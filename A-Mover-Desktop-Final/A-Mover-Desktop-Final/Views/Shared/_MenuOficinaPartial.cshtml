@@ -1,0 +1,87 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+<!-- Gestão de Mecanicos -->
+<li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-user"></i>
+        <div>Gestão de Mecânicos</div>
+    </a>
+    <ul class="menu-sub">
+        <li class="menu-item">
+            <a asp-controller="Home" asp-action="CustomError404" class="menu-link" target="_blank">
+                <div>Gestão de Mecanicos</div>
+            </a>
+        </li>
+    </ul>
+</li>
+
+<!-- Análise e Registo de Avarias e Intervenções -->
+<li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-user"></i>
+        <div>Registo de Avarias e Intervenções</div>
+    </a>
+    <ul class="menu-sub">
+        <li class="menu-item">
+            <a asp-controller="Servicos" asp-action="Index" class="menu-link">
+                <div>Histórico e Registo de Manutenções ✅</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a asp-controller="Servicos" asp-action="CalendarioIntervencoes" class="menu-link">
+                <div>Calendario de Intervenções ✅</div>
+            </a>
+        </li>
+    </ul>
+</li>
+
+<!-- Gestão de Stock -->
+
+<li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-archive"></i>
+        <div>Gestão de Stock</div>
+    </a>
+    <ul class="menu-sub">
+
+        <li class="menu-item">
+            <a asp-controller="Inventarios" asp-action="IndexOficina" class="menu-link">
+                <div>Catálogo de Peças ✅</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a asp-controller="PedidoPecas" asp-action="MeusPedidos" class="menu-link">
+                <div>Rastreamento de Lotes de Materiais ✅</div>
+            </a>
+        </li>
+    </ul>
+</li>
+
+<!-- Documentação e Conformidade -->
+
+<li class="menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-book"></i>
+        <div>Documentação e Conformidade</div>
+    </a>
+    <ul class="menu-sub">
+        <li class="menu-item">
+            <a asp-controller="Docs" asp-action="IndexManuais" class="menu-link">
+                <div>Manuais de Tecnicos ✅</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a asp-controller="Docs" asp-action="IndexCertificados" class="menu-link">
+                <div>Certificados de Conformidade ✅</div>
+            </a>
+        </li>
+
+    </ul>
+</li>
+

@@ -1,0 +1,53 @@
+﻿@model A_Mover_Desktop_Final.Models.Pecas
+
+@{
+    ViewData["Title"] = "Criar Nova Peça";
+}
+
+<div class="col-xxl">
+    <div class="card m-5">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h1 class="mb-0">Criar Nova Peça</h1>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Part Number -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="PartNumber">
+                        Part Number <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="PartNumber" class="form-control" />
+                        <span asp-validation-for="PartNumber" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="Descricao">
+                        Descrição <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="Descricao" class="form-control" />
+                        <span asp-validation-for="Descricao" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <p class="text-muted"><span class="text-danger">*</span> - Preenchimento obrigatório</p>
+
+                <div class="row justify-content-start">
+                    <div class="col-sm-10 offset-sm-2 d-flex">
+                        <input type="submit" value="Criar" class="btn btn-primary me-2" />
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

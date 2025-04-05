@@ -1,0 +1,130 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+/* Estilizar o container do campo de pesquisa */
+.dataTables_filter {
+    display: flex; /* Alinhar horizontalmente */
+    gap: 10px; /* Espaçamento entre os elementos */
+    justify-content: flex-start; /* Alinhar à esquerda */
+    align-items: center; /* Centralizar verticalmente */
+}
+
+    /* Estilizar o input de pesquisa */
+    .dataTables_filter input {
+        border: 1px solid #ced4da; /* Cor da borda */
+        border-radius: 5px; /* Cantos arredondados */
+        padding: 6px 12px; /* Espaçamento interno */
+        font-size: 14px; /* Tamanho da fonte */
+        width: 300px; /* Largura fixa */
+        margin-right: 10px; /* Espaço entre o botão */
+    }
+
+    /* Estilizar o botão de pesquisa */
+    .dataTables_filter button {
+        background-color: #007bff; /* Cor de fundo azul */
+        border: none; /* Remove borda */
+        color: white; /* Texto branco */
+        padding: 6px 12px; /* Espaçamento interno */
+        border-radius: 5px; /* Cantos arredondados */
+        cursor: pointer; /* Cursor de clique */
+        font-size: 14px; /* Tamanho da fonte */
+    }
+
+        /* Estilizar o botão ao passar o mouse */
+        .dataTables_filter button:hover {
+            background-color: #0056b3; /* Azul mais escuro */
+        }
+
+.checklist-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+    .checklist-table th,
+    .checklist-table td {
+        text-align: left;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .checklist-table th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+    }
+
+    .checklist-table tbody tr:nth-child(even) {
+        background-color: #f8f8f8;
+    }
+
+.index-ordens-producao .card {
+    border-width: 2px;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Cabeçalho do cartão */
+.index-ordens-producao .card-header {
+    background-color: #f8f8f8; /* Cor de fundo padrão do cabeçalho */
+    color: black; /* Cor do texto */
+    border-bottom: 2px solid transparent; /* Valor inicial transparente */
+}
+
+/* Cartões de diferentes estados */
+.index-ordens-producao .card.border-success {
+    border-color: var(--bs-success) !important; /* Verde */
+}
+
+    .index-ordens-producao .card.border-success .card-header {
+        border-bottom-color: var(--bs-success); /* Verde */
+    }
+
+.index-ordens-producao .card.border-danger {
+    border-color: var(--bs-danger) !important; /* Vermelho */
+}
+
+    .index-ordens-producao .card.border-danger .card-header {
+        border-bottom-color: var(--bs-danger); /* Vermelho */
+    }
+
+.index-ordens-producao .card.border-info {
+    border-color: var(--bs-info) !important; /* Azul */
+}
+
+    .index-ordens-producao .card.border-info .card-header {
+        border-bottom-color: var(--bs-info);
+    }
+
+.index-ordens-producao .card.border-primary {
+    border-color: var(--bs-primary) !important; /* Azul para a borda */
+}
+
+    .index-ordens-producao .card.border-primary .card-header {
+        border-bottom: 2px solid var(--bs-primary) !important;
+    }
+
+
+.index-ordens-producao .card:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Sombra ao passar o rato */
+    transform: scale(1.02); /* Pequeno aumento no tamanho */
+    transition: all 0.3s ease; /* Animação suave */
+}
