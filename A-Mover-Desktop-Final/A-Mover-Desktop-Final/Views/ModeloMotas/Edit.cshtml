@@ -1,59 +1,100 @@
 ﻿@model A_Mover_Desktop_Final.Models.ModeloMota
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Modelo de Mota";
 }
 
-<h1>Edit</h1>
+<div class="col-xxl">
+    <div class="card m-5">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h1 class="mb-0">Editar Modelo de Mota</h1>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="IDModelo" />
 
-<h4>ModeloMota</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IDModelo" />
-            <div class="form-group">
-                <label asp-for="CodigoProduto" class="control-label"></label>
-                <input asp-for="CodigoProduto" class="form-control" />
-                <span asp-validation-for="CodigoProduto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataInicioProducao" class="control-label"></label>
-                <input asp-for="DataInicioProducao" class="form-control" />
-                <span asp-validation-for="DataInicioProducao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataLancamento" class="control-label"></label>
-                <input asp-for="DataLancamento" class="form-control" />
-                <span asp-validation-for="DataLancamento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataDescontinuacao" class="control-label"></label>
-                <input asp-for="DataDescontinuacao" class="form-control" />
-                <span asp-validation-for="DataDescontinuacao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                <!-- Código do Produto -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="CodigoProduto">
+                        Código do Produto <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="CodigoProduto" class="form-control" />
+                        <span asp-validation-for="CodigoProduto" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Nome -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="Nome">
+                        Nome <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="Nome" class="form-control" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Data de Início de Produção -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="DataInicioProducao" readonly>
+                        Data de Início de Produção <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="DataInicioProducao" class="form-control" type="date" readonly />
+                        <span asp-validation-for="DataInicioProducao" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Data de Lançamento -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="DataLancamento">
+                        Data de Lançamento
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="DataLancamento" class="form-control" type="date" />
+                        <span asp-validation-for="DataLancamento" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Data de Descontinuação -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="DataDescontinuacao">
+                        Data de Descontinuação
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="DataDescontinuacao" class="form-control" type="date" />
+                        <span asp-validation-for="DataDescontinuacao" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Estado -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="Estado">
+                        Estado <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <select asp-for="Estado" class="form-control"
+                                asp-items="Html.GetEnumSelectList<A_Mover_Desktop_Final.Models.EstadoModelo>()">
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <p class="text-muted"><span class="text-danger">*</span> - Preenchimento obrigatório</p>
+
+                <div class="row justify-content-start">
+                    <div class="col-sm-10 offset-sm-2 d-flex">
+                        <input type="submit" value="Salvar" class="btn btn-primary me-2" />
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }

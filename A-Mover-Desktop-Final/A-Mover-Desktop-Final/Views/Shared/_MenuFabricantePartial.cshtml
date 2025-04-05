@@ -37,7 +37,7 @@
 
 <!-- Gestão de Modelos -->
 <li class="menu-item @(ViewData["ActiveMenu"] as string == "GestaoModelos" ? "active" : "")">
-	<a asp-controller="Modelos" asp-action="Index" class="menu-link">
+	<a asp-controller="ModeloMotas" asp-action="Index" class="menu-link">
 		<i class="menu-icon tf-icons bx bx-book-content"></i>
 		<div>Gestão de Modelos</div>
 	</a>
@@ -59,146 +59,24 @@
 	</a>
 </li>
 
-
-
-@* <!-- Rastreabilidade -->
-<li class="menu-item">
-	<a href="javascript:void(0);" class="menu-link menu-toggle">
-		<i class="menu-icon tf-icons bx bx-cog"></i>
-		<div>Rastreabilidade</div>
-	</a>
-	<ul class="menu-sub">
-		<li class="menu-item">
-			<a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-				<div>Registo de Componentes</div>
-			</a>
-		</li>
-		<li class="menu-item">
-			<a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-				<div>Rastreabilidade de Lotes</div>
-			</a>
-		</li>
-	</ul>
-</li> *@
-
-@* <!-- Gestão de Parceiros Autorizados -->
-<li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-user"></i>
-        <div>Gestão de Parceiros Autorizados</div>
-    </a>
-    <ul class="menu-sub">
-        <li class="menu-item">
-            <a asp-controller="ParceiroOficinas" asp-action="Index" class="menu-link">
-                <div>Gestão das Oficinas</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a asp-controller="ParceiroConcessionarias" asp-action="Index" class="menu-link">
-                <div>Gestão das Concessionarias</div>
-            </a>
-        </li>
-    </ul>
-</li>
- *@
-
-@* <!-- Informações de Utilização e Pós-Venda -->
-
 <li class="menu-item">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-cog"></i>
-        <div>Informação de Utilização e Pós-Venda</div>
+        <div>BackOffice</div>
     </a>
     <ul class="menu-sub">
         <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Feedback de Clientes</div>
+            <a asp-controller="Checklists" asp-action="Index" class="menu-link">
+                <div>Tipo de Checklists</div>
             </a>
         </li>
         <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Gestão de Devolução e Recalls</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Dados de Utilização do Produto</div>
-            </a>
-        </li>
-    </ul>
-</li>*@
-
-<!-- Histórico de Manutenção -->
-@*<li class="menu-item ">
-    <a asp-controller="Servicos" asp-action="Index" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-cog"></i>
-        <div data-i18n="Analytics">Histórico de Manutenção ✅</div>
-    </a>
-</li>
-
-<!-- Gestão de Qualidade -->
-
-<li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-cog"></i>
-        <div>Gestão de Qualidade </div>
-    </a>
-    <ul class="menu-sub">
-        <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Inspeção e Verificações</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Análise de Tendências e Anomalias</div>
-            </a>
-        </li>
-    </ul>
-</li>*@
-
-
-@*<!-- Segurança -->
-
-<li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-cog"></i>
-        <div>Segurança</div>
-    </a>
-    <ul class="menu-sub">
-        <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Controlo de Acessos</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Proteção de Informações Sensiveis</div>
-            </a>
-        </li>
-    </ul>
-</li>*@
-
-<!-- Sustentabilidade e Reciclagem -->
-
-@* <li class="menu-item">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-recycle"></i>
-        <div>Sustentabilidade e Reciclagem</div>
-    </a>
-    <ul class="menu-sub">
-        <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Ciclo de Vida Ambiental do Produto</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a asp-controller="Home" asp-action="CustomError404" class="menu-link">
-                <div>Recomendações de Reciclagem</div>
+            <a asp-controller="Documentos" asp-action="Index" class="menu-link">
+                <div>Tipo de Documentos</div>
             </a>
         </li>
     </ul> 
- *@
 </li>
+
 
 

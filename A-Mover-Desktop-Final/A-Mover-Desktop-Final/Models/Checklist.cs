@@ -2,6 +2,12 @@
 
 namespace A_Mover_Desktop_Final.Models
 {
+    public enum TipoChecklist
+    {
+        Controlo,
+        Embalagem,
+        Montagem
+    }
     public class Checklist
     {
         [Key]
@@ -12,5 +18,8 @@ namespace A_Mover_Desktop_Final.Models
 
         [Required(ErrorMessage = "É necessário associar uma descrição.")]
         public string Descricao { get; set; }
+
+        [Required]
+        public TipoChecklist Tipo { get; set; }
     }
 }

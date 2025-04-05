@@ -2,6 +2,12 @@
 
 namespace A_Mover_Desktop_Final.Models
 {
+    public enum EstadoModelo
+    {
+        EmProdução,
+        Ativo,
+        Descontinuado
+    }
     public class ModeloMota
     {
         [Key]
@@ -17,6 +23,6 @@ namespace A_Mover_Desktop_Final.Models
         public DateTime DataInicioProducao { get; set; } = DateTime.Now;
         public DateTime? DataLancamento { get; set; }
         public DateTime? DataDescontinuacao { get; set; }
-        public string Estado { get; set; }
+        public EstadoModelo Estado { get; set; }
     }
 }
