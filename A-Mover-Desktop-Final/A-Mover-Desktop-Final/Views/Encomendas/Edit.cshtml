@@ -1,0 +1,93 @@
+﻿@model A_Mover_Desktop_Final.Models.Encomenda
+
+@{
+    ViewData["Title"] = "Editar Encomenda";
+}
+
+<div class="col-xxl">
+    <div class="card m-5">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h1 class="mb-0">Editar Encomenda</h1>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="IDEncomenda" />
+
+                <!-- Modelo -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="IDModelo">
+                        Modelo <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <select asp-for="IDModelo" class="form-select" asp-items="ViewBag.IDModelo"></select>
+                        <span asp-validation-for="IDModelo" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Cliente -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="IDCliente">
+                        Cliente <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <select asp-for="IDCliente" class="form-select" asp-items="ViewBag.IDCliente"></select>
+                        <span asp-validation-for="IDCliente" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Quantidade -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="Quantidade">Quantidade<span class="text-danger"> *</span></label>
+                    <div class="col-sm-10">
+                        <input asp-for="Quantidade" class="form-control" />
+                        <span asp-validation-for="Quantidade" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Data de Criação -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="DateCriacao">Data de Criação<span class="text-danger"> *</span></label>
+                    <div class="col-sm-10">
+                        <input asp-for="DateCriacao" class="form-control" />
+                        <span asp-validation-for="DateCriacao" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Data de Entrega -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="DataEntrega">Data de Entrega<span class="text-danger"> *</span></label>
+                    <div class="col-sm-10">
+                        <input asp-for="DataEntrega" class="form-control" />
+                        <span asp-validation-for="DataEntrega" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Estado -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="Estado">Estado<span class="text-danger"> *</span></label>
+                    <div class="col-sm-10">
+                        <select asp-for="Estado" class="form-select">
+                            <option value="Pendente">Pendente</option>
+                            <option value="EmProducao">Em Produção</option>
+                            <option value="Entregue">Entregue</option>
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger"></span>
+                    </div>
+                </div>
+                <p class="text-muted"><span class="text-danger">*</span> - Preenchimento obrigatório</p>
+
+                <div class="row justify-content-start">
+                    <div class="col-sm-10 offset-sm-2 d-flex">
+                        <input type="submit" value="Salvar" class="btn btn-primary me-2" />
+                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<A_Mover_Desktop_Final.Models.Encomenda>
+
+@{
+    ViewData["Title"] = "Gestão de Encomendas";
+}
+
+<div class="card m-5 p-1">
+    <div class="d-flex justify-content-between align-items-center m-3">
+        <h1 class="m-0">Gestão de Encomendas</h1>
+        <a type="button" class="btn btn-primary" asp-action="Create">Adicionar Encomenda</a>
+    </div>
+
+    <div class="table-responsive text-nowrap">
+        <table class="table" id="tabela">
+            <thead class="table-light">
+                <tr>
+                    <th>Data de Criação</th>
+                    <th>Cliente</th>
+                    <th>Modelo</th>
+                    <th>Quantidade</th>
+                    <th>Data de Entrega</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var encomenda in Model)
+                {
+                    <tr id="row-@encomenda.IDEncomenda">
+                        <td><b>@Html.DisplayFor(modelItem => encomenda.DateCriacao)</b></td>
+                        <td>@Html.DisplayFor(modelItem => encomenda.Cliente.Nome)</td>
+                        <td>@Html.DisplayFor(modelItem => encomenda.ModeloMota.Nome)</td>
+                        <td>@Html.DisplayFor(modelItem => encomenda.Quantidade)</td>
+                        <td>
+                            @Html.Raw(encomenda.DataEntrega.HasValue
+                                     ? encomenda.DataEntrega.Value.ToString("dd/MM/yyyy")
+                                     : "<span class='text-muted'>Por definir</span>")
+                        </td>
+
+                        <td><b>@Html.DisplayFor(modelItem => encomenda.Estado)</b></td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@encomenda.IDEncomenda" class="btn btn-sm btn-info text-white me-2">
+                                <i class="fas fa-info-circle"></i> Detalhes
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@encomenda.IDEncomenda" class="btn btn-sm btn-warning text-white me-2">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@encomenda.IDEncomenda" class="btn btn-sm btn-danger text-white">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tabela').DataTable({
+                "pageLength": 10,
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado"
+                }
+            });
+        });
+
+    </script>
+}

@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace A_Mover_Desktop_Final.Models
 {
+    public enum EstadoEncomenda
+    {
+        Pendente,
+        EmProducao,
+        Entregue
+    }
     public class Encomenda
     {
         [Key]
@@ -18,7 +24,10 @@ namespace A_Mover_Desktop_Final.Models
         [ForeignKey("IDCliente")]
         public Cliente? Cliente { get; set; }
 
-        public DateTime DateCriacao { get; set; }
+        [Required(ErrorMessage = "É necessário adicionar a quantidade de motas.")]
+        public int Quantidade { get; set; }
+        public EstadoEncomenda Estado { get; set; } = EstadoEncomenda.Pendente;
+        public DateTime DateCriacao { get; set; } = DateTime.Now;
         public DateTime? DataEntrega { get; set; }
     }
 }

@@ -3,167 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\controllers\\modelomotascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\controllers\\modelomotascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\encomendas\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\encomendas\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\modelomotas\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\modelomotas\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\modelomotas\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\modelomotas\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\modelomotas\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\modelomotas\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\modelomotas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\modelomotas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\modelomota.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\modelomota.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\shared\\_menufabricantepartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\shared\\_menufabricantepartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\checklists\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\checklists\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\checklists\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\checklists\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\clientes\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\clientes\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\cliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\checklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\checklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\documentos\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\documentos\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\documentos\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\documentos\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\documentos\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\documentos\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\controllers\\documentoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\controllers\\documentoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\documento.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\documento.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\documentosmodelo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\documentosmodelo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\checklistembalagem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\checklistembalagem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\checklistcontrolo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\checklistcontrolo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\checklists\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\checklists\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\clientes\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\clientes\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\checklists\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\checklists\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\controllers\\checklistscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\controllers\\checklistscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\pecas\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\pecas\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\controllers\\pecascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\controllers\\pecascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\pecas\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\pecas\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\pecas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\pecas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\clientes\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\clientes\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\controllers\\encomendascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\controllers\\encomendascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\controllers\\clientescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\controllers\\clientescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/172.20.0.16_1433/LCMDatabase/sa/SqlTable/dbo.AspNetUsers.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\encomendas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\encomendas\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\controllers\\authenticationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\authentication\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\authentication\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\views\\encomendas\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\views\\encomendas\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\encomenda.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\encomenda.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\data\\migrations\\20250405162400_updatecliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\data\\migrations\\20250405162400_updatecliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\data\\migrations\\20250405164112_cidadecliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\data\\migrations\\20250405164112_cidadecliente.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|c:\\users\\bruno\\desktop\\amoverdesktopfinal\\a-mover-desktop-final\\a-mover-desktop-final\\data\\migrations\\20250405203750_updatechecklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{378A4C5C-8C7D-4210-9E66-F7B6FFEC5017}|A-Mover-Desktop-Final\\A-Mover-Desktop-Final.csproj|solutionrelative:a-mover-desktop-final\\data\\migrations\\20250405203750_updatechecklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -173,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -181,479 +42,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ModeloMota.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ModeloMota.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\ModeloMota.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ModeloMota.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\ModeloMota.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABwAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:30.986Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Index.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Checklists\\Index.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Index.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Checklists\\Index.cshtml",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAACIAAABJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T20:47:35.781Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Edit.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Edit.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Edit.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Edit.cshtml",
-              "ViewState": "AQIAAKkAAAAAAAAAAAAUwM0AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T21:29:50.972Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Program.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Program.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Program.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Program.cs",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAABIAAAAnAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:57:13.009Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Index.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Index.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Index.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Index.cshtml",
-              "ViewState": "AQIAAA8AAAAAAAAAAAAUwEUAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T21:29:33.144Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Create.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Create.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Create.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Create.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAALQAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T21:28:43.865Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ModeloMotasController.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\ModeloMotasController.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Controllers\\ModeloMotasController.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\ModeloMotasController.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Controllers\\ModeloMotasController.cs",
-              "ViewState": "AQIAAH4AAAAAAAAAAAAIwNcAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T21:25:21.434Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Details.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Details.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Details.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\ModeloMotas\\Details.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\ModeloMotas\\Details.cshtml",
-              "ViewState": "AQIAABEAAAAAAAAAAAAqwIQAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-06T21:47:19.174Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Documentos\\Index.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Documentos\\Index.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Documentos\\Index.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Documentos\\Index.cshtml",
-              "ViewState": "AQIAAA0AAAAAAAAAAAAqwBoAAAAwAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T21:06:01.394Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "_MenuFabricantePartial.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Shared\\_MenuFabricantePartial.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Shared\\_MenuFabricantePartial.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Shared\\_MenuFabricantePartial.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Shared\\_MenuFabricantePartial.cshtml",
-              "ViewState": "AQIAACsAAAAAAAAAAAAUwE8AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:57:08.987Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "Delete.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Delete.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Checklists\\Delete.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Delete.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Checklists\\Delete.cshtml",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T21:01:36.367Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Clientes\\Index.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Clientes\\Index.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Clientes\\Index.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Clientes\\Index.cshtml",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAAB8AAABOAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:33:03.41Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Create.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Checklists\\Create.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Create.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Checklists\\Create.cshtml",
-              "ViewState": "AQIAAA8AAAAAAAAAAAAAACsAAAB1AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T20:46:41.353Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "DocumentosController.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\DocumentosController.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Controllers\\DocumentosController.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\DocumentosController.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Controllers\\DocumentosController.cs",
-              "ViewState": "AQIAADoAAAAAAAAAAAAcwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T21:04:52.188Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Checklist.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\Checklist.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\Checklist.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\Checklist.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\Checklist.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAEAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:04.681Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Cliente.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\Cliente.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\Cliente.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\Cliente.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\Cliente.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAC8AAABIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:16.693Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "Documento.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\Documento.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\Documento.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\Documento.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\Documento.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:21.409Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "ChecklistEmbalagem.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ChecklistEmbalagem.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\ChecklistEmbalagem.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ChecklistEmbalagem.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\ChecklistEmbalagem.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:16.103Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "ChecklistControlo.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ChecklistControlo.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\ChecklistControlo.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ChecklistControlo.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\ChecklistControlo.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:05.94Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Documentos\\Create.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Documentos\\Create.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Documentos\\Create.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Documentos\\Create.cshtml",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAUwCoAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T21:05:48.4Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Documentos\\Edit.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Documentos\\Edit.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Documentos\\Edit.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Documentos\\Edit.cshtml",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAqwCsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T21:06:12.713Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "DocumentosModelo.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\DocumentosModelo.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\DocumentosModelo.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\DocumentosModelo.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\DocumentosModelo.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:22.561Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 22,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Clientes\\Create.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Clientes\\Create.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Clientes\\Create.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Clientes\\Create.cshtml",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAABsAAAAQAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:35:35.57Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "20250405203750_updateChecklist.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Data\\Migrations\\20250405203750_updateChecklist.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Data\\Migrations\\20250405203750_updateChecklist.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Data\\Migrations\\20250405203750_updateChecklist.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Data\\Migrations\\20250405203750_updateChecklist.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T20:37:50.634Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AQIAANgAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T20:43:19.132Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "ChecklistsController.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\ChecklistsController.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Controllers\\ChecklistsController.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\ChecklistsController.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Controllers\\ChecklistsController.cs",
-              "ViewState": "AQIAAIYAAAAAAAAAAAAAwAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T20:44:39.145Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Edit.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Checklists\\Edit.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Checklists\\Edit.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Checklists\\Edit.cshtml",
-              "ViewState": "AQIAABwAAAAAAAAAAAAUwCkAAAA0AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T20:47:22.084Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Pecas\\Index.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Pecas\\Index.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Pecas\\Index.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Pecas\\Index.cshtml",
-              "ViewState": "AQIAADMAAAAAAAAAAAAAABMAAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:59:19.751Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "PecasController.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\PecasController.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Controllers\\PecasController.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\PecasController.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Controllers\\PecasController.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAAgwBUAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T16:55:26.292Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Pecas\\Create.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Pecas\\Create.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Pecas\\Create.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Pecas\\Create.cshtml",
-              "ViewState": "AQIAABEAAAAAAAAAAAAUwDUAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:59:44.099Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Pecas\\Edit.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Pecas\\Edit.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Pecas\\Edit.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Pecas\\Edit.cshtml",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAADYAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:59:47.037Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
               "Title": "ClientesController.cs",
               "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\ClientesController.cs",
               "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Controllers\\ClientesController.cs",
               "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\ClientesController.cs",
               "RelativeToolTip": "A-Mover-Desktop-Final\\Controllers\\ClientesController.cs",
-              "ViewState": "AQIAAEcAAAAAAAAAAAAmwGsAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T16:32:29.347Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 38,
-              "Title": "20250405162400_updateCliente.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Data\\Migrations\\20250405162400_updateCliente.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Data\\Migrations\\20250405162400_updateCliente.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Data\\Migrations\\20250405162400_updateCliente.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Data\\Migrations\\20250405162400_updateCliente.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T16:24:00.637Z"
+              "WhenOpened": "2025-04-06T22:34:09.768Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "20250405164112_CidadeCliente.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Data\\Migrations\\20250405164112_CidadeCliente.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Data\\Migrations\\20250405164112_CidadeCliente.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Data\\Migrations\\20250405164112_CidadeCliente.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Data\\Migrations\\20250405164112_CidadeCliente.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T16:41:12.123Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "dbo.AspNetUsers [Data]",
-              "DocumentMoniker": "ViewDataWindow_MSSQL__/172.20.0.16_1433/LCMDatabase/sa/SqlTable/dbo.AspNetUsers.sql",
-              "ToolTip": "dbo.AspNetUsers [Data]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2025-04-05T15:52:31.228Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "Details.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Clientes\\Details.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Clientes\\Details.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Clientes\\Details.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Clientes\\Details.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAArAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:48:44.703Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "AuthenticationController.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\AuthenticationController.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Controllers\\AuthenticationController.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\AuthenticationController.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Controllers\\AuthenticationController.cs",
-              "ViewState": "AQIAABwAAAAAAAAAAAAwwD8AAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:51:10.943Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "LoginViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\LoginViewModel.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\LoginViewModel.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\LoginViewModel.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\LoginViewModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:30.272Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "ErrorViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ErrorViewModel.cs",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\ErrorViewModel.cs",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\ErrorViewModel.cs",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\ErrorViewModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:29.602Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 5,
               "Title": "Encomenda.cs",
               "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Models\\Encomenda.cs",
               "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Models\\Encomenda.cs",
@@ -661,19 +63,60 @@
               "RelativeToolTip": "A-Mover-Desktop-Final\\Models\\Encomenda.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-05T15:45:25.111Z"
+              "WhenOpened": "2025-04-06T22:29:59.236Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "LogIn.cshtml",
-              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Authentication\\LogIn.cshtml",
-              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Authentication\\LogIn.cshtml",
-              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Authentication\\LogIn.cshtml",
-              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Authentication\\LogIn.cshtml",
-              "ViewState": "AQIAAD0AAAAAAAAAAAAawE4AAAAAAAAA",
+              "DocumentIndex": 1,
+              "Title": "EncomendasController.cs",
+              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\EncomendasController.cs",
+              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Controllers\\EncomendasController.cs",
+              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Controllers\\EncomendasController.cs",
+              "RelativeToolTip": "A-Mover-Desktop-Final\\Controllers\\EncomendasController.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAgwBgAAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-06T22:29:57.802Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Encomendas\\Index.cshtml",
+              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Encomendas\\Index.cshtml",
+              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Encomendas\\Index.cshtml",
+              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Encomendas\\Index.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-05T16:01:35.284Z"
+              "WhenOpened": "2025-04-06T22:29:55.355Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Encomendas\\Edit.cshtml",
+              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Encomendas\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Encomendas\\Edit.cshtml",
+              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Encomendas\\Edit.cshtml",
+              "ViewState": "AQIAAC0AAAAAAAAAAAAUwEAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-06T22:29:54.66Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Encomendas\\Create.cshtml",
+              "RelativeDocumentMoniker": "A-Mover-Desktop-Final\\Views\\Encomendas\\Create.cshtml",
+              "ToolTip": "C:\\Users\\bruno\\Desktop\\AMoverDesktopFinal\\A-Mover-Desktop-Final\\A-Mover-Desktop-Final\\Views\\Encomendas\\Create.cshtml",
+              "RelativeToolTip": "A-Mover-Desktop-Final\\Views\\Encomendas\\Create.cshtml",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAACwAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-06T22:29:52.846Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -67,10 +67,7 @@ namespace A_Mover_Desktop_Final.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-    [Bind("IDModelo,CodigoProduto,Nome,DataInicioProducao,DataLancamento,DataDescontinuacao,Estado")]
-    ModeloMota modeloMota,
-    string pecasFixasIds,
-    string pecasSNIds)
+    [Bind("IDModelo,CodigoProduto,Nome,DataInicioProducao,DataLancamento,DataDescontinuacao,Estado")] ModeloMota modeloMota, string pecasFixasIds, string pecasSNIds)
         {
             ViewData["ActiveMenu"] = "GestaoModelos";
 
