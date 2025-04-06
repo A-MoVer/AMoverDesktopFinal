@@ -1,54 +1,132 @@
 ﻿@model A_Mover_Desktop_Final.Models.ModeloMota
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Modelo";
 }
 
-<h1>Details</h1>
+<div class="card m-5 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Detalhes do Modelo</h1>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.IDModelo" class="btn btn-warning text-white">
+                <i class="fas fa-edit me-1"></i> Editar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Voltar à Lista
+            </a>
+        </div>
+    </div>
 
-<div>
-    <h4>ModeloMota</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CodigoProduto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CodigoProduto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataInicioProducao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataInicioProducao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataLancamento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataLancamento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataDescontinuacao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataDescontinuacao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IDModelo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Informações Gerais</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Código do Produto:</dt>
+                        <dd class="col-sm-8">@Model.CodigoProduto</dd>
+
+                        <dt class="col-sm-4">Nome:</dt>
+                        <dd class="col-sm-8">@Model.Nome</dd>
+
+                        <dt class="col-sm-4">Início de Produção:</dt>
+                        <dd class="col-sm-8">@Model.DataInicioProducao.ToString("dd/MM/yyyy")</dd>
+
+                        @if (Model.DataLancamento.HasValue)
+                        {
+                            <dt class="col-sm-4">Lançamento:</dt>
+                            <dd class="col-sm-8">@Model.DataLancamento.Value.ToString("dd/MM/yyyy")</dd>
+                        }
+
+                        @if (Model.DataDescontinuacao.HasValue)
+                        {
+                            <dt class="col-sm-4">Descontinuação:</dt>
+                            <dd class="col-sm-8">@Model.DataDescontinuacao.Value.ToString("dd/MM/yyyy")</dd>
+                        }
+
+                        <dt class="col-sm-4">Estado:</dt>
+                        <dd class="col-sm-8">@Model.Estado</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-4 mb-3">Peças Associadas</h3>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h4>Peças Fixas</h4>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.PecasFixas != null && ViewBag.PecasFixas.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Part Number</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ViewBag.PecasFixas)
+                                    {
+                                        <tr>
+                                            <td>@item.Pecas.PartNumber</td>
+                                            <td>@item.Pecas.Descricao</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Não existem peças fixas associadas a este modelo.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h4>Peças com Número de Série</h4>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.PecasSN != null && ViewBag.PecasSN.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Part Number</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ViewBag.PecasSN)
+                                    {
+                                        <tr>
+                                            <td>@item.Pecas.PartNumber</td>
+                                            <td>@item.Pecas.Descricao</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Não existem peças com número de série associadas a este modelo.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

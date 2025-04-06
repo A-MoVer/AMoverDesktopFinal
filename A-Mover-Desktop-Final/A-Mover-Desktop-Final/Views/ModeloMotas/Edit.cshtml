@@ -1,100 +1,205 @@
 ﻿@model A_Mover_Desktop_Final.Models.ModeloMota
 
 @{
-    ViewData["Title"] = "Editar Modelo de Mota";
+    ViewData["Title"] = "Editar Modelo";
 }
 
-<div class="col-xxl">
-    <div class="card m-5">
-        <div class="card-header d-flex align-items-center justify-content-between">
-            <h1 class="mb-0">Editar Modelo de Mota</h1>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="IDModelo" />
-
-                <!-- Código do Produto -->
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" asp-for="CodigoProduto">
-                        Código do Produto <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-sm-10">
-                        <input asp-for="CodigoProduto" class="form-control" />
-                        <span asp-validation-for="CodigoProduto" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <!-- Nome -->
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" asp-for="Nome">
-                        Nome <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-sm-10">
-                        <input asp-for="Nome" class="form-control" />
-                        <span asp-validation-for="Nome" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <!-- Data de Início de Produção -->
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" asp-for="DataInicioProducao" readonly>
-                        Data de Início de Produção <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-sm-10">
-                        <input asp-for="DataInicioProducao" class="form-control" type="date" readonly />
-                        <span asp-validation-for="DataInicioProducao" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <!-- Data de Lançamento -->
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" asp-for="DataLancamento">
-                        Data de Lançamento
-                    </label>
-                    <div class="col-sm-10">
-                        <input asp-for="DataLancamento" class="form-control" type="date" />
-                        <span asp-validation-for="DataLancamento" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <!-- Data de Descontinuação -->
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" asp-for="DataDescontinuacao">
-                        Data de Descontinuação
-                    </label>
-                    <div class="col-sm-10">
-                        <input asp-for="DataDescontinuacao" class="form-control" type="date" />
-                        <span asp-validation-for="DataDescontinuacao" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <!-- Estado -->
-                <div class="row mb-3">
-                    <label class="col-sm-2 col-form-label" asp-for="Estado">
-                        Estado <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-sm-10">
-                        <select asp-for="Estado" class="form-control"
-                                asp-items="Html.GetEnumSelectList<A_Mover_Desktop_Final.Models.EstadoModelo>()">
-                        </select>
-                        <span asp-validation-for="Estado" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <p class="text-muted"><span class="text-danger">*</span> - Preenchimento obrigatório</p>
-
-                <div class="row justify-content-start">
-                    <div class="col-sm-10 offset-sm-2 d-flex">
-                        <input type="submit" value="Salvar" class="btn btn-primary me-2" />
-                        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-                    </div>
-                </div>
-            </form>
-        </div>
+<div class="card m-5 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Editar Modelo</h1>
     </div>
+
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="IDModelo" />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="CodigoProduto" class="control-label">Código do Produto</label>
+                    <input asp-for="CodigoProduto" class="form-control" />
+                    <span asp-validation-for="CodigoProduto" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Nome" class="control-label">Nome</label>
+                    <input asp-for="Nome" class="form-control" />
+                    <span asp-validation-for="Nome" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="DataInicioProducao" class="control-label">Data de Início de Produção</label>
+                    <input asp-for="DataInicioProducao" class="form-control" type="date" />
+                    <span asp-validation-for="DataInicioProducao" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DataLancamento" class="control-label">Data de Lançamento</label>
+                    <input asp-for="DataLancamento" class="form-control" type="date" />
+                    <span asp-validation-for="DataLancamento" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DataDescontinuacao" class="control-label">Data de Descontinuação</label>
+                    <input asp-for="DataDescontinuacao" class="form-control" type="date" />
+                    <span asp-validation-for="DataDescontinuacao" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Estado" class="control-label">Estado</label>
+                    <select asp-for="Estado" asp-items="Html.GetEnumSelectList<EstadoModelo>()" class="form-control"></select>
+                    <span asp-validation-for="Estado" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+        <h3>Selecionar Peças</h3>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card p-3 mb-3">
+                    <h4>Peças Fixas</h4>
+                    <p class="text-muted">Peças fixas que não necessitam de número de série</p>
+                    <div class="table-responsive">
+                        <table id="tabelaPecasFixas" class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Selecionar</th>
+                                    <th>Número da Peça</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var part in ViewBag.Pecas)
+                                {
+                                    bool isSelected = ViewBag.PecasFixasIds != null && ViewBag.PecasFixasIds.Contains(part.IDPeca);
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="peca-fixa-checkbox" value="@part.IDPeca" @(isSelected ? "checked" : "") />
+                                        </td>
+                                        <td>@part.PartNumber</td>
+                                        <td>@part.Descricao</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card p-3 mb-3">
+                    <h4>Peças com Número de Série</h4>
+                    <p class="text-muted">Peças que requerem rastreamento por número de série</p>
+                    <div class="table-responsive">
+                        <table id="tabelaPecasSN" class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Selecionar</th>
+                                    <th>Número da Peça</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var part in ViewBag.Pecas)
+                                {
+                                    bool isSelected = ViewBag.PecasSNIds != null && ViewBag.PecasSNIds.Contains(part.IDPeca);
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" class="peca-sn-checkbox" value="@part.IDPeca" @(isSelected ? "checked" : "") />
+                                        </td>
+                                        <td>@part.PartNumber</td>
+                                        <td>@part.Descricao</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="pecasFixasIds" name="pecasFixasIds" />
+        <input type="hidden" id="pecasSNIds" name="pecasSNIds" />
+
+        <div class="form-group mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Guardar
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Voltar à Lista
+            </a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            var tabelaPecasFixas = $('#tabelaPecasFixas').DataTable({
+                "pageLength": 5,
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhuma peça encontrada"
+                }
+            });
+
+            var tabelaPecasSN = $('#tabelaPecasSN').DataTable({
+                "pageLength": 5,
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhuma peça encontrada"
+                }
+            });
+
+            function updateHiddenFields() {
+                const selectedFixas = [];
+                const selectedSN = [];
+
+                tabelaPecasFixas.$('.peca-fixa-checkbox:checked').each(function () {
+                    selectedFixas.push($(this).val());
+                });
+
+                tabelaPecasSN.$('.peca-sn-checkbox:checked').each(function () {
+                    selectedSN.push($(this).val());
+                });
+
+                $('#pecasFixasIds').val(selectedFixas.join(','));
+                $('#pecasSNIds').val(selectedSN.join(','));
+            }
+
+            $('#tabelaPecasFixas, #tabelaPecasSN').on('change', '.peca-fixa-checkbox, .peca-sn-checkbox', function () {
+                updateHiddenFields();
+            });
+
+            $('form').on('submit', function () {
+                updateHiddenFields();
+            });
+
+            updateHiddenFields();
+        });
+    </script>
 }

@@ -43,7 +43,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDChecklist");
 
-                    b.ToTable("Checklist");
+                    b.ToTable("Checklist", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistControlo", b =>
@@ -70,7 +70,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDOrdemProducao");
 
-                    b.ToTable("ChecklistControlo");
+                    b.ToTable("ChecklistControlo", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistEmbalagem", b =>
@@ -97,7 +97,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDOrdemProducao");
 
-                    b.ToTable("ChecklistEmbalagem");
+                    b.ToTable("ChecklistEmbalagem", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistMontagem", b =>
@@ -124,7 +124,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDOrdemProducao");
 
-                    b.ToTable("ChecklistMontagem");
+                    b.ToTable("ChecklistMontagem", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Cliente", b =>
@@ -180,7 +180,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDCliente");
 
-                    b.ToTable("Clientes");
+                    b.ToTable("Clientes", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Documento", b =>
@@ -197,7 +197,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDDocumento");
 
-                    b.ToTable("Documento");
+                    b.ToTable("Documento", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.DocumentosModelo", b =>
@@ -222,7 +222,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDModelo");
 
-                    b.ToTable("DocumentosModelo");
+                    b.ToTable("DocumentosModelo", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Encomenda", b =>
@@ -251,7 +251,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDModelo");
 
-                    b.ToTable("Encomendas");
+                    b.ToTable("Encomendas", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloMota", b =>
@@ -284,7 +284,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDModelo");
 
-                    b.ToTable("ModelosMota");
+                    b.ToTable("ModelosMota", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloPecasFixas", b =>
@@ -307,7 +307,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDPeca");
 
-                    b.ToTable("ModeloPecasFixas");
+                    b.ToTable("ModeloPecasFixas", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloPecasSN", b =>
@@ -330,7 +330,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDPeca");
 
-                    b.ToTable("ModeloPecasSN");
+                    b.ToTable("ModeloPecasSN", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Mota", b =>
@@ -362,7 +362,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDModelo");
 
-                    b.ToTable("Motas");
+                    b.ToTable("Motas", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasSN", b =>
@@ -389,7 +389,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDPeca");
 
-                    b.ToTable("PecasModelo");
+                    b.ToTable("PecasModelo", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.OrdemProducao", b =>
@@ -440,7 +440,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("EncomendaIDEncomenda");
 
-                    b.ToTable("OrdemProducao");
+                    b.ToTable("OrdemProducao", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Pecas", b =>
@@ -461,7 +461,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDPeca");
 
-                    b.ToTable("Pecas");
+                    b.ToTable("Pecas", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
