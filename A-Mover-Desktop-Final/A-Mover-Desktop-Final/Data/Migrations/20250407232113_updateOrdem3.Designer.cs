@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250407232113_updateOrdem3")]
+    partial class updateOrdem3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -417,9 +420,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDOrdemProducao"));
 
-                    b.Property<int?>("ClienteIDCliente")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DataConclusao")
                         .HasColumnType("datetime2");
 
@@ -432,9 +432,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Property<int>("IDEncomenda")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ModeloMotaIDModelo")
-                        .HasColumnType("int");
-
                     b.Property<string>("NumeroOrdem")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -445,11 +442,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDOrdemProducao");
 
-                    b.HasIndex("ClienteIDCliente");
-
                     b.HasIndex("IDEncomenda");
-
-                    b.HasIndex("ModeloMotaIDModelo");
 
                     b.ToTable("OrdemProducao");
                 });
@@ -854,19 +847,11 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.OrdemProducao", b =>
                 {
-                    b.HasOne("A_Mover_Desktop_Final.Models.Cliente", null)
-                        .WithMany("OrdensProducao")
-                        .HasForeignKey("ClienteIDCliente");
-
                     b.HasOne("A_Mover_Desktop_Final.Models.Encomenda", "Encomenda")
                         .WithMany()
                         .HasForeignKey("IDEncomenda")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", null)
-                        .WithMany("OrdensProducao")
-                        .HasForeignKey("ModeloMotaIDModelo");
 
                     b.Navigation("Encomenda");
                 });
@@ -922,15 +907,8 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Cliente", b =>
-                {
-                    b.Navigation("OrdensProducao");
-                });
-
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloMota", b =>
                 {
-                    b.Navigation("OrdensProducao");
-
                     b.Navigation("PecasFixas");
 
                     b.Navigation("PecasSN");

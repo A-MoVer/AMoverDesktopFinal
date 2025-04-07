@@ -51,5 +51,8 @@ namespace A_Mover_Desktop_Final.Models
         public DateTime DataCriacao { get; set; } = DateTime.Now;
         public DateTime? DataModificacao { get; set; }
         public DateTime? UltimaEncomenda { get; set; }
+
+        public ICollection<OrdemProducao>? OrdensProducao { get; set; }
+
     }
 }

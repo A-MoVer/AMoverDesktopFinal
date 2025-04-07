@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using A_Mover_Desktop_Final.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace A_Mover_Desktop_Final.Data
@@ -24,5 +25,28 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ModeloPecasSN> ModeloPecasSN { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Mota> Motas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.MotasPecasSN> PecasModelo { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MotasPecasSN>()
+                .HasOne(m => m.ModeloPecasSN)
+                .WithMany()
+                .HasForeignKey(m => m.IDModeloPecaSN)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ModeloPecasSN>()
+                .HasOne(m => m.ModeloMota)
+                .WithMany()
+                .HasForeignKey(m => m.IDModelo)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrdemProducao>()
+                .HasOne(o => o.Encomenda)
+                .WithMany()
+                .HasForeignKey(o => o.IDEncomenda)
+                .OnDelete(DeleteBehavior.Restrict); // ou DeleteBehavior.NoAction
+        }
     }
 }

@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250407185525_updateMotas")]
+    partial class updateMotas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,16 +330,11 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Property<int>("IDPeca")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ModeloMotaIDModelo")
-                        .HasColumnType("int");
-
                     b.HasKey("IDModeloPSN");
 
                     b.HasIndex("IDModelo");
 
                     b.HasIndex("IDPeca");
-
-                    b.HasIndex("ModeloMotaIDModelo");
 
                     b.ToTable("ModeloPecasSN");
                 });
@@ -356,18 +354,15 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Property<DateTime>("DataRegisto")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IDModelo")
                         .HasColumnType("int");
 
                     b.Property<int>("IDOrdemProducao")
                         .HasColumnType("int");
-
-                    b.Property<string>("NumeroIdentificacao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Quilometragem")
                         .HasColumnType("float");
@@ -376,8 +371,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasIndex("IDModelo");
 
-                    b.HasIndex("IDOrdemProducao")
-                        .IsUnique();
+                    b.HasIndex("IDOrdemProducao");
 
                     b.ToTable("Motas");
                 });
@@ -390,10 +384,10 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDMotasPecasSN"));
 
-                    b.Property<int>("IDModeloPecaSN")
+                    b.Property<int>("IDMota")
                         .HasColumnType("int");
 
-                    b.Property<int>("IDMota")
+                    b.Property<int>("IDPeca")
                         .HasColumnType("int");
 
                     b.Property<string>("NumeroSerie")
@@ -402,9 +396,9 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDMotasPecasSN");
 
-                    b.HasIndex("IDModeloPecaSN");
-
                     b.HasIndex("IDMota");
+
+                    b.HasIndex("IDPeca");
 
                     b.ToTable("PecasModelo");
                 });
@@ -417,22 +411,19 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDOrdemProducao"));
 
-                    b.Property<int?>("ClienteIDCliente")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("DataConclusao")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("EncomendaIDEncomenda")
+                        .HasColumnType("int");
+
                     b.Property<int>("Estado")
                         .HasColumnType("int");
 
                     b.Property<int>("IDEncomenda")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ModeloMotaIDModelo")
                         .HasColumnType("int");
 
                     b.Property<string>("NumeroOrdem")
@@ -445,11 +436,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDOrdemProducao");
 
-                    b.HasIndex("ClienteIDCliente");
-
-                    b.HasIndex("IDEncomenda");
-
-                    b.HasIndex("ModeloMotaIDModelo");
+                    b.HasIndex("EncomendaIDEncomenda");
 
                     b.ToTable("OrdemProducao");
                 });
@@ -794,9 +781,9 @@ namespace A_Mover_Desktop_Final.Data.Migrations
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloPecasSN", b =>
                 {
                     b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", "ModeloMota")
-                        .WithMany()
+                        .WithMany("PecasSN")
                         .HasForeignKey("IDModelo")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("A_Mover_Desktop_Final.Models.Pecas", "Pecas")
@@ -804,10 +791,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .HasForeignKey("IDPeca")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", null)
-                        .WithMany("PecasSN")
-                        .HasForeignKey("ModeloMotaIDModelo");
 
                     b.Navigation("ModeloMota");
 
@@ -823,8 +806,8 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("A_Mover_Desktop_Final.Models.OrdemProducao", "OrdemProducao")
-                        .WithOne("Mota")
-                        .HasForeignKey("A_Mover_Desktop_Final.Models.Mota", "IDOrdemProducao")
+                        .WithMany("Motas")
+                        .HasForeignKey("IDOrdemProducao")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -835,38 +818,28 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasSN", b =>
                 {
-                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloPecasSN", "ModeloPecasSN")
-                        .WithMany()
-                        .HasForeignKey("IDModeloPecaSN")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("A_Mover_Desktop_Final.Models.Mota", "Mota")
-                        .WithMany("MotasPecasSN")
+                        .WithMany()
                         .HasForeignKey("IDMota")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ModeloPecasSN");
+                    b.HasOne("A_Mover_Desktop_Final.Models.Pecas", "Pecas")
+                        .WithMany()
+                        .HasForeignKey("IDPeca")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Mota");
+
+                    b.Navigation("Pecas");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.OrdemProducao", b =>
                 {
-                    b.HasOne("A_Mover_Desktop_Final.Models.Cliente", null)
-                        .WithMany("OrdensProducao")
-                        .HasForeignKey("ClienteIDCliente");
-
                     b.HasOne("A_Mover_Desktop_Final.Models.Encomenda", "Encomenda")
                         .WithMany()
-                        .HasForeignKey("IDEncomenda")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", null)
-                        .WithMany("OrdensProducao")
-                        .HasForeignKey("ModeloMotaIDModelo");
+                        .HasForeignKey("EncomendaIDEncomenda");
 
                     b.Navigation("Encomenda");
                 });
@@ -922,23 +895,11 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Cliente", b =>
-                {
-                    b.Navigation("OrdensProducao");
-                });
-
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloMota", b =>
                 {
-                    b.Navigation("OrdensProducao");
-
                     b.Navigation("PecasFixas");
 
                     b.Navigation("PecasSN");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Mota", b =>
-                {
-                    b.Navigation("MotasPecasSN");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.OrdemProducao", b =>
@@ -949,7 +910,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.Navigation("ChecklistMontagem");
 
-                    b.Navigation("Mota");
+                    b.Navigation("Motas");
                 });
 #pragma warning restore 612, 618
         }

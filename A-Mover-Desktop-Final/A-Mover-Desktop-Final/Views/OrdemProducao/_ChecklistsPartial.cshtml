@@ -1,0 +1,126 @@
+
+@model A_Mover_Desktop_Final.Models.OrdemProducao
+@{
+    var apenasVisualizar = Model.Estado == EstadoOrdemProducao.Concluida;
+}
+<!-- MONTAGEM -->
+<h3 class="mt-4">🔧 Montagem</h3>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Passo</th>
+            <th>Verificado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.ChecklistMontagem.Count; i++)
+        {
+            var item = Model.ChecklistMontagem.ElementAt(i);
+            <tr>
+                <td>@item.Checklist?.Nome</td>
+                <td>
+                    @if (apenasVisualizar)
+                    {
+                        <span class="badge @(item.Verificado == VerificadoChecklistMontagem.Sim ? "bg-success" : "bg-danger")">
+                            @item.Verificado
+                        </span>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="ChecklistMontagem[@i].IDChecklistMontagem" value="@item.IDChecklistMontagem" />
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="ChecklistMontagem[@i].Verificado" value="Sim" id="montagem-sim-@i" autocomplete="off" @(item.Verificado == VerificadoChecklistMontagem.Sim ? "checked" : "")>
+                            <label class="btn btn-outline-success btn-sm" for="montagem-sim-@i">Sim</label>
+
+                            <input type="radio" class="btn-check" name="ChecklistMontagem[@i].Verificado" value="Nao" id="montagem-nao-@i" autocomplete="off" @(item.Verificado == VerificadoChecklistMontagem.Nao ? "checked" : "")>
+                            <label class="btn btn-outline-danger btn-sm" for="montagem-nao-@i">Não</label>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- CONTROLO -->
+<h3 class="mt-4">🔍 Controlo de Qualidade</h3>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Passo</th>
+            <th>Controlo Final</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.ChecklistControlo.Count; i++)
+        {
+            var item = Model.ChecklistControlo.ElementAt(i);
+            <tr>
+                <td>@item.Checklist?.Nome</td>
+                <td>
+                    @if (apenasVisualizar)
+                    {
+                        <span class="badge
+                                    @(item.ControloFinal == ControloFinalChecklistControlo.Sim ? "bg-success" :
+                                      item.ControloFinal == ControloFinalChecklistControlo.Nao ? "bg-danger" : "bg-warning")">
+                            @item.ControloFinal
+                        </span>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="ChecklistControlo[@i].IDChecklistControlo" value="@item.IDChecklistControlo" />
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="ChecklistControlo[@i].ControloFinal" value="Sim" id="controlo-sim-@i" autocomplete="off" @(item.ControloFinal == ControloFinalChecklistControlo.Sim ? "checked" : "")>
+                            <label class="btn btn-outline-success btn-sm" for="controlo-sim-@i">Sim</label>
+
+                            <input type="radio" class="btn-check" name="ChecklistControlo[@i].ControloFinal" value="Nao" id="controlo-nao-@i" autocomplete="off" @(item.ControloFinal == ControloFinalChecklistControlo.Nao ? "checked" : "")>
+                            <label class="btn btn-outline-danger btn-sm" for="controlo-nao-@i">Não</label>
+
+                            <input type="radio" class="btn-check" name="ChecklistControlo[@i].ControloFinal" value="Corrigido" id="controlo-corrigido-@i" autocomplete="off" @(item.ControloFinal == ControloFinalChecklistControlo.Corrigido ? "checked" : "")>
+                            <label class="btn btn-outline-warning btn-sm" for="controlo-corrigido-@i">Corrigido</label>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- EMBALAGEM -->
+<h3 class="mt-4">📦 Embalagem</h3>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Passo</th>
+            <th>Incluído</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.ChecklistEmbalagem.Count; i++)
+        {
+            var item = Model.ChecklistEmbalagem.ElementAt(i);
+            <tr>
+                <td>@item.Checklist?.Nome</td>
+                <td>
+                    @if (apenasVisualizar)
+                    {
+                        <span class="badge @(item.Incluido == IncluidoChecklistEmbalagem.Sim ? "bg-success" : "bg-danger")">
+                            @item.Incluido
+                        </span>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="ChecklistEmbalagem[@i].IDChecklistEmbalagem" value="@item.IDChecklistEmbalagem" />
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="ChecklistEmbalagem[@i].Incluido" value="Sim" id="embalagem-sim-@i" autocomplete="off" @(item.Incluido == IncluidoChecklistEmbalagem.Sim ? "checked" : "")>
+                            <label class="btn btn-outline-success btn-sm" for="embalagem-sim-@i">Sim</label>
+
+                            <input type="radio" class="btn-check" name="ChecklistEmbalagem[@i].Incluido" value="Nao" id="embalagem-nao-@i" autocomplete="off" @(item.Incluido == IncluidoChecklistEmbalagem.Nao ? "checked" : "")>
+                            <label class="btn btn-outline-danger btn-sm" for="embalagem-nao-@i">Não</label>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
