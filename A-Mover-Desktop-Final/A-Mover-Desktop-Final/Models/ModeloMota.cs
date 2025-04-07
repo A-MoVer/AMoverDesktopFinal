@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace A_Mover_Desktop_Final.Models
@@ -31,12 +29,15 @@ namespace A_Mover_Desktop_Final.Models
         // Make these properties public for Entity Framework to map them properly
         public virtual List<ModeloPecasFixas> PecasFixas { get; set; } = new List<ModeloPecasFixas>();
         public virtual List<ModeloPecasSN> PecasSN { get; set; } = new List<ModeloPecasSN>();
-        
+
         // Properties for form handling (not stored in database)
         [NotMapped]
         public List<int> SelectedFixedPartIds { get; set; } = new List<int>();
-        
+
         [NotMapped]
         public List<int> SelectedSNPartIds { get; set; } = new List<int>();
+
+        public ICollection<OrdemProducao>? OrdensProducao { get; set; }
+
     }
 }

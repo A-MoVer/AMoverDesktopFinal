@@ -14,14 +14,14 @@ namespace A_Mover_Desktop_Final.Models
         [ForeignKey("IDMota")]
         public Mota? Mota { get; set; }
 
-        [Required(ErrorMessage = "É necessário associar uma peça.")]
-        public int IDPeca { get; set; }
+        [Required(ErrorMessage = "É necessário associar uma peça com SN.")]
+        public int IDModeloPecaSN { get; set; }
 
-        [ForeignKey("IDPeca")]
-        public Pecas? Pecas { get; set; }
+        [ForeignKey("IDModeloPecaSN")]
+        public ModeloPecasSN? ModeloPecasSN { get; set; }
 
         [Required(ErrorMessage = "É necessário associar o numero de série da peça (Serial Number).")]
-        public string NumeroSerie { get; set; }
+        public string? NumeroSerie { get; set; }
 
     }
 }

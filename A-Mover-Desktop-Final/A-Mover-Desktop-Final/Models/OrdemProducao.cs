@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace A_Mover_Desktop_Final.Models
 {
@@ -15,6 +16,7 @@ namespace A_Mover_Desktop_Final.Models
 
         [Required(ErrorMessage = "É necessário associar uma encomenda.")]
         public int IDEncomenda { get; set; }
+        [ForeignKey("IDEncomenda")]
         public Encomenda? Encomenda { get; set; }
 
         [Required(ErrorMessage = "Número da Ordem de Produção obrigatório")]
@@ -28,6 +30,14 @@ namespace A_Mover_Desktop_Final.Models
         public ICollection<ChecklistMontagem>? ChecklistMontagem { get; set; }
         public ICollection<ChecklistControlo>? ChecklistControlo { get; set; }
         public ICollection<ChecklistEmbalagem>? ChecklistEmbalagem { get; set; }
+        public Mota? Mota { get; set; }
+
+        // Propriedades de navegação para Cliente e Modelo via Encomenda
+        [NotMapped]
+        public Cliente? Cliente => Encomenda?.Cliente;
+
+        [NotMapped]
+        public ModeloMota? Modelo => Encomenda?.ModeloMota;
 
     }
 }
