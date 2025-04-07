@@ -3,6 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace A_Mover_Desktop_Final.Models
 {
+    public enum IncluidoChecklistEmbalagem
+    {
+        Sim,
+        Nao
+    }
     public class ChecklistEmbalagem
     {
         [Key]
@@ -17,6 +22,6 @@ namespace A_Mover_Desktop_Final.Models
         [ForeignKey("IDOrdemProducao")]
         public OrdemProducao? OrdemProducao { get; set; }
 
-        public string Estado { get; set; }
+        public IncluidoChecklistEmbalagem Incluido { get; set; } = IncluidoChecklistEmbalagem.Nao;
     }
 }

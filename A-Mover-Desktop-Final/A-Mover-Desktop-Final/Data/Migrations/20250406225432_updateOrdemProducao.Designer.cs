@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250406225432_updateOrdemProducao")]
+    partial class updateOrdemProducao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,8 +57,9 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDChecklistControlo"));
 
-                    b.Property<int>("ControloFinal")
-                        .HasColumnType("int");
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IDChecklist")
                         .HasColumnType("int");
@@ -80,13 +84,14 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDChecklistEmbalagem"));
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("IDChecklist")
                         .HasColumnType("int");
 
                     b.Property<int>("IDOrdemProducao")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Incluido")
                         .HasColumnType("int");
 
                     b.HasKey("IDChecklistEmbalagem");
@@ -106,13 +111,14 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDChecklistMontagem"));
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("IDChecklist")
                         .HasColumnType("int");
 
                     b.Property<int>("IDOrdemProducao")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Verificado")
                         .HasColumnType("int");
 
                     b.HasKey("IDChecklistMontagem");
@@ -665,7 +671,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("A_Mover_Desktop_Final.Models.OrdemProducao", "OrdemProducao")
-                        .WithMany("ChecklistControlo")
+                        .WithMany()
                         .HasForeignKey("IDOrdemProducao")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -684,7 +690,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("A_Mover_Desktop_Final.Models.OrdemProducao", "OrdemProducao")
-                        .WithMany("ChecklistEmbalagem")
+                        .WithMany()
                         .HasForeignKey("IDOrdemProducao")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -703,7 +709,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("A_Mover_Desktop_Final.Models.OrdemProducao", "OrdemProducao")
-                        .WithMany("ChecklistMontagem")
+                        .WithMany()
                         .HasForeignKey("IDOrdemProducao")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -884,15 +890,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Navigation("PecasFixas");
 
                     b.Navigation("PecasSN");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.OrdemProducao", b =>
-                {
-                    b.Navigation("ChecklistControlo");
-
-                    b.Navigation("ChecklistEmbalagem");
-
-                    b.Navigation("ChecklistMontagem");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace A_Mover_Desktop_Final.Models
 {
+    public enum ControloFinalChecklistControlo
+    {
+        Sim,
+        Nao,
+        Corrigido
+    }
     public class ChecklistControlo
     {
         [Key]
@@ -17,6 +23,6 @@ namespace A_Mover_Desktop_Final.Models
         [ForeignKey("IDOrdemProducao")]
         public OrdemProducao? OrdemProducao { get; set; }
 
-        public string Estado { get; set; }
+        public ControloFinalChecklistControlo ControloFinal { get; set; } = ControloFinalChecklistControlo.Nao;
     }
 }

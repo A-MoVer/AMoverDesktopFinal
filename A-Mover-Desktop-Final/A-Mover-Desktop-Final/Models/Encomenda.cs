@@ -7,6 +7,7 @@ namespace A_Mover_Desktop_Final.Models
     {
         Pendente,
         EmProducao,
+        Concluida,
         Entregue
     }
     public class Encomenda
