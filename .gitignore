@@ -398,5 +398,14 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+<<<<<<< Updated upstream
 A-Mover-Desktop-Final/.vs/A-Mover-Desktop-Final/v17/.suo
 A-Mover-Desktop-Final/.vs/A-Mover-Desktop-Final/v17/DocumentLayout.json
+=======
+
+# Ficheiros de layout e configurações locais
+.vs/
+*.suo
+*.user
+*.json
+>>>>>>> Stashed changes
