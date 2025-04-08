@@ -1,0 +1,120 @@
+﻿@model A_Mover_Desktop_Final.Models.Mota
+
+@{
+	ViewData["Title"] = "Ficha da Mota";
+}
+
+<div class="container mt-4">
+	<div class="card shadow-lg p-4">
+		<!-- Cabeçalho -->
+		<div class="text-center mb-4">
+			<h1 class="fw-bold text-primary">Ficha da Mota</h1>
+			<p class="text-muted">Informações detalhadas sobre a mota e as suas peças</p>
+			<!-- Exportar/Imprimir -->
+			<div class="text-center mt-4 no-print">
+				<button onclick="printFicha()" class="btn btn-outline-dark me-2">
+					<i class="bi bi-printer"></i> Imprimir
+				</button>
+				<button onclick="downloadPDF()" class="btn btn-outline-primary">
+					<i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+				</button>
+			</div>
+		</div>
+
+		<!-- Informações da Mota -->
+		<div class="card mb-3 border-0 shadow-sm">
+			<div class="card-body">
+				<h4 class="text-primary"><i class="bi bi-gear"></i> Informações da Mota</h4>
+				<hr />
+				<div class="row">
+					<div class="col-md-6"><strong>Modelo:</strong> @Model.ModeloMota?.Nome</div>
+					<div class="col-md-6"><strong>Ordem Produção:</strong> @Model.OrdemProducao?.NumeroOrdem</div>
+				</div>
+				<div class="row mt-2">
+					<div class="col-md-6"><strong>Nº Identificação:</strong> @Model.NumeroIdentificacao</div>
+					<div class="col-md-6"><strong>Data Registo:</strong> @Model.DataRegisto.ToString("dd/MM/yyyy")</div>
+				</div>
+				<div class="row mt-2">
+					<div class="col-md-6"><strong>Cor:</strong> @Model.Cor</div>
+					<div class="col-md-6"><strong>Quilometragem:</strong> @Model.Quilometragem km</div>
+				</div>
+				<div class="row mt-2">
+					<div class="col-md-6">
+						<strong>Estado:</strong>
+						<span class="badge @(Model.Estado.ToString() == "Inativa" ? "bg-danger" : "bg-success")">
+							<i class="bi @(Model.Estado.ToString() == "Inativa" ? "bi-x-circle" : "bi-check-circle")"></i> @Model.Estado
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Peças -->
+		@if (Model.MotasPecasSN != null && Model.MotasPecasSN.Any())
+		{
+			<div class="card mb-3 border-0 shadow-sm">
+				<div class="card-body">
+					<h4 class="text-primary"><i class="bi bi-nut"></i> Peças Associadas</h4>
+					<hr />
+					<table class="table table-bordered">
+						<thead class="table-light">
+							<tr>
+								<th>Nome da Peça</th>
+								<th>Número de Série</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var peca in Model.MotasPecasSN)
+							{
+								<tr>
+									<td>@peca.Pecas?.PartNumber - @peca.Pecas?.Descricao</td>
+									<td>@peca.NumeroSerie</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		}
+		else
+		{
+			<div class="alert alert-warning mt-3">
+				<i class="bi bi-exclamation-triangle"></i> Esta mota ainda não tem peças associadas.
+			</div>
+		}
+
+		<!-- Ações -->
+		<div class="text-center mt-4 no-print">
+			<a asp-action="Edit" asp-route-id="@Model?.IDMota" class="btn btn-warning me-2">
+				<i class="bi bi-pencil"></i> Editar
+			</a>
+			<a asp-action="Index" class="btn btn-secondary">
+				<i class="bi bi-arrow-left"></i> Voltar
+			</a>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+	<script>
+		function printFicha() {
+			window.print();
+		}
+
+		function downloadPDF() {
+			const element = document.querySelector('.card.shadow-lg');
+			const opt = {
+				margin: 0.5,
+				filename: 'FichaMota.pdf',
+				image: { type: 'jpeg', quality: 0.98 },
+				html2canvas: { scale: 2 },
+				jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+			};
+
+			html2pdf().set(opt).from(element).save();
+		}
+	</script>
+}
+

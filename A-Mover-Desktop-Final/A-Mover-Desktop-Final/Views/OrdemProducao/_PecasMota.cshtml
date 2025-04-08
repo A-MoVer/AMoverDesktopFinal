@@ -1,7 +1,5 @@
 @model A_Mover_Desktop_Final.Models.Mota
 
-<p><strong>IDModelo da Mota:</strong> @Model.IDModelo</p>
-<p><strong>Total de Peças:</strong> @(Model.MotasPecasSN?.Count() ?? 0)</p>
 
 <form asp-action="GuardarPecasSN" method="post">
     <input type="hidden" name="IDMota" value="@Model.IDMota" />

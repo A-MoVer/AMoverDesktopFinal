@@ -341,16 +341,54 @@ namespace A_Mover_Desktop_Final.Controllers
 
         public async Task<IActionResult> Finalizar(int id)
         {
-            var ordem = await _context.OrdemProducao.FindAsync(id);
+            var ordem = await _context.OrdemProducao
+                .Include(o => o.Mota)
+                    .ThenInclude(m => m.MotasPecasSN)
+                .Include(o => o.ChecklistMontagem)
+                .Include(o => o.ChecklistControlo)
+                .Include(o => o.ChecklistEmbalagem)
+                .FirstOrDefaultAsync(o => o.IDOrdemProducao == id);
+
             if (ordem == null || ordem.Estado != EstadoOrdemProducao.EmProducao)
                 return NotFound();
 
+            // ❌ Verificação 1: Se a mota está associada
+            if (ordem.Mota == null)
+            {
+                TempData["ErrorMessage"] = "A ordem precisa ter uma mota associada antes de ser finalizada.";
+                return RedirectToAction(nameof(FichaOP), new { id });
+            }
+
+            // ❌ Verificação 2: Cor da mota preenchida
+            if (string.IsNullOrWhiteSpace(ordem.Mota.Cor))
+            {
+                TempData["ErrorMessage"] = "A mota precisa ter uma cor definida para finalizar a ordem.";
+                return RedirectToAction(nameof(FichaOP), new { id });
+            }
+
+            // ❌ Verificação 3: Todas as peças têm número de série preenchido
+            if (ordem.Mota.MotasPecasSN == null || ordem.Mota.MotasPecasSN.Any(p => string.IsNullOrWhiteSpace(p.NumeroSerie)))
+            {
+                TempData["ErrorMessage"] = "Todas as peças da mota precisam ter número de série definido.";
+                return RedirectToAction(nameof(FichaOP), new { id });
+            }
+
+            // ❌ Verificação 4: Checklists completos
+            if (ordem.ChecklistMontagem.Any(c => c.Verificado != VerificadoChecklistMontagem.Sim) ||
+                ordem.ChecklistControlo.Any(c => c.ControloFinal != ControloFinalChecklistControlo.Sim) ||
+                ordem.ChecklistEmbalagem.Any(c => c.Incluido != IncluidoChecklistEmbalagem.Sim))
+            {
+                TempData["ErrorMessage"] = "Todos os itens dos checklists precisam estar concluídos para finalizar a ordem.";
+                return RedirectToAction(nameof(FichaOP), new { id });
+            }
+
+            // ✅ Se passou todas as verificações, finaliza a OP
             ordem.Estado = EstadoOrdemProducao.Concluida;
             ordem.DataConclusao = DateTime.Now;
-
             _context.Update(ordem);
             await _context.SaveChangesAsync();
 
+            // Atualiza estado da encomenda se todas as OPs estiverem concluídas
             var allOrders = await _context.OrdemProducao
                 .Where(o => o.IDEncomenda == ordem.IDEncomenda)
                 .ToListAsync();
@@ -369,6 +407,9 @@ namespace A_Mover_Desktop_Final.Controllers
             TempData["SuccessMessage"] = "Ordem de produção finalizada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
+
+
+
 
         private bool OrdemProducaoExists(int id)
         {
