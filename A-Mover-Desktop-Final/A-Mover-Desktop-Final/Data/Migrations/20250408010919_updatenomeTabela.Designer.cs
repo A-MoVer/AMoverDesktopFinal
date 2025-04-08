@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250408010919_updatenomeTabela")]
+    partial class updatenomeTabela
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -390,10 +393,10 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDMotasPecasSN"));
 
-                    b.Property<int>("IDMota")
+                    b.Property<int>("IDModeloPecaSN")
                         .HasColumnType("int");
 
-                    b.Property<int>("IDPeca")
+                    b.Property<int>("IDMota")
                         .HasColumnType("int");
 
                     b.Property<string>("NumeroSerie")
@@ -402,9 +405,9 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.HasKey("IDMotasPecasSN");
 
-                    b.HasIndex("IDMota");
+                    b.HasIndex("IDModeloPecaSN");
 
-                    b.HasIndex("IDPeca");
+                    b.HasIndex("IDMota");
 
                     b.ToTable("MotasPecasSN");
                 });
@@ -835,21 +838,21 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasSN", b =>
                 {
+                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloPecasSN", "ModeloPecasSN")
+                        .WithMany()
+                        .HasForeignKey("IDModeloPecaSN")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("A_Mover_Desktop_Final.Models.Mota", "Mota")
                         .WithMany("MotasPecasSN")
                         .HasForeignKey("IDMota")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("A_Mover_Desktop_Final.Models.Pecas", "Pecas")
-                        .WithMany()
-                        .HasForeignKey("IDPeca")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ModeloPecasSN");
 
                     b.Navigation("Mota");
-
-                    b.Navigation("Pecas");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.OrdemProducao", b =>

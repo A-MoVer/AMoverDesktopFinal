@@ -1,0 +1,41 @@
+@model A_Mover_Desktop_Final.Models.Mota
+
+<p><strong>IDModelo da Mota:</strong> @Model.IDModelo</p>
+<p><strong>Total de Peças:</strong> @(Model.MotasPecasSN?.Count() ?? 0)</p>
+
+<form asp-action="GuardarPecasSN" method="post">
+    <input type="hidden" name="IDMota" value="@Model.IDMota" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Peça</th>
+                <th>Número de Série</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.MotasPecasSN != null && Model.MotasPecasSN.Any())
+            {
+                for (int i = 0; i < Model.MotasPecasSN.Count; i++)
+                {
+                    var peca = Model.MotasPecasSN.ElementAt(i);
+                    <tr>
+                        <td>
+                            @peca.Pecas?.Descricao
+                            <input type="hidden" name="PecasSN[@i].IDPeca" value="@peca.IDPeca" />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" name="PecasSN[@i].NumeroSerie" value="@peca.NumeroSerie" required />
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="2" class="text-muted">Esta mota ainda não tem peças associadas.</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Guardar Números de Série</button>
+</form>
