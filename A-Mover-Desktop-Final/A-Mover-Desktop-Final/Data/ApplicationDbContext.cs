@@ -24,18 +24,23 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ModeloPecasFixas> ModeloPecasFixas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ModeloPecasSN> ModeloPecasSN { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Mota> Motas { get; set; }
-        public DbSet<A_Mover_Desktop_Final.Models.MotasPecasSN> PecasModelo { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.MotasPecasSN> MotasPecasSN { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // In your OnModelCreating method
             modelBuilder.Entity<MotasPecasSN>()
-                .HasOne(m => m.ModeloPecasSN)
-                .WithMany()
-                .HasForeignKey(m => m.IDModeloPecaSN)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(m => m.Mota)
+                .WithMany(m => m.MotasPecasSN)
+                .HasForeignKey(m => m.IDMota);
 
+            modelBuilder.Entity<MotasPecasSN>()
+                .HasOne(m => m.Pecas)
+                .WithMany()
+                .HasForeignKey(m => m.IDPeca);
+                
             modelBuilder.Entity<ModeloPecasSN>()
                 .HasOne(m => m.ModeloMota)
                 .WithMany()

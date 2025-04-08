@@ -1,0 +1,35 @@
+﻿@model A_Mover_Desktop_Final.Models.Mota
+
+<form asp-action="GuardarMota" asp-controller="OrdemProducao" method="post">
+    <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-md-6">
+            <label class="form-label">Número de Identificação</label>
+            <input type="text" class="form-control" name="NumeroIdentificacao" value="@Model.NumeroIdentificacao" required />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Cor</label>
+            <input type="text" name="Cor" class="form-control" value="@Model.Cor" required />
+        </div>
+    </div>
+    @if (Model.IDMota != 0)
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Quilometragem</label>
+                <input type="text" class="form-control" value="@Model.Quilometragem" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Estado</label>
+                <input type="text" class="form-control" value="@Model.Estado" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Data de Registo</label>
+                <input type="text" class="form-control" value="@Model.DataRegisto.ToString("dd/MM/yyyy")" readonly />
+            </div>
+        </div>
+    }
+    <button type="submit" class="btn btn-success mt-3">Guardar Mota</button>
+</form>

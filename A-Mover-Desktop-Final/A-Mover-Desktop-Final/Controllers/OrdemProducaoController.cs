@@ -33,17 +33,13 @@ namespace A_Mover_Desktop_Final.Controllers
                 .Include(op => op.Encomenda)
                     .ThenInclude(e => e.Cliente)
                 .Include(op => op.Encomenda.ModeloMota)
-                .Include(op => op.ChecklistMontagem)
-                    .ThenInclude(cm => cm.Checklist)
-                .Include(op => op.ChecklistControlo)
-                    .ThenInclude(cc => cc.Checklist)
-                .Include(op => op.ChecklistEmbalagem)
-                    .ThenInclude(ce => ce.Checklist)
+                .Include(op => op.ChecklistMontagem).ThenInclude(cm => cm.Checklist)
+                .Include(op => op.ChecklistControlo).ThenInclude(cc => cc.Checklist)
+                .Include(op => op.ChecklistEmbalagem).ThenInclude(ce => ce.Checklist)
                 .FirstOrDefaultAsync(op => op.IDOrdemProducao == id);
 
             if (ordemProducao == null) return NotFound();
 
-            // Return the FichaOP view instead of Details view
             return View("FichaOP", ordemProducao);
         }
 
@@ -148,29 +144,27 @@ namespace A_Mover_Desktop_Final.Controllers
             return RedirectToAction(nameof(FichaOP), new { id = ordem.IDOrdemProducao });
         }
 
-        public async Task<IActionResult> Continuar(int id)
-        {
-            return await FichaOP(id);
-        }
+        public async Task<IActionResult> Continuar(int id) => await FichaOP(id);
 
         public async Task<IActionResult> FichaOP(int id)
         {
             var ordem = await _context.OrdemProducao
-                .Include(o => o.Encomenda)
-                    .ThenInclude(e => e.Cliente)
-                .Include(o => o.Encomenda)
-                    .ThenInclude(e => e.ModeloMota)
+                .Include(o => o.Encomenda).ThenInclude(e => e.Cliente)
+                .Include(o => o.Encomenda).ThenInclude(e => e.ModeloMota)
                 .Include(o => o.ChecklistMontagem).ThenInclude(c => c.Checklist)
                 .Include(o => o.ChecklistControlo).ThenInclude(c => c.Checklist)
                 .Include(o => o.ChecklistEmbalagem).ThenInclude(c => c.Checklist)
                 .Include(o => o.Mota)
                     .ThenInclude(m => m.MotasPecasSN)
-                        .ThenInclude(p => p.ModeloPecasSN)
-                            .ThenInclude(mp => mp.Pecas)
+                        .ThenInclude(mp => mp.Pecas)
+                .Include(o => o.Mota)
+                    .ThenInclude(m => m.ModeloMota)
+                        .ThenInclude(mm => mm.PecasSN)
+                            .ThenInclude(psn => psn.Pecas)
                 .FirstOrDefaultAsync(o => o.IDOrdemProducao == id);
 
-            if (ordem == null) return NotFound();
 
+            if (ordem == null) return NotFound();
             return View("FichaOP", ordem);
         }
 
@@ -178,14 +172,14 @@ namespace A_Mover_Desktop_Final.Controllers
         public async Task<IActionResult> GuardarChecklists(int IDOrdemProducao, List<ChecklistMontagem> ChecklistMontagem, List<ChecklistControlo> ChecklistControlo, List<ChecklistEmbalagem> ChecklistEmbalagem)
         {
             var ordem = await _context.OrdemProducao.FindAsync(IDOrdemProducao);
-            if (ordem == null)
-                return NotFound();
+            if (ordem == null) return NotFound();
 
             if (ordem.Estado == EstadoOrdemProducao.Concluida)
             {
                 TempData["ErrorMessage"] = "Não é possível alterar uma ordem já concluída.";
                 return RedirectToAction(nameof(FichaOP), new { id = IDOrdemProducao });
             }
+
             foreach (var item in ChecklistMontagem)
             {
                 var entidade = await _context.ChecklistMontagem.FindAsync(item.IDChecklistMontagem);
@@ -208,82 +202,143 @@ namespace A_Mover_Desktop_Final.Controllers
             return RedirectToAction(nameof(FichaOP), new { id = IDOrdemProducao });
         }
 
+        [HttpGet]
         public async Task<IActionResult> AdicionarMota(int id)
         {
             var ordem = await _context.OrdemProducao
                 .Include(o => o.Encomenda)
                     .ThenInclude(e => e.ModeloMota)
-                    .ThenInclude(e => e.PecasSN)
-                .Include(o => o.Mota)
+                        .ThenInclude(m => m.PecasSN)
+                            .ThenInclude(psn => psn.Pecas)
                 .FirstOrDefaultAsync(o => o.IDOrdemProducao == id);
 
-            if (ordem == null || ordem.Estado == EstadoOrdemProducao.Concluida)
-                return NotFound();
+            if (ordem == null) return NotFound();
 
-            if (ordem.IDEncomenda == null)
-            {
-                TempData["ErrorMessage"] = "A ordem de produção não possui uma encomenda associada.";
-                return RedirectToAction(nameof(FichaOP), new { id = ordem.IDOrdemProducao });
-            }
-
+            // Se já existe mota, retornar para edição
             if (ordem.Mota != null)
             {
-                TempData["ErrorMessage"] = "A ordem de produção já possui uma mota associada.";
-                return RedirectToAction(nameof(FichaOP), new { id = ordem.IDOrdemProducao });
+                return PartialView("_MotaFormulario", ordem.Mota);
             }
 
-            // Cria a nova mota e associa à OP
+            // Criar nova mota com todas as peças do modelo
             var novaMota = new Mota
             {
                 IDOrdemProducao = ordem.IDOrdemProducao,
+                IDModelo = ordem.Encomenda.IDModelo,
                 NumeroIdentificacao = $"MOTA-{ordem.NumeroOrdem}-001",
+                Quilometragem = 0,
+                Estado = EstadoMota.EmProdução,
+                DataRegisto = DateTime.Now,
                 MotasPecasSN = new List<MotasPecasSN>()
             };
 
-            // Copia as peças com SN do modelo
-            foreach (var modeloPeca in ordem.Encomenda.ModeloMota.PecasSN)
+            // Adicionar todas as peças do modelo
+            if (ordem.Encomenda.ModeloMota.PecasSN != null)
             {
-                novaMota.MotasPecasSN.Add(new MotasPecasSN
+                foreach (var pecaModelo in ordem.Encomenda.ModeloMota.PecasSN)
                 {
-                    IDModeloPecaSN = modeloPeca.IDModeloPSN,
-                    NumeroSerie = null // ou string.Empty
-                });
+                    novaMota.MotasPecasSN.Add(new MotasPecasSN
+                    {
+                        IDPeca = pecaModelo.IDPeca,  // Use IDPeca from ModeloPecasSN
+                        Pecas = pecaModelo.Pecas,    // Reference Pecas directly
+                        NumeroSerie = ""             // Inicializa vazio
+                    });
+                }
             }
 
-            _context.Motas.Add(novaMota);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(FichaOP), new { id = ordem.IDOrdemProducao });
+            return PartialView("_MotaFormulario", novaMota);
         }
 
-
-
         [HttpPost]
-        public async Task<IActionResult> GuardarMota(Mota mota, List<MotasPecasSN> MotasPecasSN)
+        public async Task<IActionResult> GuardarMota(Mota mota)
         {
-            var motaOriginal = await _context.Motas
-                .Include(m => m.MotasPecasSN)
-                .FirstOrDefaultAsync(m => m.IDMota == mota.IDMota);
+            var ordem = await _context.OrdemProducao
+                .Include(o => o.Encomenda)
+                    .ThenInclude(e => e.ModeloMota)
+                        .ThenInclude(m => m.PecasSN)
+                .Include(o => o.Mota)
+                    .ThenInclude(m => m.MotasPecasSN)
+                .FirstOrDefaultAsync(o => o.IDOrdemProducao == mota.IDOrdemProducao);
 
-            if (motaOriginal == null)
-                return NotFound();
+            if (ordem == null) return NotFound();
 
-            // Atualizar campos básicos
-            motaOriginal.Cor = mota.Cor;
-            motaOriginal.NumeroIdentificacao = mota.NumeroIdentificacao;
-
-            // Atualizar SN das peças
-            foreach (var pecaAtualizada in MotasPecasSN)
+            if (ordem.Mota == null)
             {
-                var original = motaOriginal.MotasPecasSN.FirstOrDefault(p => p.IDMotasPecasSN == pecaAtualizada.IDMotasPecasSN);
-                if (original != null)
-                    original.NumeroSerie = pecaAtualizada.NumeroSerie;
+                mota.IDModelo = ordem.Encomenda.IDModelo;
+                mota.DataRegisto = DateTime.Now;
+                mota.Estado = EstadoMota.EmProdução;
+
+                ordem.Mota = mota;
+                _context.Motas.Add(mota);
+                await _context.SaveChangesAsync(); // <- Precisamos do ID da mota aqui primeiro
+
+                // Buscar as peças do modelo
+                var pecasModelo = await _context.ModeloPecasSN
+                    .Include(p => p.Pecas)
+                    .Where(p => p.IDModelo == mota.IDModelo)
+                    .ToListAsync();
+
+                // Criar as entradas MotasPecasSN
+                foreach (var pecaModelo in pecasModelo)
+                {
+                    var nova = new MotasPecasSN
+                    {
+                        IDMota = mota.IDMota,
+                        IDPeca = pecaModelo.IDPeca,
+                        Pecas = pecaModelo.Pecas,
+                        NumeroSerie = "" // deixar vazio para preenchimento manual
+                    };
+                    _context.MotasPecasSN.Add(nova);
+                }
+
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Peças adicionadas à mota.");
+            }
+            else
+            {
+                // Atualizar apenas dados básicos
+                ordem.Mota.NumeroIdentificacao = mota.NumeroIdentificacao;
+                ordem.Mota.Cor = mota.Cor;
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(FichaOP), new { id = mota.IDOrdemProducao });
         }
-        // Add to OrdemProducaoController.cs
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarPecasSN(int IDMota, List<MotasPecasSN> PecasSN)
+        {
+            var mota = await _context.Motas
+                .Include(m => m.MotasPecasSN)
+                .FirstOrDefaultAsync(m => m.IDMota == IDMota);
+
+            if (mota == null)
+                return NotFound();
+
+            foreach (var peca in PecasSN)
+            {
+                var existente = mota.MotasPecasSN?.FirstOrDefault(x => x.IDPeca == peca.IDPeca);
+
+                if (existente != null)
+                {
+                    existente.NumeroSerie = peca.NumeroSerie;
+                }
+                else
+                {
+                    _context.MotasPecasSN.Add(new MotasPecasSN
+                    {
+                        IDMota = IDMota,
+                        IDPeca = peca.IDPeca,
+                        NumeroSerie = peca.NumeroSerie
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(FichaOP), new { id = mota.IDOrdemProducao });
+        }
+
+
         public async Task<IActionResult> Finalizar(int id)
         {
             var ordem = await _context.OrdemProducao.FindAsync(id);
@@ -296,7 +351,6 @@ namespace A_Mover_Desktop_Final.Controllers
             _context.Update(ordem);
             await _context.SaveChangesAsync();
 
-            // Check if all orders for this encomenda are completed
             var allOrders = await _context.OrdemProducao
                 .Where(o => o.IDEncomenda == ordem.IDEncomenda)
                 .ToListAsync();
@@ -315,6 +369,7 @@ namespace A_Mover_Desktop_Final.Controllers
             TempData["SuccessMessage"] = "Ordem de produção finalizada com sucesso!";
             return RedirectToAction(nameof(Index));
         }
+
         private bool OrdemProducaoExists(int id)
         {
             return _context.OrdemProducao.Any(e => e.IDOrdemProducao == id);

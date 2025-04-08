@@ -5,61 +5,120 @@
     var apenasVisualizar = Model.Estado == EstadoOrdemProducao.Concluida;
 }
 
-<form asp-action="GuardarChecklists" method="post">
-    <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
+<div class="card m-5 p-4">
+    <h1 class="mb-4">Ficha da Ordem de Produção</h1>
 
-    <div class="card m-5 p-4">
-        <h1 class="mb-4">Ficha da Ordem de Produção</h1>
-
-        <!-- Cabeçalho -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <p><strong>Número da OP:</strong> @Model.NumeroOrdem</p>
-                <p><strong>Estado:</strong> @Model.Estado</p>
-                <p><strong>Data de Criação:</strong> @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")</p>
-                @if (Model.DataConclusao.HasValue)
-                {
-                    <p><strong>Data de Conclusão:</strong> @Model.DataConclusao.Value.ToString("dd/MM/yyyy HH:mm")</p>
-                }
-            </div>
-            <div class="col-md-6">
-                <p><strong>Cliente:</strong> @Model.Encomenda.Cliente.Nome</p>
-                <p><strong>Modelo:</strong> @Model.Encomenda.ModeloMota.Nome</p>
-                <p><strong>País Destino:</strong> @Model.PaisDestino</p>
-            </div>
-        </div>
-
-        <ul class="nav nav-tabs mb-4" id="tabSelector" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="motas-tab" data-bs-toggle="tab" data-bs-target="#motas" type="button" role="tab">Mota</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="checklists-tab" data-bs-toggle="tab" data-bs-target="#checklists" type="button" role="tab">Checklists de Controlo</button>
-            </li>
-        </ul>
-
-        <div class="tab-content" id="tabContent">
-            <div class="tab-pane fade" id="motas" role="tabpanel">
-                @Html.Partial("_MotasPartial", Model)
-            </div>
-            <div class="tab-pane fade show active" id="checklists" role="tabpanel">
-                @Html.Partial("_ChecklistsPartial", Model)
-            </div>
-        </div>
-
-        <div class="mt-4 d-flex justify-content-between">
-            <a asp-action="Index" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Voltar
-            </a>
-            @if (!apenasVisualizar)
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <p><strong>Número da OP:</strong> @Model.NumeroOrdem</p>
+            <p><strong>Estado:</strong> @Model.Estado</p>
+            <p><strong>Data de Criação:</strong> @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")</p>
+            @if (Model.DataConclusao.HasValue)
             {
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save me-1"></i> Guardar Alterações
-                </button>
-                <a asp-action="Finalizar" asp-route-id="@Model.IDOrdemProducao" class="btn btn-primary ms-2">
-                    <i class="fas fa-check-circle me-1"></i> Finalizar OP
-                </a>
+                <p><strong>Data de Conclusão:</strong> @Model.DataConclusao.Value.ToString("dd/MM/yyyy HH:mm")</p>
             }
         </div>
+        <div class="col-md-6">
+            <p><strong>Cliente:</strong> @Model.Encomenda?.Cliente?.Nome</p>
+            <p><strong>Modelo:</strong> @Model.Encomenda?.ModeloMota?.Nome</p>
+            <p><strong>País Destino:</strong> @Model.PaisDestino</p>
+        </div>
     </div>
-</form>
+
+    <ul class="nav nav-tabs mb-4" id="tabSelector" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="mota-tab" data-bs-toggle="tab" data-bs-target="#mota" type="button" role="tab">Informações da Mota</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pecas-tab" data-bs-toggle="tab" data-bs-target="#pecas" type="button" role="tab" @(Model.Mota == null ? "disabled" : "")>Peças da Mota</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="checklists-tab" data-bs-toggle="tab" data-bs-target="#checklists" type="button" role="tab">Checklists</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="tabContent">
+        <div class="tab-pane fade show active" id="mota" role="tabpanel">
+            @if (Model.Mota != null)
+            {
+                <div class="alert alert-success mb-3">
+                    <strong>Mota registada:</strong> @Model.Mota.NumeroIdentificacao (@Model.Mota.Cor)
+                </div>
+            }
+
+            @if (!apenasVisualizar)
+            {
+                <button type="button" id="btnAdicionarMota" class="btn btn-primary mb-3" data-id="@Model.IDOrdemProducao">
+                    @(Model.Mota == null ? "Adicionar Mota" : "Editar Mota")
+                </button>
+            }
+
+            <div id="formMotaAjax"></div>
+        </div>
+
+        <div class="tab-pane fade" id="pecas" role="tabpanel">
+            @if (Model.Mota != null)
+            {
+                @await Html.PartialAsync("_PecasMota", Model.Mota)
+            }
+            else
+            {
+                <p class="text-muted">A mota ainda não foi criada. Cria-a primeiro na aba anterior.</p>
+            }
+        </div>
+
+        <div class="tab-pane fade" id="checklists" role="tabpanel">
+            <form asp-action="GuardarChecklists" method="post">
+                <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
+                @Html.AntiForgeryToken()
+
+                @Html.Partial("_ChecklistsPartial", Model)
+
+                @if (!apenasVisualizar)
+                {
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> Guardar Alterações
+                        </button>
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Voltar
+        </a>
+        @if (!apenasVisualizar)
+        {
+            <a asp-action="Finalizar" asp-route-id="@Model.IDOrdemProducao" class="btn btn-primary">
+                <i class="fas fa-check-circle me-1"></i> Finalizar OP
+            </a>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).on("click", "#btnAdicionarMota", function () {
+            const id = $(this).data("id");
+
+            $.get("/OrdemProducao/AdicionarMota", { id: id }, function (html) {
+                $("#formMotaAjax").html(html);
+            });
+        });
+
+        // Recarregar a seção de peças após salvar
+        $(document).on("submit", "form[action*='GuardarPecasSN']", function (e) {
+            e.preventDefault();
+
+            $.post($(this).attr("action"), $(this).serialize(), function () {
+                // Recarrega apenas a aba de peças
+                $("#pecas-tab").click();
+                location.reload(); // Ou implemente um carregamento mais elegante via AJAX
+            });
+        });
+    </script>
+}

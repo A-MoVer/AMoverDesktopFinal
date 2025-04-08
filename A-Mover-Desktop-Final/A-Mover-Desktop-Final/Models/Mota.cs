@@ -38,7 +38,7 @@ namespace A_Mover_Desktop_Final.Models
         public double Quilometragem { get; set; }
         public EstadoMota Estado { get; set; }
 
-        public ICollection<MotasPecasSN> MotasPecasSN { get; set; }
+        public ICollection<MotasPecasSN>? MotasPecasSN { get; set; } = new List<MotasPecasSN>();
 
     }
 }
