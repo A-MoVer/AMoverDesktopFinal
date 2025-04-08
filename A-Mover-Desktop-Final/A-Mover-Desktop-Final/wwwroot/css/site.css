@@ -128,3 +128,12 @@ body {
     transform: scale(1.02); /* Pequeno aumento no tamanho */
     transition: all 0.3s ease; /* Animação suave */
 }
+
+@media print {
+    .no-print
+
+{
+    display: none !important;
+}
+
+}
