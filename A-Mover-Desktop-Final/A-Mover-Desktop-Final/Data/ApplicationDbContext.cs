@@ -25,7 +25,8 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ModeloPecasSN> ModeloPecasSN { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Mota> Motas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.MotasPecasSN> MotasPecasSN { get; set; }
-
+        public DbSet<A_Mover_Desktop_Final.Models.Servico> Servico { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.ServicosPecasAlteradas> ServicosPecasAlteradas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -40,7 +41,7 @@ namespace A_Mover_Desktop_Final.Data
                 .HasOne(m => m.Pecas)
                 .WithMany()
                 .HasForeignKey(m => m.IDPeca);
-                
+
             modelBuilder.Entity<ModeloPecasSN>()
                 .HasOne(m => m.ModeloMota)
                 .WithMany()
@@ -52,6 +53,18 @@ namespace A_Mover_Desktop_Final.Data
                 .WithMany()
                 .HasForeignKey(o => o.IDEncomenda)
                 .OnDelete(DeleteBehavior.Restrict); // ou DeleteBehavior.NoAction
+
+            modelBuilder.Entity<ServicosPecasAlteradas>()
+               .HasOne(s => s.Servico)
+               .WithMany(s => s.PecasAlteradas)
+               .HasForeignKey(s => s.IDServico)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ServicosPecasAlteradas>()
+                .HasOne(s => s.MotasPecasSN)
+                .WithMany()
+                .HasForeignKey(s => s.IDMotasPecasSN)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

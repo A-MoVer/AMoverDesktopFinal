@@ -1,0 +1,38 @@
+﻿@model A_Mover_Desktop_Final.Models.Servico
+
+@{
+    ViewData["Title"] = "Registar Intervenção";
+}
+
+<div class="card m-5 p-4">
+    <h2 class="text-primary mb-4"><i class="bi bi-tools"></i> Registar Nova Intervenção</h2>
+
+    <form asp-action="RegistarIntervencao" method="post">
+        <div class="mb-3">
+            <label asp-for="IDMota" class="form-label">Mota</label>
+            <select asp-for="IDMota" asp-items="ViewBag.IDMota" class="form-select" required></select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Tipo" class="form-label">Tipo de Serviço</label>
+            <select asp-for="Tipo" class="form-select" required>
+                <option value="">Selecione...</option>
+                <option value="0">Revisão</option>
+                <option value="1">Manutenção</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Descricao" class="form-label">Descrição</label>
+            <textarea asp-for="Descricao" class="form-control" rows="3"></textarea>
+        </div>
+
+        <input type="hidden" asp-for="DataServico" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        <input type="hidden" asp-for="Estado" value="1" /> @* EmCurso *@
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-play-circle"></i> Iniciar Serviço
+        </button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>

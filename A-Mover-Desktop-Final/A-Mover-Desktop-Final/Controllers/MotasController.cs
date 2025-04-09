@@ -140,5 +140,18 @@ namespace A_Mover_Desktop_Final.Controllers
         {
             return _context.Motas.Any(e => e.IDMota == id);
         }
+
+        [HttpGet]
+        public IActionResult GetListaIdentificacoes()
+        {
+            var lista = _context.Motas
+                .Select(m => new
+                {
+                    id = m.IDMota,
+                    numeroIdentificacao = m.NumeroIdentificacao
+                }).ToList();
+
+            return Json(lista);
+        }
     }
 }

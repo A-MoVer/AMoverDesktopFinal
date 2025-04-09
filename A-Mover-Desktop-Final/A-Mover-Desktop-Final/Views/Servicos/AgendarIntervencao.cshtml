@@ -1,0 +1,86 @@
+﻿@model A_Mover_Desktop_Final.Models.Servico
+
+@{
+    ViewData["Title"] = "Agendar Intervenção";
+    var tipos = ViewData["TiposServico"] as List<TipoServico> ?? new List<TipoServico>();
+}
+
+<div class="card m-5 p-4">
+    <h1 class="text-primary">Agendar Intervenção</h1>
+    <hr />
+
+    <form asp-action="AgendarIntervencao" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label">Mota (Nº Identificação)</label>
+            <input id="inputMota" class="form-control" autocomplete="off" placeholder="Digite o número de identificação..." />
+            <select id="selectMota" class="form-select mt-2" name="IDMota" size="5" style="display: none;"></select>
+            <input type="hidden" id="hiddenIDMota" name="IDMota" />
+            <span class="text-danger" id="erroMota"></span>
+        </div>  
+
+        <div class="mb-3">
+            <label class="form-label">Tipo de Serviço</label>
+            <select class="form-select" asp-for="Tipo">
+                @foreach (var tipo in tipos)
+                {
+                    <option value="@tipo">@tipo</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Descrição</label>
+            <textarea class="form-control" asp-for="Descricao" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Data Agendada</label>
+            <input type="datetime-local" class="form-control" asp-for="DataServico"
+                   value="@Model.DataServico.ToString("yyyy-MM-ddTHH:mm")" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Agendar</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const input = document.getElementById("inputMota");
+        const select = document.getElementById("selectMota");
+        const hidden = document.getElementById("hiddenIDMota");
+
+        input.addEventListener("input", function () {
+            const termo = this.value;
+            if (termo.length >= 2) {
+                fetch(`/Servicos/ObterMotasPorIdentificacao?termo=${encodeURIComponent(termo)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        select.innerHTML = "";
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const option = document.createElement("option");
+                                option.value = item.id;
+                                option.textContent = item.texto;
+                                select.appendChild(option);
+                            });
+                            select.style.display = "block";
+                        } else {
+                            select.style.display = "none";
+                        }
+                    });
+            } else {
+                select.style.display = "none";
+            }
+        });
+
+        select.addEventListener("change", function () {
+            const selectedOption = this.options[this.selectedIndex];
+            input.value = selectedOption.textContent;
+            hidden.value = selectedOption.value;
+            select.style.display = "none";
+        });
+    </script>
+}
