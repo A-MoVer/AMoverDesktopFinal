@@ -27,6 +27,8 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.MotasPecasSN> MotasPecasSN { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Servico> Servico { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ServicosPecasAlteradas> ServicosPecasAlteradas { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.Utilizador> Utilizadores { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.UtilizadorMota> UtilizadorMota { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
