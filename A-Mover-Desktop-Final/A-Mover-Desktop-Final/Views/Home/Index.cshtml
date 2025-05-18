@@ -1,8 +1,451 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
+    ViewData["ActiveMenu"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-lg-12 mb-4 order-0">
+            <div class="card">
+                <div class="d-flex align-items-end row">
+                    <div class="col-sm-7">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Bem-vindo @User.Identity?.Name! 🎉</h5>
+                            <p class="mb-4">
+                                Você tem <span class="fw-bold">@ViewBag.EncomendasPendentes</span> encomendas pendentes e
+                                <span class="fw-bold">@ViewBag.OrdensEmProducao</span> ordens em produção.
+                            </p>
+
+                            <a href="javascript:;" class="btn btn-sm btn-outline-primary">Ver relatório completo</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 text-center text-sm-left">
+                        <div class="card-body pb-0 px-0 px-md-4">
+                            <img src="~/assets/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row">
+        <!-- Produção -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="card-info">
+                            <p class="card-text">Motas Produzidas</p>
+                            <div class="d-flex align-items-end mb-2">
+                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalMotas</h4>
+                                <small class="text-success">+12%</small>
+                            </div>
+                            <small>Total acumulado</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-primary rounded p-2">
+                                <i class="bx bx-cycling bx-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Encomendas -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="card-info">
+                            <p class="card-text">Encomendas</p>
+                            <div class="d-flex align-items-end mb-2">
+                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalEncomendas</h4>
+                                <small class="text-success">+5%</small>
+                            </div>
+                            <small>@ViewBag.EncomendasPendentes pendentes</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-success rounded p-2">
+                                <i class="bx bxs-package bx-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ordens de Produção -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="card-info">
+                            <p class="card-text">Ordens de Produção</p>
+                            <div class="d-flex align-items-end mb-2">
+                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalOrdens</h4>
+                                <small class="text-danger">-3%</small>
+                            </div>
+                            <small>@ViewBag.OrdensEmProducao em produção</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-warning rounded p-2">
+                                <i class="bx bx-task bx-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Serviços -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="card-info">
+                            <p class="card-text">Serviços</p>
+                            <div class="d-flex align-items-end mb-2">
+                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalServicos</h4>
+                                <small class="text-success">+8%</small>
+                            </div>
+                            <small>@ViewBag.ServicosAgendados agendados</small>
+                        </div>
+                        <div class="card-icon">
+                            <span class="badge bg-label-info rounded p-2">
+                                <i class="bx bx-wrench bx-sm"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos Principais -->
+    <div class="row">
+        <!-- Gráfico de Produção Mensal -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title m-0">Produção Mensal</h5>
+                    <div class="dropdown">
+                        <button class="btn p-0" type="button" id="producaoMensalMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="producaoMensalMenu">
+                            <a class="dropdown-item" href="javascript:void(0);">Últimos 6 meses</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Último ano</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Ver relatório</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="producaoMensalChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Modelos -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title m-0">Top Modelos Produzidos</h5>
+                    <div class="dropdown">
+                        <button class="btn p-0" type="button" id="topModelosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topModelosMenu">
+                            <a class="dropdown-item" href="javascript:void(0);">Ver detalhes</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="topModelosChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Distribuição por Status -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title m-0">OPs por Status</h5>
+                </div>
+                <div class="card-body px-0">
+                    <div id="opsPorStatusChart" class="px-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Serviços por Tipo -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="card-title m-0">Serviços por Tipo</h5>
+                </div>
+                <div class="card-body">
+                    <div id="servicosPorTipoChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Atividades Recentes -->
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Atividades Recentes</h5>
+                </div>
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                            <tr>
+                                <td><strong>#OP1287</strong></td>
+                                <td>Ordem de Produção</td>
+                                <td>Produção de FZ-600</td>
+                                <td><span class="badge bg-label-warning">Em Produção</span></td>
+                                <td>12/05/2025</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Ver</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>#S254</strong></td>
+                                <td>Serviço</td>
+                                <td>Manutenção Geral</td>
+                                <td><span class="badge bg-label-success">Concluído</span></td>
+                                <td>10/05/2025</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Ver</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>#E89</strong></td>
+                                <td>Encomenda</td>
+                                <td>Cliente: Motohouse</td>
+                                <td><span class="badge bg-label-info">Pendente</span></td>
+                                <td>09/05/2025</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Ver</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Configuração e cores
+            const primaryColor = '#696cff';
+            const secondaryColor = '#8592a3';
+            const successColor = '#71dd37';
+            const infoColor = '#03c3ec';
+            const warningColor = '#ffab00';
+            const dangerColor = '#ff3e1d';
+            
+            // Gráfico de Produção Mensal
+            const producaoMensalOptions = {
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                series: [{
+                    name: 'Produção',
+                    data: @Html.Raw(Json.Serialize(ViewBag.ValoresProducao))
+                }],
+                xaxis: {
+                    categories: @Html.Raw(Json.Serialize(ViewBag.MesesProducao)),
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                tooltip: {
+                    x: {
+                        format: 'MM/yyyy'
+                    }
+                },
+                colors: [primaryColor],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.3,
+                        stops: [0, 90, 100]
+                    }
+                }
+            };
+            
+            const producaoMensalChart = new ApexCharts(
+                document.querySelector("#producaoMensalChart"),
+                producaoMensalOptions
+            );
+            producaoMensalChart.render();
+            
+            // Gráfico de Top Modelos
+            const topModelosOptions = {
+                chart: {
+                    height: 350,
+                    type: 'bar',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: true,
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Unidades',
+                    data: @Html.Raw(Json.Serialize(ViewBag.TopModelosValores))
+                }],
+                xaxis: {
+                    categories: @Html.Raw(Json.Serialize(ViewBag.TopModelosNomes)),
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                colors: [successColor]
+            };
+            
+            const topModelosChart = new ApexCharts(
+                document.querySelector("#topModelosChart"),
+                topModelosOptions
+            );
+            topModelosChart.render();
+            
+            // Gráfico de OPs por Status
+            const opsPorStatusOptions = {
+                chart: {
+                    height: 350,
+                    type: 'donut',
+                },
+                labels: ['Pendentes', 'Em Produção', 'Concluídas'],
+                series: [@ViewBag.OrdensPendentes, @ViewBag.OrdensEmProducao, @ViewBag.OrdensConcluidas],
+                colors: [infoColor, warningColor, successColor],
+                legend: {
+                    show: true,
+                    position: 'bottom'
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '75%',
+                            labels: {
+                                show: true,
+                                name: {
+                                    fontSize: '14px',
+                                    fontWeight: 500
+                                },
+                                value: {
+                                    fontSize: '16px',
+                                    fontWeight: 600
+                                },
+                                total: {
+                                    show: true,
+                                    label: 'Total',
+                                    formatter: function (w) {
+                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            
+            const opsPorStatusChart = new ApexCharts(
+                document.querySelector("#opsPorStatusChart"),
+                opsPorStatusOptions
+            );
+            opsPorStatusChart.render();
+            
+            // Gráfico de Serviços por Tipo
+            const servicosPorTipoOptions = {
+                chart: {
+                    height: 350,
+                    type: 'polarArea'
+                },
+                labels: @Html.Raw(Json.Serialize(ViewBag.TiposServico)),
+                series: @Html.Raw(Json.Serialize(ViewBag.ValoresServico)),
+                colors: [primaryColor, dangerColor],
+                stroke: {
+                    width: 2
+                },
+                fill: {
+                    opacity: 0.7
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            };
+            
+            const servicosPorTipoChart = new ApexCharts(
+                document.querySelector("#servicosPorTipoChart"),
+                servicosPorTipoOptions
+            );
+            servicosPorTipoChart.render();
+        });
+    </script>
+}

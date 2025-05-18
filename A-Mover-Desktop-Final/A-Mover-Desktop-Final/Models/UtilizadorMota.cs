@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace A_Mover_Desktop_Final.Models
 {
+    public enum EstadoAssociacao
+    {
+        Ativo,
+        Inativo,
+        Cancelado
+    }
     public class UtilizadorMota
     {
         [Key]
@@ -21,5 +27,13 @@ namespace A_Mover_Desktop_Final.Models
         public Utilizador? Utilizador { get; set; }
 
         public DateTime DataCriacao { get; set; } = DateTime.Now;
+
+        // Campos adicionados para controle de estado
+        public EstadoAssociacao Estado { get; set; } = EstadoAssociacao.Ativo;
+
+        // Novos campos para controle de inativação
+        public DateTime? DataInativacao { get; set; }
+        public string? MotivoInativacao { get; set; }
+
     }
 }
