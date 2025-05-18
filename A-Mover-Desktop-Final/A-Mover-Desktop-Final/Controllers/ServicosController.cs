@@ -223,5 +223,133 @@ namespace A_Mover_Desktop_Final.Controllers
             return Json(motas);
         }
 
+        public async Task<IActionResult> IniciarServico(int id)
+        {
+            var servico = await _context.Servico.FindAsync(id);
+            
+            if (servico == null)
+                return NotFound();
+                
+            if (servico.Estado != EstadoServico.Agendado)
+            {
+                TempData["ErrorMessage"] = "Apenas serviços agendados podem ser iniciados.";
+                return RedirectToAction(nameof(Index));
+            }
+            
+            servico.Estado = EstadoServico.EmCurso;
+            servico.DataServico = DateTime.Now;
+            
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Serviço iniciado com sucesso.";
+            
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Servicos/GerirPecas/5
+        public async Task<IActionResult> GerirPecas(int id)
+        {
+            var servico = await _context.Servico
+                .Include(s => s.Mota)
+                    .ThenInclude(m => m.MotasPecasSN)
+                        .ThenInclude(mp => mp.Pecas)
+                .Include(s => s.PecasAlteradas)
+                    .ThenInclude(pa => pa.MotasPecasSN)
+                .FirstOrDefaultAsync(s => s.IDServico == id);
+                
+            if (servico == null)
+                return NotFound();
+                
+            if (servico.Estado == EstadoServico.Concluido)
+            {
+                TempData["ErrorMessage"] = "Não é possível alterar peças de um serviço concluído.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            return View(servico);
+        }
+
+        // POST: Servicos/GerirPecas/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GerirPecas(int id, List<int> pecasParaSubstituir, List<string> novasSeriesNumericas)
+        {
+            var servico = await _context.Servico
+                .Include(s => s.PecasAlteradas)
+                .Include(s => s.Mota)
+                    .ThenInclude(m => m.MotasPecasSN)
+                .FirstOrDefaultAsync(s => s.IDServico == id);
+                
+            if (servico == null)
+                return NotFound();
+                
+            if (servico.Estado == EstadoServico.Concluido)
+            {
+                TempData["ErrorMessage"] = "Não é possível alterar peças de um serviço concluído.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            // Remover registros existentes
+            var pecasAlteradasExistentes = await _context.ServicosPecasAlteradas
+                .Where(p => p.IDServico == id)
+                .ToListAsync();
+            _context.ServicosPecasAlteradas.RemoveRange(pecasAlteradasExistentes);
+            
+            // Adicionar novos registros
+            if (pecasParaSubstituir != null)
+            {
+                for (int i = 0; i < pecasParaSubstituir.Count; i++)
+                {
+                    int idMotaPeca = pecasParaSubstituir[i];
+                    string novaSerie = i < novasSeriesNumericas.Count ? novasSeriesNumericas[i] : "";
+                    
+                    // Registrar peça alterada
+                    _context.ServicosPecasAlteradas.Add(new ServicosPecasAlteradas
+                    {
+                        IDServico = id,
+                        IDMotasPecasSN = idMotaPeca,
+                        Observacoes = "Substituída durante serviço"
+                    });
+                    
+                    // Atualizar número de série da peça
+                    var pecaMota = await _context.MotasPecasSN.FindAsync(idMotaPeca);
+                    if (pecaMota != null && !string.IsNullOrWhiteSpace(novaSerie))
+                    {
+                        pecaMota.NumeroSerie = novaSerie;
+                        _context.Update(pecaMota);
+                    }
+                }
+            }
+            
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Peças atualizadas com sucesso!";
+            
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // POST: Servicos/ConcluirServico/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConcluirServico(int id)
+        {
+            var servico = await _context.Servico.FindAsync(id);
+            
+            if (servico == null)
+                return NotFound();
+                
+            if (servico.Estado == EstadoServico.Concluido)
+            {
+                TempData["ErrorMessage"] = "Este serviço já está concluído.";
+                return RedirectToAction(nameof(Index));
+            }
+            
+            servico.Estado = EstadoServico.Concluido;
+            servico.DataConclusao = DateTime.Now;
+            
+            _context.Update(servico);
+            await _context.SaveChangesAsync();
+            
+            TempData["SuccessMessage"] = "Serviço concluído com sucesso!";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -1,54 +1,216 @@
 ﻿@model A_Mover_Desktop_Final.Models.Servico
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Serviço";
+    ViewData["ActiveMenu"] = "Servicos";
+    
+    string statusClass = Model.Estado switch
+    {
+        EstadoServico.Agendado => "bg-label-info",
+        EstadoServico.EmCurso => "bg-label-warning",
+        EstadoServico.Concluido => "bg-label-success",
+        _ => "bg-label-secondary"
+    };
+    
+    string tipoClass = Model.Tipo == TipoServico.Manutenção ? "bg-label-danger" : "bg-label-primary";
 }
 
-<h1>Details</h1>
+<div class="card m-5">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+            <i class="bx bx-wrench me-1"></i> Detalhes do Serviço #@Model.IDServico
+        </h4>
+        <div>
+            <span class="badge @statusClass fs-6 me-2">@Model.Estado</span>
+            <span class="badge @tipoClass fs-6">@Model.Tipo</span>
+        </div>
+    </div>
+    
+    <div class="card-body">
+        <div class="row">
+            <!-- Coluna da esquerda - Informações da mota -->
+            <div class="col-md-5 mb-4 mb-md-0">
+                <div class="card bg-light border-0 h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bx bx-cycling me-1"></i> Informações da Mota
+                        </h5>
+                        <hr>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-center mb-3">
+                                <img src="~/assets/img/moto-placeholder.png" alt="Mota" style="max-height: 120px;" class="img-fluid">
+                            </div>
+                            
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Nº Identificação:</div>
+                                <div class="col-7 fw-bold">@Model.Mota?.NumeroIdentificacao</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Modelo:</div>
+                                <div class="col-7">@Model.Mota?.ModeloMota?.Nome</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Cor:</div>
+                                <div class="col-7">@Model.Mota?.Cor</div>
+                            </div>
+                            <a asp-controller="Motas" asp-action="Details" asp-route-id="@Model.Mota?.IDMota" class="btn btn-sm btn-outline-primary mt-2">
+                                <i class="bx bx-info-circle"></i> Ver Mota
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Coluna da direita - Detalhes do serviço -->
+            <div class="col-md-7">
+                <h5 class="mb-3">
+                    <i class="bx bx-detail me-1"></i> Detalhes do Serviço
+                </h5>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0 mb-3">
+                            <div class="card-body py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-sm me-2 bg-label-primary rounded">
+                                        <i class="bx bx-calendar-event"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Data Agendada</small>
+                                        <span>@Model.DataServico.ToString("dd/MM/yyyy HH:mm")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0 mb-3">
+                            <div class="card-body py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-sm me-2 bg-label-success rounded">
+                                        <i class="bx bx-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Data Conclusão</small>
+                                        <span>@(Model.DataConclusao?.ToString("dd/MM/yyyy HH:mm") ?? "Não concluído")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="mb-2">Descrição do Serviço</h6>
+                        <p class="mb-0">@(string.IsNullOrEmpty(Model.Descricao) ? "Sem descrição fornecida." : Model.Descricao)</p>
+                    </div>
+                </div>
+                
+                <!-- Peças Alteradas -->
+                <h5 class="mb-3 mt-4">
+                    <i class="bx bx-cog me-1"></i> Peças Alteradas
+                </h5>
+                
+                @if (Model.PecasAlteradas != null && Model.PecasAlteradas.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Part Number</th>
+                                    <th>Descrição</th>
+                                    <th>Nº de Série</th>
+                                    <th>Observações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var peca in Model.PecasAlteradas)
+                                {
+                                    <tr>
+                                        <td>@peca.MotasPecasSN?.Pecas?.PartNumber</td>
+                                        <td>@peca.MotasPecasSN?.Pecas?.Descricao</td>
+                                        <td>@peca.MotasPecasSN?.NumeroSerie</td>
+                                        <td>@peca.Observacoes</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-1"></i> Nenhuma peça foi alterada durante este serviço.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-footer">
+        <div class="d-flex justify-content-between">
+            <div>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bx bx-arrow-back"></i> Voltar à Lista
+                </a>
+            </div>
+            
+            <div>
+                @if (Model.Estado != EstadoServico.Concluido)
+                {
+                    <a asp-action="GerirPecas" asp-route-id="@Model.IDServico" class="btn btn-info text-white me-2">
+                        <i class="bx bx-wrench"></i> Gerenciar Peças
+                    </a>
+                    
+                    @if (Model.Estado == EstadoServico.EmCurso)
+                    {
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalConcluirServico">
+                            <i class="bx bx-check-circle"></i> Concluir Serviço
+                        </button>
+                    }
+                    else if (Model.Estado == EstadoServico.Agendado)
+                    {
+                        <a asp-action="IniciarServico" asp-route-id="@Model.IDServico" class="btn btn-primary">
+                            <i class="bx bx-play"></i> Iniciar Serviço
+                        </a>
+                    }
+                }
+                
+                <a asp-action="Edit" asp-route-id="@Model.IDServico" class="btn btn-warning ms-2">
+                    <i class="bx bx-edit"></i> Editar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div>
-    <h4>Servico</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mota)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mota.Cor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tipo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tipo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataServico)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataServico)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataConclusao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataConclusao)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IDServico">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<!-- Modal para confirmar conclusão do serviço -->
+@if (Model.Estado == EstadoServico.EmCurso)
+{
+    <div class="modal fade" id="modalConcluirServico" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Concluir Serviço</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja concluir este serviço?</p>
+                    <p>Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form asp-action="ConcluirServico" asp-route-id="@Model.IDServico" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success">Concluir Serviço</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Histórico de alterações (opcional) - Adicionar se você tiver um sistema de logging -->

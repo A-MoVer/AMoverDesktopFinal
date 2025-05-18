@@ -1,0 +1,131 @@
+@model A_Mover_Desktop_Final.Models.Servico
+
+@{
+    ViewData["Title"] = "Gerenciar Peças da Intervenção";
+}
+
+<div class="card m-5 p-4">
+    <h2 class="text-primary mb-4">
+        <i class="bi bi-wrench"></i> Gestão de Peças - Intervenção #@Model.IDServico
+    </h2>
+    
+    <div class="alert alert-info">
+        <h5><i class="bi bi-info-circle"></i> Informações da Mota</h5>
+        <p><strong>Nº Identificação:</strong> @Model.Mota?.NumeroIdentificacao</p>
+        <p><strong>Modelo:</strong> @Model.Mota?.ModeloMota?.Nome</p>
+        <p><strong>Tipo de Serviço:</strong> @Model.Tipo</p>
+    </div>
+    
+    <form asp-action="GerirPecas" method="post">
+        <input type="hidden" name="id" value="@Model.IDServico" />
+        
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Substituir</th>
+                        <th>Part Number</th>
+                        <th>Descrição</th>
+                        <th>Nº de Série Atual</th>
+                        <th>Novo Nº de Série</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Mota?.MotasPecasSN != null)
+                    {
+                        foreach (var peca in Model.Mota.MotasPecasSN)
+                        {
+                            var pecaAlterada = Model.PecasAlteradas?.FirstOrDefault(p => p.IDMotasPecasSN == peca.IDMotasPecasSN);
+                            var isChecked = pecaAlterada != null;
+                            
+                            <tr>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input peca-checkbox" type="checkbox" 
+                                               name="pecasParaSubstituir" value="@peca.IDMotasPecasSN"
+                                               id="peca_@peca.IDMotasPecasSN" @(isChecked ? "checked" : "")>
+                                    </div>
+                                </td>
+                                <td>@peca.Pecas?.PartNumber</td>
+                                <td>@peca.Pecas?.Descricao</td>
+                                <td>@peca.NumeroSerie</td>
+                                <td>
+                                    <input type="text" class="form-control peca-serie"
+                                           name="novasSeriesNumericas"
+                                           id="serie_@peca.IDMotasPecasSN"
+                                           placeholder="Novo número de série"
+                                           @(isChecked ? "" : "disabled")>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <em>Esta mota não possui peças registradas com número de série.</em>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="d-flex justify-content-between mt-4">
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Salvar Alterações
+                </button>
+                <a asp-action="Details" asp-route-id="@Model.IDServico" class="btn btn-secondary ms-2">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+            
+            <div>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalConcluirServico">
+                    <i class="bi bi-check-circle"></i> Concluir Serviço
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal para confirmar conclusão do serviço -->
+<div class="modal fade" id="modalConcluirServico" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Concluir Serviço</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja concluir este serviço?</p>
+                <p>Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="ConcluirServico" asp-route-id="@Model.IDServico" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success">Concluir Serviço</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Ativar/desativar campo de serial conforme checkbox
+            $('.peca-checkbox').change(function() {
+                var id = $(this).attr('id').replace('peca_', 'serie_');
+                if ($(this).is(':checked')) {
+                    $('#' + id).prop('disabled', false);
+                } else {
+                    $('#' + id).prop('disabled', true);
+                    $('#' + id).val('');
+                }
+            });
+        });
+    </script>
+}
