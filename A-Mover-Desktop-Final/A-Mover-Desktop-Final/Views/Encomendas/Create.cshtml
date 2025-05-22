@@ -153,21 +153,51 @@
                 clienteResults.empty();
                 
                 clientes.forEach(function(cliente) {
-                    const item = $('<a class="dropdown-item"></a>')
-                        .attr('href', '#')
+                    // Usar div em vez de link para evitar problemas de navegação
+                    const item = $('<div class="dropdown-item" style="cursor:pointer;"></div>')
                         .attr('data-id', cliente.id)
                         .attr('data-info', JSON.stringify(cliente))
                         .text(cliente.nome);
                     
-                    item.click(function(e) {
-                        e.preventDefault();
-                        selecionarCliente($(this));
+                    // Adicionar efeito hover
+                    item.hover(
+                        function() { $(this).addClass('active'); },
+                        function() { $(this).removeClass('active'); }
+                    );
+                    
+                    // Vincular o evento de clique diretamente ao elemento
+                    item.on('click', function() {
+                        // Obter os dados do cliente diretamente do elemento clicado
+                        const id = $(this).data('id');
+                        const clienteInfo = JSON.parse($(this).attr('data-info'));
+                        
+                        // Definir valores nos campos
+                        clienteInput.val(clienteInfo.nome);
+                        clienteIdInput.val(id);
+                        
+                        // Mostrar informações do cliente selecionado
+                        clienteSelecionado.html(`
+                            <strong>Cliente Selecionado:</strong> ${clienteInfo.nome}<br>
+                            <strong>Email:</strong> ${clienteInfo.email || 'N/A'}<br>
+                            <strong>Telefone:</strong> ${clienteInfo.telefone || 'N/A'}
+                        `).show();
+                        
+                        // Esconder resultados
+                        clienteResults.hide();
+                        noResults.hide();
+                        validarFormulario();
                     });
                     
                     clienteResults.append(item);
                 });
                 
-                clienteResults.show();
+                // Importante: garantir que o dropdown fique visível
+                clienteResults.addClass('show').css({
+                    'display': 'block', 
+                    'position': 'absolute',
+                    'z-index': '1000',
+                    'width': clienteInput.outerWidth()
+                });
             }
             
             // Função para selecionar um cliente
