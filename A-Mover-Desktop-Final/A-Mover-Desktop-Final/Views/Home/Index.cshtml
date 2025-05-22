@@ -28,7 +28,8 @@
             </div>
         </div>
     </div>
-
+ @if (User.IsInRole("Fabricante"))
+{   
     <!-- Cards de Estatísticas -->
     <div class="row">
         <!-- Produção -->
@@ -272,6 +273,7 @@
             </div>
         </div>
     </div>
+    }
 </div>
 
 @section Scripts {
