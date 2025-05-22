@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Gestão de Encomendas";
+    // Obter todos os possíveis estados de encomenda para o filtro
+    var estados = Enum.GetValues(typeof(EstadoEncomenda))
+                     .Cast<EstadoEncomenda>()
+                     .Select(e => e.ToString());
 }
 
 <div class="card m-5 p-1">
@@ -10,10 +14,29 @@
         <a type="button" class="btn btn-primary" asp-action="Create">Adicionar Encomenda</a>
     </div>
 
+    <!-- Filtro por Estado -->
+    <div class="m-3">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <label class="input-group-text" for="filtroEstado">Estado:</label>
+                    <select id="filtroEstado" class="form-select">
+                        <option value="">Todos</option>
+                        @foreach (var estado in estados)
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="table-responsive text-nowrap">
         <table class="table" id="tabela">
             <thead class="table-light">
                 <tr>
+                    <th>NºEncomenda</th>
                     <th>Data de Criação</th>
                     <th>Cliente</th>
                     <th>Modelo</th>
@@ -26,7 +49,8 @@
             <tbody>
                 @foreach (var encomenda in Model)
                 {
-                    <tr id="row-@encomenda.IDEncomenda">
+                    <tr id="row-@encomenda.IDEncomenda" data-estado="@encomenda.Estado">
+                        <td>@encomenda.IDEncomenda</td>
                         <td><b>@Html.DisplayFor(modelItem => encomenda.DateCriacao)</b></td>
                         <td>@Html.DisplayFor(modelItem => encomenda.Cliente.Nome)</td>
                         <td>@Html.DisplayFor(modelItem => encomenda.ModeloMota.Nome)</td>
@@ -36,9 +60,9 @@
                                      ? encomenda.DataEntrega.Value.ToString("dd/MM/yyyy")
                                      : "<span class='text-muted'>Por definir</span>")
                         </td>
-
                         <td><b>@Html.DisplayFor(modelItem => encomenda.Estado)</b></td>
                         <td>
+                            <!-- Ações permanecem iguais -->
                             <a asp-action="Details" asp-route-id="@encomenda.IDEncomenda" class="btn btn-sm btn-info text-white me-2">
                                 <i class="fas fa-info-circle"></i> Detalhes
                             </a>
@@ -61,7 +85,6 @@
                     </tr>
                 }
             </tbody>
-
         </table>
     </div>
 </div>
@@ -69,24 +92,66 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-        $('#tabela').DataTable({
-            "pageLength": 10,
-            "order": [[0, 'desc']], // Ordenar pela primeira coluna (Data) em ordem descendente
-            "language": {
-                "lengthMenu": "Mostrar _MENU_ registos por página",
-                "paginate": {
-                    "first": "Primeira",
-                    "last": "Última",
-                    "next": "Próxima",
-                    "previous": "Anterior"
-                },
-                "info": "_START_ a _END_ de _TOTAL_ registos",
-                "infoEmpty": "Nenhum registo disponível",
-                "search": "Pesquisar:",
-                "zeroRecords": "Nenhum registro encontrado"
-            }
+            // Inicializar DataTables com configurações
+            var table = $('#tabela').DataTable({
+                "pageLength": 10,
+                "order": [[0, 'desc']], // Ordenar pela primeira coluna (Data) em ordem descendente
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado"
+                }
+            });
+            
+            // Aplicar filtro por estado quando o dropdown mudar
+            $('#filtroEstado').on('change', function() {
+                var estado = $(this).val();
+                
+                // Método 1: Usando a API de busca do DataTables
+                if (estado) {
+                    table.column(5).search('^' + estado + '$', true, false).draw();
+                } else {
+                    table.column(5).search('').draw();
+                }
+                
+                // Método 2 (alternativa): Filtragem manual por atributo data
+                // Descomente se preferir este método
+                /*
+                if (estado) {
+                    $('tr[data-estado]').hide();
+                    $('tr[data-estado="' + estado + '"]').show();
+                } else {
+                    $('tr[data-estado]').show();
+                }
+                */
+            });
+            
+            // Adicionar cores personalizadas para melhor visualização dos estados
+            $('tbody tr').each(function() {
+                var estado = $(this).find('td:eq(5)').text().trim();
+                switch(estado) {
+                    case 'Pendente':
+                        $(this).addClass('table-secondary');
+                        break;
+                    case 'EmProducao':
+                        $(this).addClass('table-warning');
+                        break;
+                    case 'Concluida':
+                        $(this).addClass('table-success');
+                        break;
+                    case 'Entregue':
+                        $(this).addClass('table-info');
+                        break;
+                }
+            });
         });
-    });
-
     </script>
 }

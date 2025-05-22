@@ -139,7 +139,37 @@ namespace A_Mover_Desktop_Final.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+[HttpGet]
+public async Task<IActionResult> BuscarPorNome(string termo)
+{
+    if (string.IsNullOrEmpty(termo) || termo.Length < 2)
+        return Json(new List<object>());
 
+    try
+    {
+        var clientes = await _context.Clientes
+            .Where(c => c.Nome.Contains(termo) || 
+                       (c.Email != null && c.Email.Contains(termo)))
+            .Take(10)
+            .Select(c => new
+            {
+                id = c.IDCliente,
+                nome = c.Nome,
+                email = c.Email,
+                telefone = c.Telefone,
+                cidade = c.Cidade
+            })
+            .ToListAsync();
+
+        return Json(clientes);
+    }
+    catch (Exception ex)
+    {
+        // Registrar o erro para depuração
+        Console.WriteLine($"Erro ao buscar clientes: {ex.Message}");
+        return Json(new { erro = "Erro ao processar solicitação" });
+    }
+}
         private bool ClienteExists(int id)
         {
             return _context.Clientes.Any(e => e.IDCliente == id);

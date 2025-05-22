@@ -17,7 +17,7 @@
                 <!-- Modelo -->
                 <div class="row mb-3">
                     <label asp-for="IDModelo" class="col-sm-2 col-form-label">
-                        Modelo <span class="text-danger">*</span>
+                        Modelo da Mota<span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-10">
                         <select asp-for="IDModelo" class="form-select" asp-items="ViewBag.IDModelo">
@@ -27,15 +27,28 @@
                     </div>
                 </div>
 
-                <!-- Cliente -->
+                <!-- Cliente - Substituído por campo de autocompletar -->
                 <div class="row mb-3">
-                    <label asp-for="IDCliente" class="col-sm-2 col-form-label">
+                    <label class="col-sm-2 col-form-label">
                         Cliente <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-10">
-                        <select asp-for="IDCliente" class="form-select" asp-items="ViewBag.IDCliente">
-                            <option value="">-- Selecione um Cliente --</option>
-                        </select>
+                        <div class="input-group">
+                            <input id="clienteNome" type="text" class="form-control" 
+                                   placeholder="Digite o nome do cliente..." autocomplete="off" />
+                            <button class="btn btn-outline-secondary" type="button" id="btnLimparCliente">
+                                <i class="bx bx-x"></i>
+                            </button>
+                        </div>
+                        <div id="clienteResults" class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto;"></div>
+                        <div id="noResults" class="mt-2" style="display: none;">
+                            <span class="text-muted">Nenhum cliente encontrado.</span>
+                            <a asp-controller="Clientes" asp-action="Create" class="btn btn-sm btn-success ms-2">
+                                <i class="bx bx-plus"></i> Criar Novo Cliente
+                            </a>
+                        </div>
+                        <input asp-for="IDCliente" type="hidden" id="clienteID" />
+                        <div id="clienteSelecionado" class="mt-2 alert alert-info" style="display: none;"></div>
                         <span asp-validation-for="IDCliente" class="text-danger"></span>
                     </div>
                 </div>
@@ -56,7 +69,7 @@
 
                 <div class="row justify-content-start">
                     <div class="col-sm-10 offset-sm-2">
-                        <button type="submit" class="btn btn-primary me-2">
+                        <button type="submit" class="btn btn-primary me-2" id="btnSubmit">
                             <i class="bx bx-save me-1"></i> Criar
                         </button>
                         <a asp-action="Index" class="btn btn-secondary">
@@ -71,4 +84,141 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            let timeoutId;
+            const clienteInput = $('#clienteNome');
+            const clienteResults = $('#clienteResults');
+            const clienteIdInput = $('#clienteID');
+            const clienteSelecionado = $('#clienteSelecionado');
+            const noResults = $('#noResults');
+            const btnSubmit = $('#btnSubmit');
+            
+            // Desabilitar o botão de envio até que um cliente seja selecionado
+            validarFormulario();
+            
+            // Pesquisar clientes ao digitar
+            clienteInput.on('input', function() {
+                const termo = $(this).val().trim();
+                
+                // Limpar timeout anterior
+                clearTimeout(timeoutId);
+                
+                // Se o campo estiver vazio, limpar resultados e o cliente selecionado
+                if (!termo) {
+                    limparSelecaoCliente();
+                    return;
+                }
+                
+                // Adicionar pequeno delay para evitar requisições excessivas
+                timeoutId = setTimeout(function() {
+                    // Apenas pesquisar se tiver pelo menos 2 caracteres
+                    if (termo.length >= 2) {
+                        // Fazer requisição AJAX para buscar clientes
+                        $.ajax({
+                            url: '/Encomendas/BuscarPorNome', // Alterar de '/Clientes/BuscarPorNome' para '/Encomendas/BuscarPorNome'
+                            data: { termo: termo },
+                            method: 'GET',
+                            success: function(data) {
+                                if (data && data.length > 0) {
+                                    // Mostrar resultados
+                                    mostrarResultadosClientes(data);
+                                    noResults.hide();
+                                } else {
+                                    // Mostrar botão para criar novo cliente
+                                    clienteResults.empty().hide();
+                                    noResults.show();
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Erro na busca:", error);
+                                clienteResults.html('<div class="dropdown-item text-danger">Erro ao buscar clientes</div>').show();
+                                noResults.hide();
+                            }
+                        });
+                    } else {
+                        clienteResults.empty().hide();
+                        noResults.hide();
+                    }
+                }, 300); // 300ms de delay
+            });
+            
+            // Limpar botão
+            $('#btnLimparCliente').click(function() {
+                limparSelecaoCliente();
+            });
+            
+            // Função para mostrar resultados da pesquisa
+            function mostrarResultadosClientes(clientes) {
+                clienteResults.empty();
+                
+                clientes.forEach(function(cliente) {
+                    const item = $('<a class="dropdown-item"></a>')
+                        .attr('href', '#')
+                        .attr('data-id', cliente.id)
+                        .attr('data-info', JSON.stringify(cliente))
+                        .text(cliente.nome);
+                    
+                    item.click(function(e) {
+                        e.preventDefault();
+                        selecionarCliente($(this));
+                    });
+                    
+                    clienteResults.append(item);
+                });
+                
+                clienteResults.show();
+            }
+            
+            // Função para selecionar um cliente
+            function selecionarCliente(item) {
+                const id = item.data('id');
+                const clienteInfo = JSON.parse(item.data('info'));
+                
+                clienteInput.val(clienteInfo.nome);
+                clienteIdInput.val(id);
+                
+                // Mostrar informações do cliente selecionado
+                clienteSelecionado.html(`
+                    <strong>Cliente Selecionado:</strong> ${clienteInfo.nome}<br>
+                    <strong>Email:</strong> ${clienteInfo.email || 'N/A'}<br>
+                    <strong>Telefone:</strong> ${clienteInfo.telefone || 'N/A'}
+                `).show();
+                
+                clienteResults.hide();
+                noResults.hide();
+                
+                validarFormulario();
+            }
+            
+            // Função para limpar a seleção de cliente
+            function limparSelecaoCliente() {
+                clienteInput.val('');
+                clienteIdInput.val('');
+                clienteSelecionado.hide();
+                clienteResults.empty().hide();
+                noResults.hide();
+                validarFormulario();
+            }
+            
+            // Validar formulário para habilitar/desabilitar botão de envio
+            function validarFormulario() {
+                const clienteValido = clienteIdInput.val() !== '';
+                const modeloValido = $('#IDModelo').val() !== '';
+                
+                btnSubmit.prop('disabled', !clienteValido || !modeloValido);
+            }
+            
+            // Também validar quando o modelo mudar
+            $('#IDModelo').change(validarFormulario);
+            
+            // Validar antes de enviar
+            $('form').submit(function(e) {
+                if (!clienteIdInput.val()) {
+                    e.preventDefault();
+                    alert('Por favor, selecione um cliente válido.');
+                }
+            });
+        });
+    </script>
 }
