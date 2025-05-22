@@ -14,11 +14,20 @@
 
         <div class="mb-3">
             <label class="form-label">Mota (Nº Identificação)</label>
-            <input id="inputMota" class="form-control" autocomplete="off" placeholder="Digite o número de identificação..." />
-            <select id="selectMota" class="form-select mt-2" name="IDMota" size="5" style="display: none;"></select>
-            <input type="hidden" id="hiddenIDMota" name="IDMota" />
-            <span class="text-danger" id="erroMota"></span>
-        </div>  
+            <div class="input-group">
+                <input id="inputMota" class="form-control" autocomplete="off" 
+                       placeholder="Digite o número de identificação ou parte dele..." />
+                <button class="btn btn-outline-secondary" type="button" id="btnLimpar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div id="resultadosBusca" class="mt-2">
+                <select id="selectMota" class="form-select" size="5" style="display: none;"></select>
+            </div>
+            <input type="hidden" id="hiddenIDMota" name="IDMota" required />
+            <div id="motaSelecionadaInfo" class="alert alert-info mt-2" style="display: none;"></div>
+            <div id="erroMota" class="text-danger mt-1"></div>
+        </div>
 
         <div class="mb-3">
             <label class="form-label">Tipo de Serviço</label>
@@ -41,7 +50,7 @@
                    value="@Model.DataServico.ToString("yyyy-MM-ddTHH:mm")" />
         </div>
 
-        <button type="submit" class="btn btn-primary">Agendar</button>
+        <button type="submit" class="btn btn-primary" id="btnSubmit" disabled>Agendar</button>
         <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
     </form>
 </div>
@@ -51,36 +60,99 @@
         const input = document.getElementById("inputMota");
         const select = document.getElementById("selectMota");
         const hidden = document.getElementById("hiddenIDMota");
-
-        input.addEventListener("input", function () {
-            const termo = this.value;
-            if (termo.length >= 2) {
-                fetch(`/Servicos/ObterMotasPorIdentificacao?termo=${encodeURIComponent(termo)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        select.innerHTML = "";
-                        if (data.length > 0) {
-                            data.forEach(item => {
-                                const option = document.createElement("option");
-                                option.value = item.id;
-                                option.textContent = item.texto;
-                                select.appendChild(option);
-                            });
-                            select.style.display = "block";
-                        } else {
-                            select.style.display = "none";
-                        }
-                    });
-            } else {
-                select.style.display = "none";
+        const btnLimpar = document.getElementById("btnLimpar");
+        const btnSubmit = document.getElementById("btnSubmit");
+        const erroMota = document.getElementById("erroMota");
+        const motaInfo = document.getElementById("motaSelecionadaInfo");
+        
+        // Função para buscar motas
+        let timeoutId;
+        input.addEventListener("input", function() {
+            const termo = this.value.trim();
+            
+            // Limpar o timeout anterior para evitar múltiplas requisições
+            clearTimeout(timeoutId);
+            
+            // Resetar os campos se o input estiver vazio
+            if (termo.length === 0) {
+                limparCampos();
+                return;
             }
+            
+            // Definir um timeout para buscar apenas após o usuário parar de digitar
+            timeoutId = setTimeout(() => {
+                if (termo.length >= 2) {
+                    erroMota.textContent = "Buscando...";
+                    fetch(`/Servicos/ObterMotasPorIdentificacao?termo=${encodeURIComponent(termo)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            select.innerHTML = "";
+                            erroMota.textContent = "";
+                            
+                            if (data.length > 0) {
+                                data.forEach(item => {
+                                    const option = document.createElement("option");
+                                    option.value = item.id;
+                                    option.textContent = `${item.texto} - ${item.infoAdicional || 'Sem informações adicionais'}`;
+                                    option.dataset.info = JSON.stringify(item);
+                                    select.appendChild(option);
+                                });
+                                select.style.display = "block";
+                            } else {
+                                select.style.display = "none";
+                                erroMota.textContent = "Nenhuma mota encontrada com este número.";
+                            }
+                        })
+                        .catch(error => {
+                            erroMota.textContent = "Erro ao buscar motas. Tente novamente.";
+                            console.error("Erro:", error);
+                        });
+                } else {
+                    select.style.display = "none";
+                    erroMota.textContent = "Digite pelo menos 2 caracteres para buscar.";
+                }
+            }, 300); // 300ms delay para melhorar performance
         });
 
-        select.addEventListener("change", function () {
+        // Selecionar mota da lista
+        select.addEventListener("change", function() {
             const selectedOption = this.options[this.selectedIndex];
-            input.value = selectedOption.textContent;
-            hidden.value = selectedOption.value;
+            if (selectedOption) {
+                const itemInfo = JSON.parse(selectedOption.dataset.info);
+                input.value = selectedOption.textContent.split(" - ")[0];
+                hidden.value = selectedOption.value;
+                select.style.display = "none";
+                
+                // Exibir informações adicionais da mota selecionada
+                motaInfo.innerHTML = `
+                    <strong>Mota Selecionada:</strong> ${itemInfo.texto}<br>
+                    <strong>Modelo:</strong> ${itemInfo.modelo || 'N/A'}<br>
+                    <strong>Cor:</strong> ${itemInfo.cor || 'N/A'}<br>
+                    <strong>Estado:</strong> ${itemInfo.estado || 'N/A'}
+                `;
+                motaInfo.style.display = "block";
+                btnSubmit.disabled = false;
+            }
+        });
+        
+        // Limpar campo de busca
+        btnLimpar.addEventListener("click", limparCampos);
+        
+        function limparCampos() {
+            input.value = "";
+            hidden.value = "";
             select.style.display = "none";
+            motaInfo.style.display = "none";
+            erroMota.textContent = "";
+            btnSubmit.disabled = true;
+        }
+        
+        // Validar envio do formulário
+        document.querySelector("form").addEventListener("submit", function(e) {
+            if (!hidden.value) {
+                e.preventDefault();
+                erroMota.textContent = "Selecione uma mota válida para continuar.";
+            }
         });
     </script>
 }

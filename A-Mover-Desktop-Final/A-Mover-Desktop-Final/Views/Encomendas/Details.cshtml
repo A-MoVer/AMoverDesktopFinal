@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Detalhes da Encomenda";
+    ViewData["ActiveMenu"] = "Encomendas";
 }
 
 <div class="col-xxl">
@@ -9,64 +10,137 @@
         <div class="card-header d-flex align-items-center justify-content-between">
             <h1 class="mb-0">Detalhes da Encomenda</h1>
         </div>
+        
+        <!-- Card com resumo da encomenda -->
         <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.ModeloMota)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ModeloMota.Nome)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Cliente)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Cliente.Nome)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Quantidade)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Quantidade)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Estado)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Estado)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.DateCriacao)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.DateCriacao)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.DataEntrega)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.Raw(Model.DataEntrega.HasValue
-                             ? Model.DataEntrega.Value.ToString("dd/MM/yyyy")
-                             : "<span class='text-muted'>Por definir</span>")
-                </dd>
-            </dl>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Informações da Encomenda</h5>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th width="35%">Modelo:</th>
+                                    <td>@Model.ModeloMota.Nome</td>
+                                </tr>
+                                <tr>
+                                    <th>Cliente:</th>
+                                    <td>@Model.Cliente.Nome</td>
+                                </tr>
+                                <tr>
+                                    <th>Quantidade:</th>
+                                    <td>@Model.Quantidade</td>
+                                </tr>
+                                <tr>
+                                    <th>Estado:</th>
+                                    <td>
+                                        <span class="badge bg-@(Model.Estado == EstadoEncomenda.Pendente ? "secondary" : 
+                                                              Model.Estado == EstadoEncomenda.EmProducao ? "primary" : 
+                                                              Model.Estado == EstadoEncomenda.Concluida ? "success" : "info")">
+                                            @Model.Estado
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Data de Criação:</th>
+                                    <td>@Model.DateCriacao.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <th>Data de Entrega:</th>
+                                    <td>@(Model.DataEntrega?.ToString("dd/MM/yyyy") ?? "Por definir")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+        <!-- Botões de ação principais -->
         <div class="card-footer">
-            @if (Model.Estado.ToString() == "Pendente")
-            {
-                <a asp-controller="OrdensProducao"
-                   asp-action="CriarPorEncomenda"
-                   asp-route-id="@Model.IDEncomenda"
-                   class="btn btn-success text-white me-2">
-                    <i class="fas fa-cogs"></i> Criar Ordens de Produção
-                </a>
-            }
-            <a asp-action="Edit" asp-route-id="@Model?.IDEncomenda" class="btn btn-warning text-white me-2">
-                <i class="fas fa-edit"></i> Editar
-            </a>
-            <a asp-action="Index" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Voltar à Lista
-            </a>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bx bx-arrow-back"></i> Voltar à Lista
+                    </a>
+                </div>
+                <div>
+                    @if (Model.Estado == EstadoEncomenda.Pendente)
+                    {
+                        <a asp-controller="OrdemProducao"
+                           asp-action="CriarPorEncomenda"
+                           asp-route-id="@Model.IDEncomenda"
+                           class="btn btn-success text-white me-2">
+                            <i class="bx bx-cog"></i> Iniciar Produção
+                        </a>
+                    }
+                    <a asp-action="Edit" asp-route-id="@Model?.IDEncomenda" class="btn btn-warning text-white me-2">
+                        <i class="bx bx-edit"></i> Editar
+                    </a>
+                    <button class="btn btn-info text-white me-2" onclick="window.print()">
+                        <i class="bx bx-printer"></i> Imprimir
+                    </button>
+                </div>
+            </div>
         </div>
+    </div>
+    
+<!-- Tabela de Ordens de Produção -->
+<div class="card mb-4 mx-5">
+    <div class="card-header">
+        <h5 class="card-title">Ordens de Produção</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Data Criação</th>
+                    <th>Estado</th>
+                    <th>Mota</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.OrdensProducao != null && ViewBag.OrdensProducao.Count > 0)
+                {
+                    @foreach (var op in ViewBag.OrdensProducao)
+                    {
+                        <tr>
+                            <td>@op.NumeroOrdem</td>
+                            <td>@op.DataCriacao.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="badge bg-@(op.Estado == EstadoOrdemProducao.Pendente ? "secondary" : 
+                                                       op.Estado == EstadoOrdemProducao.EmProducao ? "warning" : 
+                                                       "success")">
+                                    @op.Estado
+                                </span>
+                            </td>
+                            <td>@(op.Mota?.NumeroIdentificacao ?? "Não criada")</td>
+                            <td>
+                                <a asp-controller="OrdemProducao" asp-action="FichaOP" asp-route-id="@op.IDOrdemProducao" 
+                                   class="btn btn-sm btn-primary">
+                                    <i class="bx bx-show"></i> Ver
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <em>Nenhuma ordem de produção criada para esta encomenda.</em>
+                            @if (Model.Estado == EstadoEncomenda.Pendente)
+                            {
+                                <div class="mt-2">
+                                    <span>Clique em "Iniciar Produção" para gerar as ordens de produção.</span>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

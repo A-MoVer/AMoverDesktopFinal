@@ -18,8 +18,13 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Motas
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Motas.Include(m => m.ModeloMota).Include(m => m.OrdemProducao);
-            return View(await applicationDbContext.ToListAsync());
+            var motas = await _context.Motas
+                .Include(m => m.ModeloMota)
+                .Include(m => m.OrdemProducao)
+                .OrderByDescending(m => m.DataRegisto)  // Ordenar pela data de registro (mais recentes primeiro)
+                .ToListAsync();
+            
+            return View(motas);
         }
 
         // GET: Motas/Details/5

@@ -69,23 +69,24 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#tabela').DataTable({
-                "pageLength": 10,
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registos por página",
-                    "paginate": {
-                        "first": "Primeira",
-                        "last": "Última",
-                        "next": "Próxima",
-                        "previous": "Anterior"
-                    },
-                    "info": "_START_ a _END_ de _TOTAL_ registos",
-                    "infoEmpty": "Nenhum registo disponível",
-                    "search": "Pesquisar:",
-                    "zeroRecords": "Nenhum registro encontrado"
-                }
-            });
+        $('#tabela').DataTable({
+            "pageLength": 10,
+            "order": [[0, 'desc']], // Ordenar pela primeira coluna (Data) em ordem descendente
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registos por página",
+                "paginate": {
+                    "first": "Primeira",
+                    "last": "Última",
+                    "next": "Próxima",
+                    "previous": "Anterior"
+                },
+                "info": "_START_ a _END_ de _TOTAL_ registos",
+                "infoEmpty": "Nenhum registo disponível",
+                "search": "Pesquisar:",
+                "zeroRecords": "Nenhum registro encontrado"
+            }
         });
+    });
 
     </script>
 }

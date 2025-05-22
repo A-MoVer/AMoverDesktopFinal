@@ -105,7 +105,6 @@ namespace A_Mover_Desktop_Final.Controllers
             }
 
             servico.Estado = EstadoServico.Agendado;
-            servico.DataConclusao = DateTime.MinValue;
 
             _context.Servico.Add(servico);
             await _context.SaveChangesAsync();
@@ -208,15 +207,26 @@ namespace A_Mover_Desktop_Final.Controllers
             return _context.Servico.Any(e => e.IDServico == id);
         }
 
+        // Método para buscar motas por número de identificação (VIN)
         [HttpGet]
         public async Task<IActionResult> ObterMotasPorIdentificacao(string termo)
         {
+            if (string.IsNullOrEmpty(termo) || termo.Length < 2)
+                return Json(new List<object>());
+
             var motas = await _context.Motas
-                .Where(m => m.NumeroIdentificacao.Contains(termo))
+                .Include(m => m.ModeloMota)
+                .Where(m => m.NumeroIdentificacao.Contains(termo) && 
+                            m.Estado == EstadoMota.Ativo)  // Apenas motas ativas
+                .Take(10)  // Limitar resultados para melhor performance
                 .Select(m => new
                 {
                     id = m.IDMota,
-                    texto = m.NumeroIdentificacao
+                    texto = m.NumeroIdentificacao,
+                    modelo = m.ModeloMota.Nome,
+                    cor = m.Cor,
+                    estado = m.Estado.ToString(),
+                    infoAdicional = $"{m.ModeloMota.Nome} - {m.Cor}"
                 })
                 .ToListAsync();
 
