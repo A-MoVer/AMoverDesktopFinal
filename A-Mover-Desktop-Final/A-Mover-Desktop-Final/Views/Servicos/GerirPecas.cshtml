@@ -71,6 +71,23 @@
             </table>
         </div>
         
+<!-- Seção de Notas da Manutenção -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-journal-text"></i> Notas da Manutenção</h5>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <label class="form-label">Observações Técnicas</label>
+            <textarea class="form-control" name="NotasManutencao" rows="3" 
+                      placeholder="Registre detalhes importantes sobre a manutenção realizada...">@Model.NotasServico</textarea>
+            <small class="text-muted">
+                Inclua informações relevantes como: anomalias detectadas, recomendações 
+                para o cliente ou observações para a próxima manutenção.
+            </small>
+        </div>
+    </div>
+</div>
         <div class="d-flex justify-content-between mt-4">
             <div>
                 <button type="submit" class="btn btn-primary">
@@ -112,6 +129,7 @@
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script>

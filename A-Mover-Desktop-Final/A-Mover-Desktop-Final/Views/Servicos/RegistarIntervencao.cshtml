@@ -108,8 +108,8 @@
             }, 300); // 300ms delay para melhorar performance
         });
 
-        // Selecionar mota da lista
-        select.addEventListener("change", function() {
+        // Selecionar mota da lista - SUBSTITUIR ESTA PARTE
+        select.addEventListener("click", function(e) {  // Mudado de "change" para "click"
             const selectedOption = this.options[this.selectedIndex];
             if (selectedOption) {
                 const itemInfo = JSON.parse(selectedOption.dataset.info);
@@ -126,6 +126,31 @@
                 `;
                 motaInfo.style.display = "block";
                 btnSubmit.disabled = false;
+            }
+        });
+        
+        // Adicionar um evento de clique duplo como alternativa
+        select.addEventListener("dblclick", function(e) {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption) {
+                // Mesmo código acima para seleção
+                const itemInfo = JSON.parse(selectedOption.dataset.info);
+                input.value = selectedOption.textContent.split(" - ")[0];
+                hidden.value = selectedOption.value;
+                select.style.display = "none";
+                
+                motaInfo.innerHTML = `
+                    <strong>Mota Selecionada:</strong> ${itemInfo.texto}<br>
+                    <strong>Modelo:</strong> ${itemInfo.modelo || 'N/A'}<br>
+                    <strong>Cor:</strong> ${itemInfo.cor || 'N/A'}<br>
+                    <strong>Estado:</strong> ${itemInfo.estado || 'N/A'}
+                `;
+                motaInfo.style.display = "block";
+                btnSubmit.disabled = false;
+                
+                // Envia o formulário automaticamente ao clicar duas vezes
+                // Descomente a linha abaixo se desejar este comportamento
+                // document.querySelector("form").submit();
             }
         });
         
