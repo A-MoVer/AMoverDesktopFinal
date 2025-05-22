@@ -1,4 +1,5 @@
-﻿using A_Mover_Desktop_Final.Data;
+﻿using System.Text;
+using A_Mover_Desktop_Final.Data;
 using A_Mover_Desktop_Final.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -220,12 +221,15 @@ namespace A_Mover_Desktop_Final.Controllers
                 return PartialView("_MotaFormulario", ordem.Mota);
             }
 
+            // Gerar número de identificação aleatório de 17 caracteres começando com "AJP"
+            string numeroIdentificacao = GerarNumeroIdentificacao();
+
             // Criar nova mota com todas as peças do modelo
             var novaMota = new Mota
             {
                 IDOrdemProducao = ordem.IDOrdemProducao,
                 IDModelo = ordem.Encomenda.IDModelo,
-                NumeroIdentificacao = $"MOTA-{ordem.NumeroOrdem}-001",
+                NumeroIdentificacao = numeroIdentificacao,
                 Quilometragem = 0,
                 Estado = EstadoMota.EmProdução,
                 DataRegisto = DateTime.Now,
@@ -239,9 +243,9 @@ namespace A_Mover_Desktop_Final.Controllers
                 {
                     novaMota.MotasPecasSN.Add(new MotasPecasSN
                     {
-                        IDPeca = pecaModelo.IDPeca,  // Use IDPeca from ModeloPecasSN
-                        Pecas = pecaModelo.Pecas,    // Reference Pecas directly
-                        NumeroSerie = ""             // Inicializa vazio
+                        IDPeca = pecaModelo.IDPeca,
+                        Pecas = pecaModelo.Pecas,
+                        NumeroSerie = ""
                     });
                 }
             }
@@ -385,6 +389,13 @@ namespace A_Mover_Desktop_Final.Controllers
             // ✅ Se passou todas as verificações, finaliza a OP
             ordem.Estado = EstadoOrdemProducao.Concluida;
             ordem.DataConclusao = DateTime.Now;
+
+            // Atualizar o estado da mota para Ativo
+            if (ordem.Mota != null)
+            {
+                ordem.Mota.Estado = EstadoMota.Ativo;
+            }
+
             _context.Update(ordem);
             await _context.SaveChangesAsync();
 
@@ -408,7 +419,31 @@ namespace A_Mover_Desktop_Final.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        // Novo método para gerar número de identificação
+        private string GerarNumeroIdentificacao()
+        {
+            // Prefixo AJP
+            string prefixo = "AJP";
+            
+            // Caracteres permitidos para a parte aleatória
+            string caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            
+            // Comprimento total menos o prefixo
+            int comprimentoAleatorio = 17 - prefixo.Length;
+            
+            // Inicializar gerador de números aleatórios
+            Random random = new Random();
+            
+            // Construir a parte aleatória
+            var parteAleatoria = new StringBuilder(comprimentoAleatorio);
+            for (int i = 0; i < comprimentoAleatorio; i++)
+            {
+                parteAleatoria.Append(caracteresPermitidos[random.Next(caracteresPermitidos.Length)]);
+            }
+            
+            // Retornar o número de identificação completo
+            return prefixo + parteAleatoria.ToString();
+        }
 
 
         private bool OrdemProducaoExists(int id)

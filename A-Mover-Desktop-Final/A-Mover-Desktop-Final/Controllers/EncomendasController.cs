@@ -18,8 +18,13 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Encomendas
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Encomendas.Include(e => e.Cliente).Include(e => e.ModeloMota);
-            return View(await applicationDbContext.ToListAsync());
+            var encomendas = await _context.Encomendas
+                .Include(e => e.Cliente)
+                .Include(e => e.ModeloMota)
+                .OrderByDescending(e => e.DateCriacao)  // Ordenar por data de criação (mais recentes primeiro)
+                .ToListAsync();
+            
+            return View(encomendas);
         }
 
         // GET: Encomendas/Details/5
@@ -30,14 +35,28 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
+            // Buscar a encomenda (sem incluir ordens de produção)
             var encomenda = await _context.Encomendas
                 .Include(e => e.Cliente)
                 .Include(e => e.ModeloMota)
                 .FirstOrDefaultAsync(m => m.IDEncomenda == id);
+
             if (encomenda == null)
             {
                 return NotFound();
             }
+
+            // Buscar as ordens de produção separadamente
+            var ordensProducao = await _context.OrdemProducao
+                .Include(op => op.Mota)
+                .Where(op => op.IDEncomenda == id)
+                .ToListAsync();
+
+            // Adicionar mensagem para depuração
+            TempData["Debug"] = $"Buscando encomenda com ID {id} | Ordens encontradas: {ordensProducao.Count}";
+
+            // Passar as ordens para a view usando ViewBag
+            ViewBag.OrdensProducao = ordensProducao;
 
             return View(encomenda);
         }
@@ -53,16 +72,32 @@ namespace A_Mover_Desktop_Final.Controllers
         // POST: Encomendas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDEncomenda,IDModelo,IDCliente,Quantidade,Estado,DateCriacao,DataEntrega")] Encomenda encomenda)
+        public async Task<IActionResult> Create([Bind("IDEncomenda,IDModelo,IDCliente,Quantidade")] Encomenda encomenda)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(encomenda);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Definir valores padrão
+                    encomenda.Estado = EstadoEncomenda.Pendente;
+                    encomenda.DateCriacao = DateTime.Now;
+                    encomenda.DataEntrega = null; // Garantir que a data de entrega seja nula
+                    encomenda.OrdemProducao = new List<OrdemProducao>(); // Inicializar a coleção
+
+                    _context.Add(encomenda);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    // Adicionar mensagem de erro específica para depuração
+                    ModelState.AddModelError("", $"Erro ao criar encomenda: {ex.Message}");
+                }
             }
-            ViewData["IDCliente"] = new SelectList(_context.Clientes, "IDCliente", "Cidade", encomenda.IDCliente);
-            ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "CodigoProduto", encomenda.IDModelo);
+
+            // Recarregar as SelectLists em caso de erro
+            ViewData["IDCliente"] = new SelectList(_context.Clientes, "IDCliente", "Nome", encomenda.IDCliente);
+            ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome", encomenda.IDModelo);
             return View(encomenda);
         }
 

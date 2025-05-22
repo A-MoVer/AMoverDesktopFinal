@@ -1,6 +1,19 @@
 ﻿@model IEnumerable<A_Mover_Desktop_Final.Models.Servico>
 @{
     ViewData["Title"] = "Calendário de Intervenções";
+    // Serializar os dados do modelo para JSON
+    var eventosJson = System.Text.Json.JsonSerializer.Serialize(
+        Model.Where(s => s.Estado != EstadoServico.Concluido)
+             .Select(s => new {
+                 id = s.IDServico,
+                 title = (s.Mota?.NumeroIdentificacao ?? "Sem ID") + " - " + s.Tipo.ToString(),
+                 start = s.DataServico.ToString("yyyy-MM-ddTHH:mm:ss"),
+                 vin = s.Mota?.NumeroIdentificacao ?? "Não informado",
+                 tipoManutencao = s.Tipo.ToString(),
+                 description = s.Descricao ?? "Sem descrição",
+                 color = s.Tipo == TipoServico.Revisao ? "#3788d8" : "#198754" // Azul para revisão, verde para manutenção
+             })
+    );
 }
 
 <div class="card m-5">
@@ -25,55 +38,88 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <a id="btnVerDetalhes" href="#" class="btn btn-primary">Ver Detalhes</a>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.js"></script>
+    <!-- Usar versão mais recente do FullCalendar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/pt-br.global.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendarioIntervencoes');
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'pt',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                events: [
-        @foreach (var servico in Model.Where(s => s.Estado != EstadoServico.Concluido))
-        {
-            var titulo = servico.Mota?.NumeroIdentificacao + " - " + servico.Tipo.ToString();
-            var descricao = servico.Descricao ?? "Sem descrição";
-            <text>
-                        {
-                            title: '@titulo',
-                            start: '@servico.DataServico.ToString("yyyy-MM-ddTHH:mm:ss")',
-                            vin: '@servico.Mota?.NumeroIdentificacao',
-                            tipoManutencao: '@servico.Tipo',
-                            description: '@descricao'
-                        },
-            </text>
-        }
-                        ],
-                eventClick: function (info) {
-                    document.getElementById("modalVin").innerText = info.event.extendedProps.vin;
-                    document.getElementById("modalTipoManutencao").innerText = info.event.extendedProps.tipoManutencao;
-                    document.getElementById("modalDescricao").innerText = info.event.extendedProps.description;
-                    document.getElementById("modalHorario").innerText = info.event.start.toLocaleString();
-
-                    var eventDetailsModal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
-                    eventDetailsModal.show();
+            try {
+                var calendarEl = document.getElementById('calendarioIntervencoes');
+                var events = @Html.Raw(eventosJson);
+                
+                if (!calendarEl) {
+                    console.error("Elemento do calendário não encontrado");
+                    return;
                 }
-            });
 
-            calendar.render();
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'pt-br',
+                    timeZone: 'local',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    buttonText: {
+                        today: 'Hoje',
+                        month: 'Mês',
+                        week: 'Semana',
+                        day: 'Dia'
+                    },
+                    firstDay: 1, // Segunda-feira como primeiro dia da semana
+                    events: events,
+                    eventClick: function (info) {
+                        document.getElementById("modalVin").innerText = info.event.extendedProps.vin;
+                        document.getElementById("modalTipoManutencao").innerText = info.event.extendedProps.tipoManutencao;
+                        document.getElementById("modalDescricao").innerText = info.event.extendedProps.description;
+                        document.getElementById("modalHorario").innerText = new Date(info.event.start).toLocaleString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        document.getElementById("btnVerDetalhes").href = `/Servicos/Details/${info.event.id}`;
+
+                        var eventDetailsModal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
+                        eventDetailsModal.show();
+                    },
+                    eventTimeFormat: {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    },
+                    dayMaxEvents: true, // Quando há muitos eventos, mostra um link "+X mais"
+                    height: 'auto' // Altura automática
+                });
+
+                calendar.render();
+                console.log("Calendário inicializado com sucesso");
+            } catch (error) {
+                console.error("Erro ao inicializar o calendário:", error);
+                
+                // Mostrar mensagem de erro para o usuário
+                var calendarEl = document.getElementById('calendarioIntervencoes');
+                if (calendarEl) {
+                    calendarEl.innerHTML = `
+                        <div class="alert alert-danger">
+                            Ocorreu um erro ao carregar o calendário. Por favor, tente novamente mais tarde.
+                            <br>Erro: ${error.message}
+                        </div>
+                    `;
+                }
+            }
         });
     </script>
 }

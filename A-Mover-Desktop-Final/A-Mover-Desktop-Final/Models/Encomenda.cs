@@ -30,5 +30,14 @@ namespace A_Mover_Desktop_Final.Models
         public EstadoEncomenda Estado { get; set; } = EstadoEncomenda.Pendente;
         public DateTime DateCriacao { get; set; } = DateTime.Now;
         public DateTime? DataEntrega { get; set; }
+
+        [InverseProperty("Encomenda")]
+    public ICollection<OrdemProducao>? OrdemProducao { get; set; }
+
+    // Construtor para inicializar a coleção
+    public Encomenda()
+    {
+        OrdemProducao = new List<OrdemProducao>();
+    }
     }
 }

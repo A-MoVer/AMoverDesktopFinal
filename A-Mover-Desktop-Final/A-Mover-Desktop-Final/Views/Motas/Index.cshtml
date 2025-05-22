@@ -55,6 +55,7 @@
 		$(document).ready(function () {
 			$('#tabela').DataTable({
 				"pageLength": 10,
+				"order": [[2, 'desc']], // Ordenar pela terceira coluna (Data de Registro) em ordem descendente
 				"language": {
 					"lengthMenu": "Mostrar _MENU_ registos por página",
 					"paginate": {
