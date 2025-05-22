@@ -40,6 +40,8 @@ namespace A_Mover_Desktop_Final.Models
         [DataType(DataType.Date)]
         public DateTime? DataConclusao { get; set; }
 
+        public string? NotasServico { get; set; }
+
         public ICollection<ServicosPecasAlteradas>? PecasAlteradas { get; set; }
     }
 }

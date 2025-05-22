@@ -17,6 +17,25 @@
         </div>
     </div>
 
+    <!-- Filtro por Estado -->
+    <div class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <label class="input-group-text" for="filtroEstado">
+                        <i class="bi bi-funnel"></i> Estado:
+                    </label>
+                    <select id="filtroEstado" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="Agendado">Agendado</option>
+                        <option value="EmCurso">Em Curso</option>
+                        <option value="Concluido">Concluído</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="table-responsive text-nowrap">
         <table class="table" id="tabelaServicos">
             <thead class="table-light">
@@ -32,7 +51,7 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
+                    <tr data-estado="@item.Estado">
                         <td>@item.Mota?.NumeroIdentificacao</td>
                         <td>@item.Tipo</td>
                         <td>
@@ -42,8 +61,8 @@
                                 @item.Estado
                             </span>
                         </td>
-                        <td>@item.DataServico.ToString("dd/MM/yyyy")</td>
-                        <td>
+                        <td data-order="@item.DataServico.ToString("yyyy-MM-dd")">@item.DataServico.ToString("dd/MM/yyyy")</td>
+                        <td data-order="@(item.DataConclusao?.ToString("yyyy-MM-dd") ?? "9999-12-31")">
                             @(item.DataConclusao?.ToString("dd/MM/yyyy") ?? "-")
                         </td>
                         <td>
@@ -81,8 +100,10 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#tabelaServicos').DataTable({
+            // Inicializar DataTable com ordenação por data agendada (descendente)
+            var table = $('#tabelaServicos').DataTable({
                 "pageLength": 10,
+                "order": [[3, "desc"]], // Ordenar pela coluna de data agendada (índice 3) em ordem ascendente
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registos por página",
                     "paginate": {
@@ -95,8 +116,49 @@
                     "infoEmpty": "Nenhum registo disponível",
                     "search": "Pesquisar:",
                     "zeroRecords": "Nenhum serviço encontrado"
-                }
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": 5 } // Desativar ordenação na coluna de ações
+                ]
             });
+            
+            // Aplicar filtro por estado quando o dropdown mudar
+            $('#filtroEstado').on('change', function() {
+                var estado = $(this).val();
+                
+                // Usando a API de busca do DataTables para a coluna Estado (índice 2)
+                if (estado) {
+                    table.column(2).search(estado).draw();
+                } else {
+                    table.column(2).search('').draw();
+                }
+                
+                // Adicionar classes visuais para diferenciar estados após o filtro
+                aplicarEstilosTabela();
+            });
+            
+            // Função para aplicar estilos visuais baseados no estado
+            function aplicarEstilosTabela() {
+                $('tr[data-estado]').each(function() {
+                    var estado = $(this).data('estado');
+                    $(this).removeClass('table-secondary table-warning table-success');
+                    
+                    switch(estado) {
+                        case 'Agendado':
+                            $(this).addClass('table-secondary');
+                            break;
+                        case 'EmCurso':
+                            $(this).addClass('table-warning');
+                            break;
+                        case 'Concluido':
+                            $(this).addClass('table-success');
+                            break;
+                    }
+                });
+            }
+            
+            // Aplicar estilos na inicialização
+            aplicarEstilosTabela();
         });
     </script>
 }

@@ -120,25 +120,34 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistarIntervencao(Servico servico)
-        {
-            if (!ModelState.IsValid)
-            {
-                ViewData["IDMota"] = new SelectList(_context.Motas.Include(m => m.ModeloMota), "IDMota", "NumeroIdentificacao", servico.IDMota);
-                return View(servico);
-            }
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> RegistarIntervencao(Servico servico)
+{
+    // Verificar se a mota existe
+    var motaExiste = await _context.Motas.AnyAsync(m => m.IDMota == servico.IDMota);
+    if (!motaExiste)
+    {
+        ModelState.AddModelError("IDMota", "Mota não encontrada. Por favor, selecione uma mota válida.");
+        ViewData["IDMota"] = new SelectList(_context.Motas.Include(m => m.ModeloMota), "IDMota", "NumeroIdentificacao");
+        return View(servico);
+    }
 
-            servico.Estado = EstadoServico.EmCurso;
-            servico.DataConclusao = DateTime.MinValue;
-            servico.DataServico = DateTime.Now;
+    if (!ModelState.IsValid)
+    {
+        ViewData["IDMota"] = new SelectList(_context.Motas.Include(m => m.ModeloMota), "IDMota", "NumeroIdentificacao", servico.IDMota);
+        return View(servico);
+    }
 
-            _context.Servico.Add(servico);
-            await _context.SaveChangesAsync();
+    servico.Estado = EstadoServico.EmCurso;
+    servico.DataConclusao = DateTime.MinValue;
+    servico.DataServico = DateTime.Now;
 
-            TempData["SuccessMessage"] = "Intervenção iniciada com sucesso.";
-            return RedirectToAction(nameof(Index));
-        }
+    _context.Servico.Add(servico);
+    await _context.SaveChangesAsync();
+
+    TempData["SuccessMessage"] = "Intervenção iniciada com sucesso.";
+    return RedirectToAction(nameof(Index));
+}
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -256,14 +265,14 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: Servicos/GerirPecas/5
-        public async Task<IActionResult> GerirPecas(int id)
+        public async Task<IActionResult> GerirPecas(int? id)
         {
             var servico = await _context.Servico
                 .Include(s => s.Mota)
-                    .ThenInclude(m => m.MotasPecasSN)
-                        .ThenInclude(mp => mp.Pecas)
+                    .ThenInclude(m => m.ModeloMota) // Adicione esta linha para carregar o modelo
+                .Include(s => s.Mota.MotasPecasSN)
+                    .ThenInclude(mp => mp.Pecas)
                 .Include(s => s.PecasAlteradas)
-                    .ThenInclude(pa => pa.MotasPecasSN)
                 .FirstOrDefaultAsync(s => s.IDServico == id);
                 
             if (servico == null)
@@ -278,64 +287,75 @@ namespace A_Mover_Desktop_Final.Controllers
             return View(servico);
         }
 
-        // POST: Servicos/GerirPecas/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GerirPecas(int id, List<int> pecasParaSubstituir, List<string> novasSeriesNumericas)
+        // Método POST: Servicos/GerirPecas/5
+// Método POST: Servicos/GerirPecas/5
+[HttpPost]
+public async Task<IActionResult> GerirPecas(int id, List<int> pecasParaSubstituir, List<string> novasSeriesNumericas, string NotasManutencao)
+{
+    var servico = await _context.Servico
+        .Include(s => s.Mota)
+            .ThenInclude(m => m.MotasPecasSN)
+                .ThenInclude(mp => mp.Pecas)
+        .FirstOrDefaultAsync(s => s.IDServico == id);
+        
+    if (servico == null)
+    {
+        return NotFound();
+    }
+    
+    // Salvar as notas de manutenção
+    servico.NotasServico = NotasManutencao;
+    
+    // Primeiro atualize o serviço
+    _context.Update(servico);
+    
+    // Obter peças alteradas existentes para este serviço
+    var pecasAlteradasExistentes = await _context.ServicosPecasAlteradas
+        .Where(p => p.IDServico == id)
+        .ToListAsync();
+    
+    // Remover registros existentes
+    if (pecasAlteradasExistentes.Any())
+    {
+        _context.ServicosPecasAlteradas.RemoveRange(pecasAlteradasExistentes);
+    }
+    
+    // Processar as peças selecionadas para substituição
+    if (pecasParaSubstituir != null && pecasParaSubstituir.Count > 0)
+    {
+        for (int i = 0; i < pecasParaSubstituir.Count; i++)
         {
-            var servico = await _context.Servico
-                .Include(s => s.PecasAlteradas)
-                .Include(s => s.Mota)
-                    .ThenInclude(m => m.MotasPecasSN)
-                .FirstOrDefaultAsync(s => s.IDServico == id);
-                
-            if (servico == null)
-                return NotFound();
-                
-            if (servico.Estado == EstadoServico.Concluido)
-            {
-                TempData["ErrorMessage"] = "Não é possível alterar peças de um serviço concluído.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
+            var idPeca = pecasParaSubstituir[i];
+            var novoNumeroSerie = (i < novasSeriesNumericas.Count) ? novasSeriesNumericas[i] : null;
             
-            // Remover registros existentes
-            var pecasAlteradasExistentes = await _context.ServicosPecasAlteradas
-                .Where(p => p.IDServico == id)
-                .ToListAsync();
-            _context.ServicosPecasAlteradas.RemoveRange(pecasAlteradasExistentes);
-            
-            // Adicionar novos registros
-            if (pecasParaSubstituir != null)
+            // Criar nova entrada para peça alterada
+            var pecaAlterada = new ServicosPecasAlteradas
             {
-                for (int i = 0; i < pecasParaSubstituir.Count; i++)
+                IDServico = id,
+                IDMotasPecasSN = idPeca,
+                Observacoes = $"Substituição: Novo número de série {novoNumeroSerie}"
+            };
+            
+            _context.ServicosPecasAlteradas.Add(pecaAlterada);
+            
+            // Atualizar o número de série na tabela MotasPecasSN se fornecido
+            if (!string.IsNullOrEmpty(novoNumeroSerie))
+            {
+                var motaPeca = await _context.MotasPecasSN.FindAsync(idPeca);
+                if (motaPeca != null)
                 {
-                    int idMotaPeca = pecasParaSubstituir[i];
-                    string novaSerie = i < novasSeriesNumericas.Count ? novasSeriesNumericas[i] : "";
-                    
-                    // Registrar peça alterada
-                    _context.ServicosPecasAlteradas.Add(new ServicosPecasAlteradas
-                    {
-                        IDServico = id,
-                        IDMotasPecasSN = idMotaPeca,
-                        Observacoes = "Substituída durante serviço"
-                    });
-                    
-                    // Atualizar número de série da peça
-                    var pecaMota = await _context.MotasPecasSN.FindAsync(idMotaPeca);
-                    if (pecaMota != null && !string.IsNullOrWhiteSpace(novaSerie))
-                    {
-                        pecaMota.NumeroSerie = novaSerie;
-                        _context.Update(pecaMota);
-                    }
+                    motaPeca.NumeroSerie = novoNumeroSerie;
+                    _context.Update(motaPeca);
                 }
             }
-            
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Peças atualizadas com sucesso!";
-            
-            return RedirectToAction(nameof(Details), new { id });
         }
-
+    }
+    
+    await _context.SaveChangesAsync();
+    
+    TempData["Sucesso"] = "Alterações nas peças e notas salvas com sucesso!";
+    return RedirectToAction(nameof(Details), new { id = id });
+}
         // POST: Servicos/ConcluirServico/5
         [HttpPost]
         [ValidateAntiForgeryToken]

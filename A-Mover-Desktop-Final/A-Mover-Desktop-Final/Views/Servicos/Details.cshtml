@@ -109,6 +109,23 @@
                     </div>
                 </div>
                 
+                <!-- Notas de Serviço -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="mb-2">
+                            <i class="bx bx-notepad me-1"></i> Notas da Manutenção
+                        </h6>
+                        @if (!string.IsNullOrEmpty(Model.NotasServico))
+                        {
+                            <p class="mb-0">@Model.NotasServico</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted mb-0">Nenhuma nota registrada para este serviço.</p>
+                        }
+                    </div>
+                </div>
+                
                 <!-- Peças Alteradas -->
                 <h5 class="mb-3 mt-4">
                     <i class="bx bx-cog me-1"></i> Peças Alteradas
@@ -138,6 +155,15 @@
                                 }
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Resumo das alterações -->
+                    <div class="card bg-light border-0 mt-3">
+                        <div class="card-body">
+                            <p class="mb-0">
+                                <strong>Total de peças alteradas:</strong> @Model.PecasAlteradas.Count<br>
+                            </p>
+                        </div>
                     </div>
                 }
                 else
@@ -182,6 +208,10 @@
                 <a asp-action="Edit" asp-route-id="@Model.IDServico" class="btn btn-warning ms-2">
                     <i class="bx bx-edit"></i> Editar
                 </a>
+                
+                <button type="button" class="btn btn-danger ms-2" data-bs-toggle="modal" data-bs-target="#modalDeletarServico">
+                    <i class="bx bx-trash"></i> Excluir
+                </button>
             </div>
         </div>
     </div>
@@ -213,4 +243,67 @@
     </div>
 }
 
-<!-- Histórico de alterações (opcional) - Adicionar se você tiver um sistema de logging -->
+<!-- Modal para confirmar exclusão do serviço -->
+<div class="modal fade" id="modalDeletarServico" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Excluir Serviço</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir este serviço?</p>
+                <p class="text-danger">Esta ação não pode ser desfeita e todos os registros relacionados serão removidos.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="Delete" asp-route-id="@Model.IDServico" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Excluir Serviço</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção para impressão -->
+<div class="modal fade" id="modalImprimirServico" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Imprimir Relatório</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Selecione o tipo de relatório que deseja imprimir:</p>
+                <div class="list-group">
+                    <a href="#" onclick="imprimirRelatorio('completo')" class="list-group-item list-group-item-action">
+                        <i class="bx bx-file me-2"></i> Relatório Completo
+                    </a>
+                    <a href="#" onclick="imprimirRelatorio('pecas')" class="list-group-item list-group-item-action">
+                        <i class="bx bx-cog me-2"></i> Lista de Peças Alteradas
+                    </a>
+                    @if (Model.Estado == EstadoServico.Concluido)
+                    {
+                        <a href="#" onclick="imprimirRelatorio('fatura')" class="list-group-item list-group-item-action">
+                            <i class="bx bx-receipt me-2"></i> Fatura de Serviço
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function imprimirRelatorio(tipo) {
+            // Implementar lógica de impressão baseada no tipo selecionado
+            alert('Funcionalidade de impressão de ' + tipo + ' será implementada em breve.');
+            $('#modalImprimirServico').modal('hide');
+        }
+    </script>
+}
