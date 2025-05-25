@@ -95,7 +95,7 @@
             // Inicializar DataTables com configurações
             var table = $('#tabela').DataTable({
                 "pageLength": 10,
-                "order": [[0, 'desc']], // Ordenar pela primeira coluna (Data) em ordem descendente
+                "order": [[0, 'desc']], // Ordenar pela primeira coluna (ID) em ordem descendente
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registos por página",
                     "paginate": {
@@ -111,32 +111,26 @@
                 }
             });
             
-            // Aplicar filtro por estado quando o dropdown mudar
+            // Aplicar filtro por estado quando o dropdown mudar - CORRIGIDO
             $('#filtroEstado').on('change', function() {
                 var estado = $(this).val();
                 
-                // Método 1: Usando a API de busca do DataTables
+                // Corrigido para o índice 6 (a coluna Estado é a 7ª coluna, índice 6)
                 if (estado) {
-                    table.column(5).search('^' + estado + '$', true, false).draw();
+                    table.column(6).search(estado).draw();
                 } else {
-                    table.column(5).search('').draw();
+                    table.column(6).search('').draw();
                 }
-                
-                // Método 2 (alternativa): Filtragem manual por atributo data
-                // Descomente se preferir este método
-                /*
-                if (estado) {
-                    $('tr[data-estado]').hide();
-                    $('tr[data-estado="' + estado + '"]').show();
-                } else {
-                    $('tr[data-estado]').show();
-                }
-                */
             });
             
-            // Adicionar cores personalizadas para melhor visualização dos estados
+            // Adicionar cores personalizadas para melhor visualização dos estados - CORRIGIDO
             $('tbody tr').each(function() {
-                var estado = $(this).find('td:eq(5)').text().trim();
+                var estado = $(this).attr('data-estado'); // Usando o atributo data-estado
+                
+                // Limpar classes existentes
+                $(this).removeClass('table-secondary table-warning table-success table-info');
+                
+                // Aplicar classe conforme o estado
                 switch(estado) {
                     case 'Pendente':
                         $(this).addClass('table-secondary');
