@@ -47,7 +47,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // POST: Clientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDCliente,Nome,Tipo,NIF,Email,Telefone,Morada,CodigoPostal,Cidade,Estado,DataCriacao,DataModificacao,UltimaEncomenda")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("IDCliente,Nome,Tipo")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // POST: Clientes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDCliente,Nome,Tipo,NIF,Email,Telefone,Morada,CodigoPostal,Cidade,Estado,DataCriacao,DataModificacao,UltimaEncomenda")] Cliente cliente)
+        public async Task<IActionResult> Edit(int id, [Bind("IDCliente,Nome,Tipo")] Cliente cliente)
         {
             if (id != cliente.IDCliente)
             {
@@ -148,16 +148,12 @@ public async Task<IActionResult> BuscarPorNome(string termo)
     try
     {
         var clientes = await _context.Clientes
-            .Where(c => c.Nome.Contains(termo) || 
-                       (c.Email != null && c.Email.Contains(termo)))
+            .Where(c => c.Nome.Contains(termo))
             .Take(10)
             .Select(c => new
             {
                 id = c.IDCliente,
                 nome = c.Nome,
-                email = c.Email,
-                telefone = c.Telefone,
-                cidade = c.Cidade
             })
             .ToListAsync();
 

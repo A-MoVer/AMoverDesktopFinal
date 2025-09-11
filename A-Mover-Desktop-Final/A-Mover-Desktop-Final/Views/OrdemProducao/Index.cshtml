@@ -70,12 +70,42 @@
                                     <i class="fas fa-play-circle"></i> Continuar OP
                                 </a>
                             }
-                            @if (item.Estado.ToString() == "Concluida")
-{
-    <a asp-action="FichaOP" asp-route-id="@item.IDOrdemProducao" class="btn btn-sm btn-info text-white me-1">
-        <i class="fas fa-info-circle"></i> Ver Ficha
-    </a>
-}
+                            @if (item.Estado == EstadoOrdemProducao.Concluida)
+                            {
+                                <div class="d-flex mb-2">
+                                    <form asp-action="AlterarEstado" method="post" class="me-2">
+                                        <input type="hidden" name="id" value="@item.IDOrdemProducao" />
+                                        <input type="hidden" name="novoEstado" value="@EstadoOrdemProducao.Embalada" />
+                                        <button type="submit" class="btn btn-sm btn-primary text-white">
+                                            <i class="bx bx-package me-1"></i> Marcar como Embalada
+                                        </button>
+                                    </form>
+                                    <a asp-action="FichaOP" asp-route-id="@item.IDOrdemProducao" class="btn btn-sm btn-info text-white">
+                                        <i class="fas fa-info-circle"></i> Ver Ficha
+                                    </a>
+                                </div>
+                            }
+                            else if (item.Estado == EstadoOrdemProducao.Embalada)
+                            {
+                                <div class="d-flex mb-2">
+                                    <form asp-action="AlterarEstado" method="post" class="me-2">
+                                        <input type="hidden" name="id" value="@item.IDOrdemProducao" />
+                                        <input type="hidden" name="novoEstado" value="@EstadoOrdemProducao.Enviada" />
+                                        <button type="submit" class="btn btn-sm btn-success text-white">
+                                            <i class="bx bx-send me-1"></i> Marcar como Enviada
+                                        </button>
+                                    </form>
+                                    <a asp-action="FichaOP" asp-route-id="@item.IDOrdemProducao" class="btn btn-sm btn-info text-white">
+                                        <i class="fas fa-info-circle"></i> Ver Ficha
+                                    </a>
+                                </div>
+                            }
+                            else if (item.Estado == EstadoOrdemProducao.Enviada)
+                            {
+                                    <a asp-action="FichaOP" asp-route-id="@item.IDOrdemProducao" class="btn btn-sm btn-info text-white">
+                                        <i class="fas fa-info-circle"></i> Ver Ficha
+                                    </a>
+                            }
                             <a asp-action="Delete" asp-route-id="@item.IDOrdemProducao" class="btn btn-sm btn-danger text-white">
                                 <i class="fas fa-trash-alt"></i> Eliminar
                             </a>

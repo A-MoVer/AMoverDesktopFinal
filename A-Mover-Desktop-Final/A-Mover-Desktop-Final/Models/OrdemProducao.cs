@@ -7,7 +7,9 @@ namespace A_Mover_Desktop_Final.Models
     {
         Pendente,
         EmProducao,
-        Concluida
+        Concluida,
+        Embalada,
+        Enviada
     }
     public class OrdemProducao
     {

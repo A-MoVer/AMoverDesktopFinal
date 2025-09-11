@@ -36,6 +36,17 @@ builder.Services.AddSession(options =>
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
+// Configurar CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Seed roles
@@ -70,8 +81,13 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 
+// Usar CORS
+app.UseCors("AllowAll");
+
 app.UseAuthentication(); // Ensure authentication is used
 app.UseAuthorization();
+
+
 
 app.MapControllerRoute(
     name: "default",

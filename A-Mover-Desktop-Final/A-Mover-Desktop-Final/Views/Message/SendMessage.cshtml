@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Enviar Mensagem";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Enviar Mensagem para a API</h2>
+
+    <form id="messageForm">
+        <div class="mb-3">
+            <label for="vin" class="form-label">VIN</label>
+            <input type="text" id="vin" name="vin" class="form-control" placeholder="Insira o VIN do veículo" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="message" class="form-label">Mensagem</label>
+            <textarea id="message" name="message" class="form-control" rows="4" placeholder="Insira a mensagem" required></textarea>
+        </div>
+
+        <button type="button" id="sendMessageButton" class="btn btn-primary">Enviar Mensagem</button>
+    </form>
+
+    <div id="responseContainer" class="mt-4" style="display: none;">
+        <h4>Resposta da API:</h4>
+        <pre id="responseContent" class="bg-light p-3 border rounded"></pre>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("sendMessageButton").addEventListener("click", async function () {
+    const vin = document.getElementById("vin").value;
+    const message = document.getElementById("message").value;
+    const sender = "DefaultSender"; // Substitua por um valor apropriado ou adicione um campo no formulário
+
+    const responseContainer = document.getElementById("responseContainer");
+    const responseContent = document.getElementById("responseContent");
+
+    try {
+        const response = await fetch(`https://localhost:7221/api/message/${vin}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": "@ViewBag.ApiKey"
+            },
+            body: JSON.stringify({ sender, message }) // Inclua o campo Sender
+        });
+
+        const responseData = await response.json();
+
+        responseContainer.style.display = "block";
+        responseContent.textContent = JSON.stringify(responseData, null, 2);
+    } catch (error) {
+        responseContainer.style.display = "block";
+        responseContent.textContent = `Erro ao enviar a mensagem: ${error.message}`;
+    }
+});
+    </script>
+}
