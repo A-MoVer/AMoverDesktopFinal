@@ -4,371 +4,498 @@
 }
 
 <div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Cabeçalho de Boas-vindas -->
     <div class="row">
         <div class="col-lg-12 mb-4 order-0">
-            <div class="card">
+            <div class="card bg-primary text-white">
                 <div class="d-flex align-items-end row">
                     <div class="col-sm-7">
                         <div class="card-body">
-                            <h5 class="card-title text-primary">Bem-vindo @User.Identity?.Name! 🎉</h5>
-                            <p class="mb-4">
-                                Você tem <span class="fw-bold">@ViewBag.EncomendasPendentes</span> encomendas pendentes e
-                                <span class="fw-bold">@ViewBag.OrdensEmProducao</span> ordens em produção.
+                            <h5 class="card-title text-white mb-2">Bem-vindo @User.Identity?.Name! 🎉</h5>
+                            <p class="mb-3 text-white-50">
+                                Você tem <span class="fw-bold text-white">@ViewBag.EncomendasPendentes</span> encomendas pendentes e
+                                <span class="fw-bold text-white">@ViewBag.OrdensEmProducao</span> ordens em produção.
                             </p>
-
-                            <a href="javascript:;" class="btn btn-sm btn-outline-primary">Ver relatório completo</a>
+                            @if (ViewBag.Alertas != null && ((List<string>)ViewBag.Alertas).Count > 0)
+                            {
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>Atenção!</strong> @((List<string>)ViewBag.Alertas)[0]
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            }
+                            <a href="@Url.Action("Index", "OrdemProducao")" class="btn btn-outline-light btn-sm">Ver todas as ordens</a>
                         </div>
                     </div>
-                    <div class="col-sm-5 text-center text-sm-left">
+                    <div class="col-sm-5 text-center">
                         <div class="card-body pb-0 px-0 px-md-4">
-                            <img src="~/assets/img/illustrations/man-with-laptop-light.png" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png" />
+                            <img src="~/assets/img/illustrations/man-with-laptop-light.png" height="140" alt="Dashboard" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
- @if (User.IsInRole("Fabricante"))
-{   
-    <!-- Cards de Estatísticas -->
-    <div class="row">
-        <!-- Produção -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div class="card-info">
-                            <p class="card-text">Motas Produzidas</p>
-                            <div class="d-flex align-items-end mb-2">
-                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalMotas</h4>
-                                <small class="text-success">+12%</small>
+
+    @if (User.IsInRole("Fabricante") || User.IsInRole("Oficina"))
+    {   
+        <!-- Cards de Estatísticas Principais -->
+        <div class="row mb-4">
+            <!-- Produção -->
+            <div class="col-md-6 col-xl-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="card-info">
+                                <p class="card-text text-muted mb-1">Motas Produzidas</p>
+                                <div class="d-flex align-items-center mb-2">
+                                    <h4 class="card-title mb-0 me-2">@ViewBag.TotalMotas</h4>
+                                    @{
+                                        var crescimento = (double)ViewBag.CrescimentoMotas;
+                                        var corCrescimento = crescimento >= 0 ? "success" : "danger";
+                                        var iconeCrescimento = crescimento >= 0 ? "bx-trending-up" : "bx-trending-down";
+                                    }
+                                    <small class="text-@corCrescimento d-flex align-items-center">
+                                        <i class="bx @iconeCrescimento me-1"></i>
+                                        @Math.Abs(crescimento)%
+                                    </small>
+                                </div>
+                                <small class="text-muted">@ViewBag.MotasEsteMes este mês</small>
                             </div>
-                            <small>Total acumulado</small>
-                        </div>
-                        <div class="card-icon">
-                            <span class="badge bg-label-primary rounded p-2">
-                                <i class="bx bx-cycling bx-sm"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Encomendas -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div class="card-info">
-                            <p class="card-text">Encomendas</p>
-                            <div class="d-flex align-items-end mb-2">
-                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalEncomendas</h4>
-                                <small class="text-success">+5%</small>
+                            <div class="card-icon">
+                                <span class="badge bg-label-primary rounded-pill p-2">
+                                    <i class="bx bx-cycling bx-sm"></i>
+                                </span>
                             </div>
-                            <small>@ViewBag.EncomendasPendentes pendentes</small>
-                        </div>
-                        <div class="card-icon">
-                            <span class="badge bg-label-success rounded p-2">
-                                <i class="bx bxs-package bx-sm"></i>
-                            </span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Ordens de Produção -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div class="card-info">
-                            <p class="card-text">Ordens de Produção</p>
-                            <div class="d-flex align-items-end mb-2">
-                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalOrdens</h4>
-                                <small class="text-danger">-3%</small>
+            <!-- Encomendas -->
+            <div class="col-md-6 col-xl-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="card-info">
+                                <p class="card-text text-muted mb-1">Encomendas</p>
+                                <div class="d-flex align-items-center mb-2">
+                                    <h4 class="card-title mb-0 me-2">@ViewBag.TotalEncomendas</h4>
+                                    <small class="text-info d-flex align-items-center">
+                                        <i class="bx bx-package me-1"></i>
+                                        @ViewBag.EncomendasEsteMes
+                                    </small>
+                                </div>
+                                <small class="text-muted">@ViewBag.EncomendasPendentes pendentes</small>
                             </div>
-                            <small>@ViewBag.OrdensEmProducao em produção</small>
-                        </div>
-                        <div class="card-icon">
-                            <span class="badge bg-label-warning rounded p-2">
-                                <i class="bx bx-task bx-sm"></i>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Serviços -->
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div class="card-info">
-                            <p class="card-text">Serviços</p>
-                            <div class="d-flex align-items-end mb-2">
-                                <h4 class="card-title mb-0 me-2">@ViewBag.TotalServicos</h4>
-                                <small class="text-success">+8%</small>
+                            <div class="card-icon">
+                                <span class="badge bg-label-success rounded-pill p-2">
+                                    <i class="bx bx-package bx-sm"></i>
+                                </span>
                             </div>
-                            <small>@ViewBag.ServicosAgendados agendados</small>
                         </div>
-                        <div class="card-icon">
-                            <span class="badge bg-label-info rounded p-2">
-                                <i class="bx bx-wrench bx-sm"></i>
-                            </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ordens de Produção -->
+            <div class="col-md-6 col-xl-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="card-info">
+                                <p class="card-text text-muted mb-1">Ordens de Produção</p>
+                                <div class="d-flex align-items-center mb-2">
+                                    <h4 class="card-title mb-0 me-2">@ViewBag.TotalOrdens</h4>
+                                    <small class="text-warning d-flex align-items-center">
+                                        <i class="bx bx-time me-1"></i>
+                                        @ViewBag.OrdensEmProducao
+                                    </small>
+                                </div>
+                                <small class="text-muted">@ViewBag.OrdensEmProducao em produção</small>
+                            </div>
+                            <div class="card-icon">
+                                <span class="badge bg-label-warning rounded-pill p-2">
+                                    <i class="bx bx-task bx-sm"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Serviços -->
+            <div class="col-md-6 col-xl-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="card-info">
+                                <p class="card-text text-muted mb-1">Serviços</p>
+                                <div class="d-flex align-items-center mb-2">
+                                    <h4 class="card-title mb-0 me-2">@ViewBag.TotalServicos</h4>
+                                    <small class="text-info d-flex align-items-center">
+                                        <i class="bx bx-calendar me-1"></i>
+                                        @ViewBag.ServicosEsteMes
+                                    </small>
+                                </div>
+                                <small class="text-muted">@ViewBag.ServicosAgendados agendados</small>
+                            </div>
+                            <div class="card-icon">
+                                <span class="badge bg-label-info rounded-pill p-2">
+                                    <i class="bx bx-wrench bx-sm"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Gráficos Principais -->
-    <div class="row">
-        <!-- Gráfico de Produção Mensal -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <h5 class="card-title m-0">Produção Mensal</h5>
-                    <div class="dropdown">
-                        <button class="btn p-0" type="button" id="producaoMensalMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="producaoMensalMenu">
-                            <a class="dropdown-item" href="javascript:void(0);">Últimos 6 meses</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Último ano</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Ver relatório</a>
+        <!-- Gráficos Principais -->
+        <div class="row mb-4">
+            <!-- Gráfico de Produção vs Encomendas -->
+            <div class="col-lg-8 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0">Produção vs Encomendas (Últimos 12 meses)</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bx bx-calendar me-1"></i> Período
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="javascript:void(0);">Últimos 6 meses</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0);">Último ano</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0);">Ver relatório</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="producaoEncomendasChart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estados das Encomendas -->
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title m-0">Estado das Encomendas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="encomendasStatusChart"></div>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted">Taxa de Conclusão</span>
+                                <span class="fw-bold">@(ViewBag.TotalEncomendas > 0 ? Math.Round((double)ViewBag.EncomendasConcluidas / ViewBag.TotalEncomendas * 100, 1) : 0)%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" style="width: @(ViewBag.TotalEncomendas > 0 ? (double)ViewBag.EncomendasConcluidas / ViewBag.TotalEncomendas * 100 : 0)%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div id="producaoMensalChart"></div>
-                </div>
             </div>
         </div>
-
-        <!-- Top Modelos -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <h5 class="card-title m-0">Top Modelos Produzidos</h5>
-                    <div class="dropdown">
-                        <button class="btn p-0" type="button" id="topModelosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="bx bx-dots-vertical-rounded"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topModelosMenu">
-                            <a class="dropdown-item" href="javascript:void(0);">Ver detalhes</a>
-                        </div>
+        <!-- Atividades Recentes -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h5 class="card-title m-0">Atividades Recentes</h5>
+                        <small class="text-muted">Últimas atualizações do sistema</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (ViewBag.AtividadesRecentes != null)
+                                {
+                                    @foreach (dynamic atividade in ViewBag.AtividadesRecentes)
+                                    {
+                                        <tr>
+                                            <td><strong>#@atividade.Id</strong></td>
+                                            <td>
+                                                <span class="badge bg-label-secondary">@atividade.Tipo</span>
+                                            </td>
+                                            <td>@atividade.Descricao</td>
+                                            <td>
+                                                <span class="badge bg-label-@atividade.Cor">@atividade.Estado</span>
+                                            </td>
+                                            <td>@DateTime.Parse(atividade.Data.ToString()).ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="javascript:void(0);">
+                                                            <i class="bx bx-show me-1"></i> Ver detalhes
+                                                        </a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">
+                                                            <i class="bx bx-edit me-1"></i> Editar
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Nenhuma atividade recente encontrada</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div id="topModelosChart"></div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5>Acesso Restrito</h5>
+                        <p class="text-muted">Você não tem permissão para visualizar o dashboard completo.</p>
+                        <a href="@Url.Action("Login", "Authentication")" class="btn btn-primary">Fazer Login</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <!-- Distribuição por Status -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <h5 class="card-title m-0">OPs por Status</h5>
-                </div>
-                <div class="card-body px-0">
-                    <div id="opsPorStatusChart" class="px-3"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Serviços por Tipo -->
-        <div class="col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <h5 class="card-title m-0">Serviços por Tipo</h5>
-                </div>
-                <div class="card-body">
-                    <div id="servicosPorTipoChart"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tabela de Atividades Recentes -->
-    <div class="row">
-        <div class="col-md-12 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Atividades Recentes</h5>
-                </div>
-                <div class="table-responsive text-nowrap">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tipo</th>
-                                <th>Descrição</th>
-                                <th>Status</th>
-                                <th>Data</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-border-bottom-0">
-                            <tr>
-                                <td><strong>#OP1287</strong></td>
-                                <td>Ordem de Produção</td>
-                                <td>Produção de FZ-600</td>
-                                <td><span class="badge bg-label-warning">Em Produção</span></td>
-                                <td>12/05/2025</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Ver</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#S254</strong></td>
-                                <td>Serviço</td>
-                                <td>Manutenção Geral</td>
-                                <td><span class="badge bg-label-success">Concluído</span></td>
-                                <td>10/05/2025</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Ver</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#E89</strong></td>
-                                <td>Encomenda</td>
-                                <td>Cliente: Motohouse</td>
-                                <td><span class="badge bg-label-info">Pendente</span></td>
-                                <td>09/05/2025</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Ver</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
     }
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Configuração e cores
-            const primaryColor = '#696cff';
-            const secondaryColor = '#8592a3';
-            const successColor = '#71dd37';
-            const infoColor = '#03c3ec';
-            const warningColor = '#ffab00';
-            const dangerColor = '#ff3e1d';
-            
-            // Gráfico de Produção Mensal
-            const producaoMensalOptions = {
+            // Configuração e cores do tema
+            const config = {
+                colors: {
+                    primary: '#696cff',
+                    secondary: '#8592a3',
+                    success: '#71dd37',
+                    info: '#03c3ec',
+                    warning: '#ffab00',
+                    danger: '#ff3e1d',
+                    light: '#fcfdfd',
+                    dark: '#233446'
+                },
+                fontFamily: '"Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif'
+            };
+
+            // Configurações globais do ApexCharts
+            window.Apex = {
                 chart: {
-                    height: 350,
-                    type: 'area',
+                    fontFamily: config.fontFamily,
                     toolbar: {
                         show: false
+                    }
+                },
+                colors: [config.colors.primary, config.colors.success, config.colors.warning, config.colors.info, config.colors.danger]
+            };
+            
+            // 1. Gráfico Combinado: Produção vs Encomendas
+            const producaoEncomendasOptions = {
+                chart: {
+                    height: 350,
+                    type: 'line',
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                series: [
+                    {
+                        name: 'Produção',
+                        type: 'column',
+                        data: @Html.Raw(Json.Serialize(ViewBag.ValoresProducao ?? new List<int>()))
+                    },
+                    {
+                        name: 'Encomendas',
+                        type: 'line',
+                        data: @Html.Raw(Json.Serialize(ViewBag.ValoresEncomendas ?? new List<int>()))
+                    }
+                ],
+                stroke: {
+                    width: [0, 3],
+                    curve: 'smooth'
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '50%'
+                    }
+                },
+                fill: {
+                    opacity: [0.85, 1]
+                },
+                labels: @Html.Raw(Json.Serialize(ViewBag.MesesProducao ?? new List<string>())),
+                markers: {
+                    size: 0
+                },
+                xaxis: {
+                    type: 'category'
+                },
+                yaxis: [
+                    {
+                        title: {
+                            text: 'Unidades Produzidas'
+                        }
+                    },
+                    {
+                        opposite: true,
+                        title: {
+                            text: 'Encomendas'
+                        }
+                    }
+                ],
+                tooltip: {
+                    shared: true,
+                    intersect: false,
+                    y: {
+                        formatter: function (y) {
+                            if (typeof y !== "undefined") {
+                                return y.toFixed(0) + " unidades";
+                            }
+                            return y;
+                        }
+                    }
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'left'
+                }
+            };
+            
+            const producaoEncomendasChart = new ApexCharts(
+                document.querySelector("#producaoEncomendasChart"),
+                producaoEncomendasOptions
+            );
+            producaoEncomendasChart.render();
+
+            // 2. Gráfico de Estados das Encomendas
+            const encomendasStatusOptions = {
+                chart: {
+                    height: 300,
+                    type: 'donut'
+                },
+                labels: ['Pendentes', 'Em Produção', 'Concluídas'],
+                series: @Html.Raw(Json.Serialize(ViewBag.EncomendasPorEstado ?? new int[] {0, 0, 0})),
+                colors: [config.colors.info, config.colors.warning, config.colors.success],
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '70%',
+                            labels: {
+                                show: true,
+                                name: {
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    color: config.colors.dark
+                                },
+                                value: {
+                                    fontSize: '16px',
+                                    fontWeight: 600,
+                                    color: config.colors.dark,
+                                    formatter: function (val) {
+                                        return parseInt(val)
+                                    }
+                                },
+                                total: {
+                                    show: true,
+                                    showAlways: false,
+                                    label: 'Total',
+                                    fontSize: '14px',
+                                    fontWeight: 600,
+                                    color: config.colors.dark,
+                                    formatter: function (w) {
+                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    show: true,
+                    position: 'bottom',
+                    markers: {
+                        width: 8,
+                        height: 8
                     }
                 },
                 dataLabels: {
                     enabled: false
                 },
-                stroke: {
-                    curve: 'smooth',
-                    width: 3
-                },
-                series: [{
-                    name: 'Produção',
-                    data: @Html.Raw(Json.Serialize(ViewBag.ValoresProducao))
-                }],
-                xaxis: {
-                    categories: @Html.Raw(Json.Serialize(ViewBag.MesesProducao)),
-                    labels: {
-                        style: {
-                            fontSize: '12px'
+                responsive: [{
+                    breakpoint: 992,
+                    options: {
+                        chart: {
+                            height: 380
                         }
                     }
-                },
-                tooltip: {
-                    x: {
-                        format: 'MM/yyyy'
-                    }
-                },
-                colors: [primaryColor],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.3,
-                        stops: [0, 90, 100]
-                    }
-                }
+                }]
             };
             
-            const producaoMensalChart = new ApexCharts(
-                document.querySelector("#producaoMensalChart"),
-                producaoMensalOptions
+            const encomendasStatusChart = new ApexCharts(
+                document.querySelector("#encomendasStatusChart"),
+                encomendasStatusOptions
             );
-            producaoMensalChart.render();
+            encomendasStatusChart.render();
             
-            // Gráfico de Top Modelos
+            // 3. Top Modelos - Gráfico de Barras Horizontais
             const topModelosOptions = {
                 chart: {
                     height: 350,
-                    type: 'bar',
-                    toolbar: {
-                        show: false
-                    }
+                    type: 'bar'
                 },
                 plotOptions: {
                     bar: {
                         borderRadius: 4,
                         horizontal: true,
+                        dataLabels: {
+                            position: 'top'
+                        }
                     }
                 },
                 dataLabels: {
-                    enabled: false
+                    enabled: true,
+                    offsetX: -6,
+                    style: {
+                        fontSize: '12px',
+                        colors: ['#fff']
+                    }
                 },
                 series: [{
-                    name: 'Unidades',
-                    data: @Html.Raw(Json.Serialize(ViewBag.TopModelosValores))
+                    name: 'Unidades Produzidas',
+                    data: @Html.Raw(Json.Serialize(ViewBag.TopModelosValores ?? new List<int>()))
                 }],
                 xaxis: {
-                    categories: @Html.Raw(Json.Serialize(ViewBag.TopModelosNomes)),
+                    categories: @Html.Raw(Json.Serialize(ViewBag.TopModelosNomes ?? new List<string>())),
                     labels: {
                         style: {
                             fontSize: '12px'
                         }
                     }
                 },
-                colors: [successColor]
+                colors: [config.colors.success],
+                grid: {
+                    borderColor: '#e7e7e7',
+                    row: {
+                        colors: ['#f3f3f3', 'transparent'],
+                        opacity: 0.5
+                    }
+                }
             };
             
             const topModelosChart = new ApexCharts(
@@ -377,70 +504,52 @@
             );
             topModelosChart.render();
             
-            // Gráfico de OPs por Status
-            const opsPorStatusOptions = {
-                chart: {
-                    height: 350,
-                    type: 'donut',
-                },
-                labels: ['Pendentes', 'Em Produção', 'Concluídas'],
-                series: [@ViewBag.OrdensPendentes, @ViewBag.OrdensEmProducao, @ViewBag.OrdensConcluidas],
-                colors: [infoColor, warningColor, successColor],
-                legend: {
-                    show: true,
-                    position: 'bottom'
-                },
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: '75%',
-                            labels: {
-                                show: true,
-                                name: {
-                                    fontSize: '14px',
-                                    fontWeight: 500
-                                },
-                                value: {
-                                    fontSize: '16px',
-                                    fontWeight: 600
-                                },
-                                total: {
-                                    show: true,
-                                    label: 'Total',
-                                    formatter: function (w) {
-                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-            
-            const opsPorStatusChart = new ApexCharts(
-                document.querySelector("#opsPorStatusChart"),
-                opsPorStatusOptions
-            );
-            opsPorStatusChart.render();
-            
-            // Gráfico de Serviços por Tipo
+            // 4. Serviços por Tipo - Gráfico Polar
             const servicosPorTipoOptions = {
                 chart: {
                     height: 350,
                     type: 'polarArea'
                 },
-                labels: @Html.Raw(Json.Serialize(ViewBag.TiposServico)),
-                series: @Html.Raw(Json.Serialize(ViewBag.ValoresServico)),
-                colors: [primaryColor, dangerColor],
+                labels: @Html.Raw(Json.Serialize(ViewBag.TiposServico ?? new List<string>())),
+                series: @Html.Raw(Json.Serialize(ViewBag.ValoresServico ?? new List<int>())),
+                colors: [config.colors.primary, config.colors.info, config.colors.warning, config.colors.danger],
                 stroke: {
-                    width: 2
+                    width: 2,
+                    colors: ['#fff']
                 },
                 fill: {
-                    opacity: 0.7
+                    opacity: 0.8
                 },
                 legend: {
-                    position: 'bottom'
-                }
+                    position: 'bottom',
+                    markers: {
+                        width: 8,
+                        height: 8
+                    }
+                },
+                plotOptions: {
+                    polarArea: {
+                        rings: {
+                            strokeWidth: 1,
+                            strokeColor: '#e7e7e7'
+                        },
+                        spokes: {
+                            strokeWidth: 1,
+                            connectorColors: '#e7e7e7'
+                        }
+                    }
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            height: 300
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }]
             };
             
             const servicosPorTipoChart = new ApexCharts(
@@ -448,6 +557,19 @@
                 servicosPorTipoOptions
             );
             servicosPorTipoChart.render();
+
+            // Adicionar efeitos de hover nos cards
+            $('.card').hover(function() {
+                $(this).addClass('shadow-lg').css('transform', 'translateY(-2px)');
+            }, function() {
+                $(this).removeClass('shadow-lg').css('transform', 'translateY(0)');
+            });
+
+            // Atualizar dados a cada 5 minutos (opcional)
+            setInterval(function() {
+                // Aqui você pode adicionar código para atualizar os dados via AJAX
+                console.log('Verificando atualizações...');
+            }, 300000); // 5 minutos
         });
     </script>
 }

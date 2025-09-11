@@ -34,88 +34,10 @@
                     </div>
                 </div>
                 
-                <div class="row mb-3">
-                    <label asp-for="NIF" class="col-sm-2 col-form-label">NIF <span class="text-danger">*</span></label>
-                    <div class="col-sm-10">
-                        <input asp-for="NIF" class="form-control" />
-                        <span asp-validation-for="NIF" class="text-danger"></span>
-                    </div>
-                </div>
-                
-                <!-- Contactos -->
-                <h5 class="mb-3 mt-4 text-primary"><i class="bx bx-envelope me-1"></i>Contactos</h5>
-                <div class="row mb-3">
-                    <label asp-for="Email" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-10">
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label asp-for="Telefone" class="col-sm-2 col-form-label">Telefone</label>
-                    <div class="col-sm-10">
-                        <input asp-for="Telefone" class="form-control" />
-                        <span asp-validation-for="Telefone" class="text-danger"></span>
-                    </div>
-                </div>
-                
-                <!-- Morada -->
-                <h5 class="mb-3 mt-4 text-primary"><i class="bx bx-map me-1"></i>Morada</h5>
-                <div class="row mb-3">
-                    <label asp-for="Morada" class="col-sm-2 col-form-label">Morada</label>
-                    <div class="col-sm-10">
-                        <input asp-for="Morada" class="form-control" />
-                        <span asp-validation-for="Morada" class="text-danger"></span>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label asp-for="CodigoPostal" class="col-sm-2 col-form-label">Código Postal</label>
-                    <div class="col-sm-10">
-                        <input asp-for="CodigoPostal" class="form-control" />
-                        <span asp-validation-for="CodigoPostal" class="text-danger"></span>
-                    </div>
-                </div>
-                
-                <!-- Informações de Sistema -->
-                <h5 class="mb-3 mt-4 text-primary"><i class="bx bx-cog me-1"></i>Estado e Informações</h5>
-                <div class="row mb-3">
-                    <label asp-for="Estado" class="col-sm-2 col-form-label">Estado</label>
-                    <div class="col-sm-10">
-                        <select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<EstadoCliente>()">
-                        </select>
-                        <span asp-validation-for="Estado" class="text-danger"></span>
-                    </div>
-                </div>
-                
-                <!-- Campos automáticos (somente leitura) -->
-                <div class="row mb-3">
-                    <label asp-for="DataCriacao" class="col-sm-2 col-form-label">Data de Criação</label>
-                    <div class="col-sm-10">
-                        <input asp-for="DataCriacao" class="form-control" readonly />
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label asp-for="DataModificacao" class="col-sm-2 col-form-label">Última Atualização</label>
-                    <div class="col-sm-10">
-                        <input type="hidden" asp-for="DataModificacao" value="@DateTime.Now" />
-                        <input class="form-control" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" readonly />
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <label asp-for="UltimaEncomenda" class="col-sm-2 col-form-label">Última Encomenda</label>
-                    <div class="col-sm-10">
-                        <input asp-for="UltimaEncomenda" class="form-control" readonly />
-                    </div>
-                </div>
-                
                 <div class="row justify-content-end">
                     <div class="col-sm-10">
                         <button type="submit" class="btn btn-primary me-2">
-                            <i class="bx bx-save me-1"></i> Salvar Alterações
+                            <i class="bx bx-save me-1"></i> Guardar Alterações
                         </button>
                         <a asp-action="Index" class="btn btn-secondary">
                             <i class="bx bx-arrow-back me-1"></i> Voltar à Lista

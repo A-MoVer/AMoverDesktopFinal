@@ -1,0 +1,1 @@
+    "DefaultConnection": "Server=172.20.0.16,1433;Database=LCMDatabase;User Id=sa;Password=Fulgora3000;TrustServerCertificate=True;"

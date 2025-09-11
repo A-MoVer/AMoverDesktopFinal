@@ -59,13 +59,30 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
-            var mota = await _context.Motas.FindAsync(id);
+            var mota = await _context.Motas
+                .Include(m => m.ModeloMota)
+                .Include(m => m.MotasPecasSN)
+                    .ThenInclude(p => p.Pecas)
+                .FirstOrDefaultAsync(m => m.IDMota == id);
+                
             if (mota == null)
             {
                 return NotFound();
             }
-            ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "CodigoProduto", mota.IDModelo);
-            ViewData["IDOrdemProducao"] = new SelectList(_context.OrdemProducao, "IDOrdemProducao", "NumeroOrdem", mota.IDOrdemProducao);
+            
+            ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome", mota.IDModelo);
+            ViewData["IDOrdemProducao"] = new SelectList(_context.OrdemProducao, "IDOrdemProducao", "IDOrdemProducao", mota.IDOrdemProducao);
+            
+            // Preparar lista de peças disponíveis para adicionar
+            //ViewBag.PecasDisponiveis = await _context.Pecas
+             //   .Where(p => p.ControlarSN)
+             //   .Select(p => new { 
+              //      Value = p.IDPeca, 
+                //PartNumber = p.PartNumber, 
+                 //   Descricao = p.Descricao 
+               // })
+              //  .ToListAsync();
+            
             return View(mota);
         }
 
@@ -74,7 +91,15 @@ namespace A_Mover_Desktop_Final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDMota,IDModelo,IDOrdemProducao,NumeroIdentificacao,DataRegisto,Cor,Quilometragem,Estado")] Mota mota)
+        public async Task<IActionResult> Edit(
+            int id, 
+            Mota mota, 
+            List<int> PecasID, 
+            List<int> PecasIDPeca, 
+            List<string> PecasNumeroSerie,
+            List<int> NovasPecasIDPeca, 
+            List<string> NovasPecasNumeroSerie,
+            List<int> PecasRemovidas)
         {
             if (id != mota.IDMota)
             {
@@ -85,8 +110,61 @@ namespace A_Mover_Desktop_Final.Controllers
             {
                 try
                 {
+                    // Atualizar dados da mota
                     _context.Update(mota);
+                    
+                    // Processar peças existentes (atualizar número de série)
+                    if (PecasID != null)
+                    {
+                        for (int i = 0; i < PecasID.Count; i++)
+                        {
+                            var pecaId = PecasID[i];
+                            var numeroSerie = PecasNumeroSerie[i];
+                            
+                            var pecaExistente = await _context.MotasPecasSN.FindAsync(pecaId);
+                            if (pecaExistente != null)
+                            {
+                                pecaExistente.NumeroSerie = numeroSerie;
+                                _context.Update(pecaExistente);
+                            }
+                        }
+                    }
+                    
+                    // Adicionar novas peças
+                    if (NovasPecasIDPeca != null)
+                    {
+                        for (int i = 0; i < NovasPecasIDPeca.Count; i++)
+                        {
+                            var idPeca = NovasPecasIDPeca[i];
+                            var numeroSerie = NovasPecasNumeroSerie[i];
+                            
+                            var novaPeca = new MotasPecasSN
+                            {
+                                IDMota = mota.IDMota,
+                                IDPeca = idPeca,
+                                NumeroSerie = numeroSerie
+                            };
+                            
+                            _context.MotasPecasSN.Add(novaPeca);
+                        }
+                    }
+                    
+                    // Remover peças
+                    if (PecasRemovidas != null)
+                    {
+                        foreach (var pecaId in PecasRemovidas)
+                        {
+                            var pecaRemover = await _context.MotasPecasSN.FindAsync(pecaId);
+                            if (pecaRemover != null)
+                            {
+                                _context.MotasPecasSN.Remove(pecaRemover);
+                            }
+                        }
+                    }
+                    
                     await _context.SaveChangesAsync();
+                    
+                    TempData["Sucesso"] = "Mota atualizada com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -101,8 +179,10 @@ namespace A_Mover_Desktop_Final.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "CodigoProduto", mota.IDModelo);
-            ViewData["IDOrdemProducao"] = new SelectList(_context.OrdemProducao, "IDOrdemProducao", "NumeroOrdem", mota.IDOrdemProducao);
+            
+            ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome", mota.IDModelo);
+            ViewData["IDOrdemProducao"] = new SelectList(_context.OrdemProducao, "IDOrdemProducao", "IDOrdemProducao", mota.IDOrdemProducao);
+            
             return View(mota);
         }
 

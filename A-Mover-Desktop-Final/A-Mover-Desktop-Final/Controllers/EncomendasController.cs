@@ -114,7 +114,7 @@ namespace A_Mover_Desktop_Final.Controllers
             {
                 return NotFound();
             }
-            ViewData["IDCliente"] = new SelectList(_context.Clientes, "IDCliente", "Cidade", encomenda.IDCliente);
+            ViewData["IDCliente"] = new SelectList(_context.Clientes, "IDCliente", "Nome", encomenda.IDCliente);
             ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "CodigoProduto", encomenda.IDModelo);
             return View(encomenda);
         }
@@ -149,7 +149,7 @@ namespace A_Mover_Desktop_Final.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IDCliente"] = new SelectList(_context.Clientes, "IDCliente", "Cidade", encomenda.IDCliente);
+            ViewData["IDCliente"] = new SelectList(_context.Clientes, "IDCliente", "Nome", encomenda.IDCliente);
             ViewData["IDModelo"] = new SelectList(_context.ModelosMota, "IDModelo", "CodigoProduto", encomenda.IDModelo);
             return View(encomenda);
         }
@@ -202,16 +202,12 @@ namespace A_Mover_Desktop_Final.Controllers
                 return Json(new List<object>());
 
             var clientes = await _context.Clientes
-                .Where(c => c.Nome.Contains(termo) || 
-                           (c.Email != null && c.Email.Contains(termo)))
+                .Where(c => c.Nome.Contains(termo))
                 .Take(10)
                 .Select(c => new
                 {
                     id = c.IDCliente,
                     nome = c.Nome,
-                    email = c.Email,
-                    telefone = c.Telefone,
-                    cidade = c.Cidade
                 })
                 .ToListAsync();
 

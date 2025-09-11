@@ -1,64 +1,283 @@
 ﻿@model A_Mover_Desktop_Final.Models.Mota
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Mota";
+    ViewData["ActiveMenu"] = "Motas";
 }
 
-<h1>Edit</h1>
+<div class="card m-5">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0"><i class="bx bx-cycling me-2"></i>Editar Mota #@Model.NumeroIdentificacao</h4>
+        <div>
+            <span class="badge bg-label-primary">@Model.ModeloMota?.Nome</span>
+        </div>
+    </div>
 
-<h4>Mota</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IDMota" />
-            <div class="form-group">
-                <label asp-for="IDModelo" class="control-label"></label>
-                <select asp-for="IDModelo" class="form-control" asp-items="ViewBag.IDModelo"></select>
-                <span asp-validation-for="IDModelo" class="text-danger"></span>
+
+            <div class="row">
+                <!-- Coluna da esquerda - Dados básicos da mota -->
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <div class="card shadow-none bg-light border">
+                        <div class="card-header">
+                            <h5 class="mb-0">Informações Gerais</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="IDModelo" class="form-label">Modelo</label>
+                                <select asp-for="IDModelo" class="form-select" asp-items="ViewBag.IDModelo" disabled></select>
+                                <input type="hidden" asp-for="IDModelo" />
+                                <span asp-validation-for="IDModelo" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="NumeroIdentificacao" class="form-label">Número de Identificação</label>
+                                <input asp-for="NumeroIdentificacao" class="form-control" />
+                                <span asp-validation-for="NumeroIdentificacao" class="text-danger"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="DataRegisto" class="form-label">Data de Registo</label>
+                                    <input asp-for="DataRegisto" class="form-control" type="date" />
+                                    <span asp-validation-for="DataRegisto" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Quilometragem" class="form-label">Quilometragem</label>
+                                    <div class="input-group">
+                                        <input asp-for="Quilometragem" class="form-control" type="number" min="0" />
+                                        <span class="input-group-text">km</span>
+                                    </div>
+                                    <span asp-validation-for="Quilometragem" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Cor" class="form-label">Cor</label>
+                                <input asp-for="Cor" class="form-control" />
+                                <span asp-validation-for="Cor" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Estado" class="form-label">Estado</label>
+                                <select asp-for="Estado" class="form-select" asp-items="Html.GetEnumSelectList<EstadoMota>()"></select>
+                                <span asp-validation-for="Estado" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna da direita - Informações da ordem de produção e outros dados -->
+                <div class="col-md-6">
+                    <div class="card shadow-none bg-light border mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Produção</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="IDOrdemProducao" class="form-label">Ordem de Produção</label>
+                                <select asp-for="IDOrdemProducao" class="form-select" asp-items="ViewBag.IDOrdemProducao" disabled></select>
+                                <input type="hidden" asp-for="IDOrdemProducao" />
+                                <span asp-validation-for="IDOrdemProducao" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="IDOrdemProducao" class="control-label"></label>
-                <select asp-for="IDOrdemProducao" class="form-control" asp-items="ViewBag.IDOrdemProducao"></select>
-                <span asp-validation-for="IDOrdemProducao" class="text-danger"></span>
+
+            <!-- Peças com número de série -->
+            <div class="card shadow-none bg-light border mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Peças com Número de Série</h5>
+                    <button type="button" class="btn btn-sm btn-primary" id="btnAdicionarPeca">
+                        <i class="bx bx-plus"></i> Adicionar Peça
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="tabelaPecas">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Part Number</th>
+                                    <th>Descrição</th>
+                                    <th>Número de Série</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.MotasPecasSN != null && Model.MotasPecasSN.Any())
+                                {
+                                    @foreach (var peca in Model.MotasPecasSN)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @peca.Pecas?.PartNumber
+                                                <input type="hidden" name="PecasID" value="@peca.IDMotasPecasSN" />
+                                                <input type="hidden" name="PecasIDPeca" value="@peca.IDPeca" />
+                                            </td>
+                                            <td>@peca.Pecas?.Descricao</td>
+                                            <td>
+                                                <input type="text" class="form-control" name="PecasNumeroSerie" 
+                                                       value="@peca.NumeroSerie" />
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger btn-remover-peca">
+                                                    <i class="bx bx-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            Nenhuma peça com número de série registrada para esta mota.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="NumeroIdentificacao" class="control-label"></label>
-                <input asp-for="NumeroIdentificacao" class="form-control" />
-                <span asp-validation-for="NumeroIdentificacao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataRegisto" class="control-label"></label>
-                <input asp-for="DataRegisto" class="form-control" />
-                <span asp-validation-for="DataRegisto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cor" class="control-label"></label>
-                <input asp-for="Cor" class="form-control" />
-                <span asp-validation-for="Cor" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quilometragem" class="control-label"></label>
-                <input asp-for="Quilometragem" class="form-control" />
-                <span asp-validation-for="Quilometragem" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <select asp-for="Estado" class="form-control"></select>
-                <span asp-validation-for="Estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="mt-4 d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bx bx-arrow-back me-1"></i> Voltar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bx bx-save me-1"></i> Salvar Alterações
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<!-- Modal para adicionar nova peça -->
+<div class="modal fade" id="modalAdicionarPeca" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adicionar Nova Peça</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="selectPeca" class="form-label">Selecione a Peça</label>
+                    <select id="selectPeca" class="form-select">
+                        <option value="">Selecione...</option>
+                        @foreach (var peca in ViewBag.PecasDisponiveis ?? new List<object>())
+                        {
+                            <option value="@peca.Value" data-part="@peca.PartNumber" data-desc="@peca.Descricao">
+                                @peca.PartNumber - @peca.Descricao
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="novoNumeroSerie" class="form-label">Número de Série</label>
+                    <input type="text" id="novoNumeroSerie" class="form-control" placeholder="Insira o número de série">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmarAdicionarPeca">Adicionar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Abrir modal para adicionar peça
+            $("#btnAdicionarPeca").click(function() {
+                $("#selectPeca").val("");
+                $("#novoNumeroSerie").val("");
+                var modal = new bootstrap.Modal(document.getElementById('modalAdicionarPeca'));
+                modal.show();
+            });
+            
+            // Confirmar adição de peça
+            $("#btnConfirmarAdicionarPeca").click(function() {
+                var pecaSelect = $("#selectPeca");
+                var pecaId = pecaSelect.val();
+                var pecaOption = pecaSelect.find("option:selected");
+                var partNumber = pecaOption.data("part");
+                var descricao = pecaOption.data("desc");
+                var numeroSerie = $("#novoNumeroSerie").val();
+                
+                if (!pecaId) {
+                    alert("Por favor, selecione uma peça.");
+                    return;
+                }
+                
+                if (!numeroSerie) {
+                    alert("Por favor, insira o número de série.");
+                    return;
+                }
+                
+                // Adicionar linha à tabela
+                var newRow = `<tr>
+                    <td>
+                        ${partNumber}
+                        <input type="hidden" name="NovasPecasID" value="nova" />
+                        <input type="hidden" name="NovasPecasIDPeca" value="${pecaId}" />
+                    </td>
+                    <td>${descricao}</td>
+                    <td>
+                        <input type="text" class="form-control" name="NovasPecasNumeroSerie" 
+                               value="${numeroSerie}" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-danger btn-remover-peca">
+                            <i class="bx bx-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+                
+                // Remover mensagem de "nenhuma peça" se existir
+                if ($("#tabelaPecas tbody tr td").length === 1 && 
+                    $("#tabelaPecas tbody tr td").text().trim().includes("Nenhuma peça")) {
+                    $("#tabelaPecas tbody").empty();
+                }
+                
+                $("#tabelaPecas tbody").append(newRow);
+                
+                // Fechar modal
+                bootstrap.Modal.getInstance(document.getElementById('modalAdicionarPeca')).hide();
+            });
+            
+            // Remover peça (delegação de eventos para incluir linhas adicionadas dinamicamente)
+            $(document).on("click", ".btn-remover-peca", function() {
+                if (confirm("Tem certeza que deseja remover esta peça?")) {
+                    var row = $(this).closest("tr");
+                    var id = row.find("input[name='PecasID']").val();
+                    
+                    // Adicionar um campo hidden para remover a peça no servidor
+                    if (id) {
+                        $("form").append(`<input type="hidden" name="PecasRemovidas" value="${id}" />`);
+                    }
+                    
+                    row.remove();
+                    
+                    // Se não houver mais peças, mostrar mensagem
+                    if ($("#tabelaPecas tbody tr").length === 0) {
+                        $("#tabelaPecas tbody").html(`
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    Nenhuma peça com número de série registrada para esta mota.
+                                </td>
+                            </tr>
+                        `);
+                    }
+                }
+            });
+        });
+    </script>
 }

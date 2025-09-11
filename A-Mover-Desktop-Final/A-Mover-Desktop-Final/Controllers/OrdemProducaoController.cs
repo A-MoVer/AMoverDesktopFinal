@@ -100,7 +100,7 @@ namespace A_Mover_Desktop_Final.Controllers
                     IDEncomenda = encomenda.IDEncomenda,
                     NumeroOrdem = numero,
                     Estado = EstadoOrdemProducao.Pendente,
-                    PaisDestino = encomenda.Cliente.Cidade ?? "Desconhecido",
+                    PaisDestino = encomenda.Cliente.Nome ?? "Desconhecido",
                     DataCriacao = DateTime.Now
                 });
             }
@@ -445,6 +445,39 @@ namespace A_Mover_Desktop_Final.Controllers
             return prefixo + parteAleatoria.ToString();
         }
 
+        // Método para alterar o estado de uma ordem de produção
+        [HttpPost]
+        public async Task<IActionResult> AlterarEstado(int id, EstadoOrdemProducao novoEstado)
+        {
+            var ordemProducao = await _context.OrdemProducao.FindAsync(id);
+            
+            if (ordemProducao == null)
+            {
+                return NotFound();
+            }
+            
+            // Atualizar o estado
+            ordemProducao.Estado = novoEstado;
+            
+            // Se for estado Concluida e não tiver data de conclusão, atualizar
+            if (novoEstado == EstadoOrdemProducao.Concluida && !ordemProducao.DataConclusao.HasValue)
+            {
+                ordemProducao.DataConclusao = DateTime.Now;
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            TempData["Sucesso"] = "Estado da ordem atualizado com sucesso!";
+            
+            // Redirecionar para a página de origem (FichaOP ou Index)
+            string returnUrl = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            
+            return RedirectToAction(nameof(Index));
+        }
 
         private bool OrdemProducaoExists(int id)
         {

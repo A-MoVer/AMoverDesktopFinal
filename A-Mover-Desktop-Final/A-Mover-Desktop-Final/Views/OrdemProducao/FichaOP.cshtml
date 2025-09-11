@@ -3,135 +3,478 @@
 @{
     ViewData["Title"] = "Ficha da Ordem de Produção";
     var apenasVisualizar = Model.Estado == EstadoOrdemProducao.Concluida;
+    var corEstado = Model.Estado switch 
+    {
+        EstadoOrdemProducao.Pendente => "warning",
+        EstadoOrdemProducao.EmProducao => "info",
+        EstadoOrdemProducao.Concluida => "success",
+        _ => "secondary"
+    };
+    var iconEstado = Model.Estado switch 
+    {
+        EstadoOrdemProducao.Pendente => "bx-clock",
+        EstadoOrdemProducao.EmProducao => "bx-cog",
+        EstadoOrdemProducao.Concluida => "bx-check-circle",
+        _ => "bx-file"
+    };
 }
 
-<div class="card m-5 p-4">
-    <h1 class="mb-4">Ficha da Ordem de Produção</h1>
+<style>
+    .op-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #495057;
+        border-radius: 10px 10px 0 0;
+        border-bottom: 3px solid #dee2e6;
+    }
+    .info-card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+        background: #ffffff;
+    }
+    .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    .tab-custom {
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    font-weight: 600;
+    color: #6c757d !important;
+    background: transparent !important;
+}
+
+.tab-custom.active {
+    border-bottom-color: #495057 !important;
+    color: #212529 !important; /* Cor mais escura para melhor contraste */
+    background: rgba(248, 249, 250, 0.8) !important; /* Fundo ligeiramente diferente */
+}
+
+.tab-custom:hover {
+    color: #495057 !important;
+    background: rgba(248, 249, 250, 0.5) !important;
+}
+
+.tab-custom:focus {
+    color: #212529 !important;
+    box-shadow: none !important;
+}
+
+/* Garantir que os ícones também ficam visíveis */
+.tab-custom.active i {
+    color: #212529 !important;
+}
+
+.tab-custom i {
+    color: inherit !important;
+}
+    .mota-showcase {
+        background: linear-gradient(135deg, #f1f3f4 0%, #e8eaed 100%);
+        color: #495057;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 1rem 0;
+        border: 1px solid #dee2e6;
+    }
+    .stats-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border: 1px solid #f1f3f4;
+    }
+    .card {
+        border: 1px solid #e9ecef !important;
+    }
+    .alert-info {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #495057;
+    }
+    .alert-primary {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #495057;
+    }
+    .text-primary-custom {
+        color: #6c757d !important;
+    }
+    .text-success-custom {
+        color: #6c757d !important;
+    }
+    .text-info-custom {
+        color: #6c757d !important;
+    }
+    .text-warning-custom {
+        color: #6c757d !important;
+    }
+    .btn-primary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    .btn-primary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    .btn-success {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    .btn-success:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- Header da OP -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="op-header p-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2 display-6 fw-bold">
+                        <i class="bx bx-file-blank me-2"></i>
+                        Ordem de Produção
+                    </h1>
+                    <h2 class="h4 mb-0 opacity-75">#@Model.NumeroOrdem</h2>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="badge bg-@corEstado fs-6 px-3 py-2">
+                        <i class="bx @iconEstado me-1"></i>
+                        @Model.Estado
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações Principais -->
+        <div class="card-body p-4" style="background-color: #fbfcfd;">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="text-primary-custom mb-2">
+                            <i class="bx bx-calendar-event fs-1"></i>
+                        </div>
+                        <h6 class="text-muted mb-1">Criação</h6>
+                        <p class="fw-bold mb-0">@Model.DataCriacao.ToString("dd/MM/yyyy")</p>
+                        <small class="text-muted">@Model.DataCriacao.ToString("HH:mm")</small>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="text-success-custom mb-2">
+                            <i class="bx bx-user fs-1"></i>
+                        </div>
+                        <h6 class="text-muted mb-1">Cliente</h6>
+                        <p class="fw-bold mb-0">@(Model.Encomenda?.Cliente?.Nome ?? "N/A")</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="text-info-custom mb-2">
+                            <i class="bx bx-cycling fs-1"></i>
+                        </div>
+                        <h6 class="text-muted mb-1">Modelo</h6>
+                        <p class="fw-bold mb-0">@(Model.Encomenda?.ModeloMota?.Nome ?? "N/A")</p>
+                        <small class="text-muted">Destino: @Model.PaisDestino</small>
+                    </div>
+                </div>
+
+                @if (Model.DataConclusao.HasValue)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="text-success-custom mb-2">
+                                <i class="bx bx-check-circle fs-1"></i>
+                            </div>
+                            <h6 class="text-muted mb-1">Conclusão</h6>
+                            <p class="fw-bold mb-0">@Model.DataConclusao.Value.ToString("dd/MM/yyyy")</p>
+                            <small class="text-muted">@Model.DataConclusao.Value.ToString("HH:mm")</small>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="text-warning-custom mb-2">
+                                <i class="bx bx-time fs-1"></i>
+                            </div>
+                            <h6 class="text-muted mb-1">Tempo Decorrido</h6>
+                            <p class="fw-bold mb-0">@((DateTime.Now - Model.DataCriacao).Days) dias</p>
+                            <small class="text-muted">Em progresso</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas -->
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <i class="bx bx-error-circle me-2"></i>
             @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     }
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <i class="bx bx-check-circle me-2"></i>
             @TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     }
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <p><strong>Número da OP:</strong> @Model.NumeroOrdem</p>
-            <p><strong>Estado:</strong> @Model.Estado</p>
-            <p><strong>Data de Criação:</strong> @Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")</p>
-            @if (Model.DataConclusao.HasValue)
-            {
-                <p><strong>Data de Conclusão:</strong> @Model.DataConclusao.Value.ToString("dd/MM/yyyy HH:mm")</p>
-            }
+
+    <!-- Conteúdo Principal -->
+    <div class="card border-0 shadow-sm">
+        <!-- Navegação por Abas -->
+        <div class="card-header bg-white border-bottom">
+            <ul class="nav nav-pills nav-justified" id="tabSelector" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom active" id="mota-tab" data-bs-toggle="tab" data-bs-target="#mota" type="button" role="tab">
+                        <i class="bx bx-cycling me-2"></i>
+                        Informações da Mota
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="pecas-tab" data-bs-toggle="tab" data-bs-target="#pecas" type="button" role="tab" @(Model.Mota == null ? "disabled" : "")>
+                        <i class="bx bx-wrench me-2"></i>
+                        Peças da Mota
+                        @if (Model.Mota == null)
+                        {
+                            <i class="bx bx-lock-alt ms-1 text-muted"></i>
+                        }
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="checklists-tab" data-bs-toggle="tab" data-bs-target="#checklists" type="button" role="tab">
+                        <i class="bx bx-list-check me-2"></i>
+                        Checklists
+                    </button>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-6">
-            <p><strong>Cliente:</strong> @Model.Encomenda?.Cliente?.Nome</p>
-            <p><strong>Modelo:</strong> @Model.Encomenda?.ModeloMota?.Nome</p>
-            <p><strong>País Destino:</strong> @Model.PaisDestino</p>
+
+        <div class="card-body p-4" style="background-color: #fbfcfd;">
+            <div class="tab-content" id="tabContent">
+                <!-- Aba: Informações da Mota -->
+                <div class="tab-pane fade show active" id="mota" role="tabpanel">
+                    @if (Model.Mota != null)
+                    {
+                        <div class="mota-showcase">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h3 class="mb-3">
+                                        <i class="bx bx-badge-check me-2"></i>
+                                        Mota Registada
+                                    </h3>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <h5 class="opacity-75 mb-1">Número de Quadro / Número de Identificação</h5>
+                                            <h4 class="fw-bold">@Model.Mota.NumeroIdentificacao</h4>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h5 class="opacity-75 mb-1">Cor</h5>
+                                            <h4 class="fw-bold">@Model.Mota.Cor</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <i class="bx bx-cycling display-1 opacity-50"></i>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bx bx-cycling display-1 text-muted mb-3"></i>
+                            <h4 class="text-muted mb-4">Nenhuma mota registada</h4>
+                            <p class="text-muted mb-4">Crie uma mota para esta ordem de produção para continuar o processo.</p>
+                        </div>
+                    }
+
+                    @if (!apenasVisualizar)
+                    {
+                        <div class="text-center mt-4">
+                            <button type="button" id="btnAdicionarMota" class="btn btn-primary btn-lg px-5" data-id="@Model.IDOrdemProducao">
+                                <i class="bx @(Model.Mota == null ? "bx-plus" : "bx-edit") me-2"></i>
+                                @(Model.Mota == null ? "Registar Mota" : "Editar Informações")
+                            </button>
+                        </div>
+                    }
+
+                    <div id="formMotaAjax" class="mt-4"></div>
+                </div>
+
+                <!-- Aba: Peças da Mota -->
+                <div class="tab-pane fade" id="pecas" role="tabpanel">
+                    @if (Model.Mota != null)
+                    {
+                        <div class="alert alert-info mb-4">
+                            <i class="bx bx-info-circle me-2"></i>
+                            <strong>Gestão de Peças:</strong> Aqui pode gerir todas as peças com número de série associadas à mota <strong>@Model.Mota.NumeroIdentificacao</strong>.
+                        </div>
+                        @await Html.PartialAsync("_PecasMota", Model.Mota)
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bx bx-wrench display-1 text-muted mb-3"></i>
+                            <h4 class="text-muted mb-3">Peças Indisponíveis</h4>
+                            <p class="text-muted">A mota ainda não foi criada. Registe-a primeiro na aba anterior para poder gerir as peças.</p>
+                            <button class="btn btn-outline-secondary" onclick="$('#mota-tab').click()">
+                                <i class="bx bx-arrow-left me-1"></i> Ir para Informações da Mota
+                            </button>
+                        </div>
+                    }
+                </div>
+
+                <!-- Aba: Checklists -->
+                <div class="tab-pane fade" id="checklists" role="tabpanel">
+                    <div class="alert alert-primary mb-4">
+                        <i class="bx bx-list-check me-2"></i>
+                        <strong>Controlo de Qualidade:</strong> Complete todos os checklists para garantir a qualidade da produção.
+                    </div>
+
+                    <form asp-action="GuardarChecklists" method="post">
+                        <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
+                        @Html.AntiForgeryToken()
+
+                        @Html.Partial("_ChecklistsPartial", Model)
+
+                        @if (!apenasVisualizar)
+                        {
+                            <div class="text-center mt-5">
+                                <button type="submit" class="btn btn-success btn-lg px-5">
+                                    <i class="bx bx-save me-2"></i> Guardar Alterações
+                                </button>
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <ul class="nav nav-tabs mb-4" id="tabSelector" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="mota-tab" data-bs-toggle="tab" data-bs-target="#mota" type="button" role="tab">Informações da Mota</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pecas-tab" data-bs-toggle="tab" data-bs-target="#pecas" type="button" role="tab" @(Model.Mota == null ? "disabled" : "")>Peças da Mota</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="checklists-tab" data-bs-toggle="tab" data-bs-target="#checklists" type="button" role="tab">Checklists</button>
-        </li>
-    </ul>
-
-    <div class="tab-content" id="tabContent">
-        <div class="tab-pane fade show active" id="mota" role="tabpanel">
-            @if (Model.Mota != null)
-            {
-                <div class="alert alert-success mb-3">
-                    <strong>Mota registada:</strong> @Model.Mota.NumeroIdentificacao (@Model.Mota.Cor)
-                </div>
-            }
-
+    <!-- Rodapé com Ações -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                <i class="bx bx-arrow-left me-2"></i> Voltar à Lista
+            </a>
+        </div>
+        <div class="col-md-6 text-end">
             @if (!apenasVisualizar)
             {
-                <button type="button" id="btnAdicionarMota" class="btn btn-primary mb-3" data-id="@Model.IDOrdemProducao">
-                    @(Model.Mota == null ? "Adicionar Mota" : "Editar Mota")
-                </button>
-            }
-
-            <div id="formMotaAjax"></div>
-        </div>
-
-        <div class="tab-pane fade" id="pecas" role="tabpanel">
-            @if (Model.Mota != null)
-            {
-                @await Html.PartialAsync("_PecasMota", Model.Mota)
+                <a asp-action="Finalizar" asp-route-id="@Model.IDOrdemProducao" class="btn btn-success btn-lg px-5">
+                    <i class="bx bx-check-circle me-2"></i> Finalizar Ordem de Produção
+                </a>
             }
             else
             {
-                <p class="text-muted">A mota ainda não foi criada. Cria-a primeiro na aba anterior.</p>
+                <span class="badge bg-success fs-6 px-3 py-2">
+                    <i class="bx bx-check-circle me-1"></i> Ordem Concluída
+                </span>
             }
         </div>
+    </div>
 
-        <div class="tab-pane fade" id="checklists" role="tabpanel">
-            <form asp-action="GuardarChecklists" method="post">
-                <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
-                @Html.AntiForgeryToken()
-
-                @Html.Partial("_ChecklistsPartial", Model)
-
-                @if (!apenasVisualizar)
-                {
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save me-1"></i> Guardar Alterações
-                        </button>
-                    </div>
-                }
-            </form>
+    <!-- Estado da Ordem -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Estado da Ordem</h5>
+            <span class="badge bg-label-@(Model.Estado == EstadoOrdemProducao.Pendente ? "warning" : 
+                                      Model.Estado == EstadoOrdemProducao.EmProducao ? "primary" : 
+                                      Model.Estado == EstadoOrdemProducao.Concluida ? "success" : 
+                                      Model.Estado == EstadoOrdemProducao.Embalada ? "info" : "dark")">
+                @Model.Estado
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="progress mb-3" style="height: 25px;">
+                <div class="progress-bar bg-warning @(Model.Estado >= EstadoOrdemProducao.Pendente ? "w-20" : "w-0")" 
+                     role="progressbar">Pendente</div>
+                <div class="progress-bar bg-primary @(Model.Estado >= EstadoOrdemProducao.EmProducao ? "w-20" : "w-0")" 
+                     role="progressbar">Em Produção</div>
+                <div class="progress-bar bg-success @(Model.Estado >= EstadoOrdemProducao.Concluida ? "w-20" : "w-0")" 
+                     role="progressbar">Concluída</div>
+                <div class="progress-bar bg-info @(Model.Estado >= EstadoOrdemProducao.Embalada ? "w-20" : "w-0")" 
+                     role="progressbar">Embalada</div>
+                <div class="progress-bar bg-dark @(Model.Estado == EstadoOrdemProducao.Enviada ? "w-20" : "w-0")" 
+                     role="progressbar">Enviada</div>
+            </div>
+            
+            @if (Model.Estado == EstadoOrdemProducao.Concluida)
+            {
+                <form asp-action="AlterarEstado" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.IDOrdemProducao" />
+                    <input type="hidden" name="novoEstado" value="@EstadoOrdemProducao.Embalada" />
+                    <button type="submit" class="btn btn-info">
+                        <i class="bx bx-package me-1"></i> Marcar como Embalada
+                    </button>
+                </form>
+            }
+            else if (Model.Estado == EstadoOrdemProducao.Embalada)
+            {
+                <form asp-action="AlterarEstado" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.IDOrdemProducao" />
+                    <input type="hidden" name="novoEstado" value="@EstadoOrdemProducao.Enviada" />
+                    <button type="submit" class="btn btn-dark">
+                        <i class="bx bx-send me-1"></i> Marcar como Enviada
+                    </button>
+                </form>
+            }
         </div>
     </div>
-
-    <div class="mt-4 d-flex justify-content-between">
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Voltar
-        </a>
-        @if (!apenasVisualizar)
-        {
-            <a asp-action="Finalizar" asp-route-id="@Model.IDOrdemProducao" class="btn btn-primary">
-                <i class="fas fa-check-circle me-1"></i> Finalizar OP
-            </a>
-        }
-    </div>
-
 </div>
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).on("click", "#btnAdicionarMota", function () {
-            const id = $(this).data("id");
-
-            $.get("/OrdemProducao/AdicionarMota", { id: id }, function (html) {
-                $("#formMotaAjax").html(html);
+        $(document).ready(function() {
+            // Animação suave entre abas
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $(e.target.getAttribute('data-bs-target')).hide().fadeIn(300);
             });
-        });
 
-        // Recarregar a seção de peças após salvar
-        $(document).on("submit", "form[action*='GuardarPecasSN']", function (e) {
-            e.preventDefault();
+            // Carregar formulário de mota via AJAX
+            $(document).on("click", "#btnAdicionarMota", function () {
+                const id = $(this).data("id");
+                const btn = $(this);
+                
+                btn.prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin me-2"></i>Carregando...');
 
-            $.post($(this).attr("action"), $(this).serialize(), function () {
-                // Recarrega apenas a aba de peças
-                $("#pecas-tab").click();
-                location.reload(); // Ou implemente um carregamento mais elegante via AJAX
+                $.get("/OrdemProducao/AdicionarMota", { id: id }, function (html) {
+                    $("#formMotaAjax").html(html).hide().fadeIn(300);
+                    btn.prop('disabled', false).html('<i class="bx bx-edit me-2"></i>Editar Informações');
+                }).fail(function() {
+                    btn.prop('disabled', false).html('<i class="bx bx-error me-2"></i>Erro ao Carregar');
+                });
+            });
+
+            // Recarregar após submeter peças
+            $(document).on("submit", "form[action*='GuardarPecasSN']", function (e) {
+                e.preventDefault();
+                
+                const form = $(this);
+                const submitBtn = form.find('button[type="submit"]');
+                const originalText = submitBtn.html();
+                
+                submitBtn.prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin me-2"></i>Guardando...');
+
+                $.post(form.attr("action"), form.serialize(), function () {
+                    location.reload();
+                }).fail(function() {
+                    submitBtn.prop('disabled', false).html(originalText);
+                    alert('Erro ao guardar. Tente novamente.');
+                });
             });
         });
     </script>
