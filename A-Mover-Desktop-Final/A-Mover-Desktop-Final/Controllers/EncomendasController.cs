@@ -72,7 +72,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // POST: Encomendas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDEncomenda,IDModelo,IDCliente,Quantidade")] Encomenda encomenda)
+        public async Task<IActionResult> Create([Bind("IDEncomenda,IDModelo,IDCliente,Quantidade,DataEntrega")] Encomenda encomenda)
         {
             if (ModelState.IsValid)
             {
@@ -81,7 +81,7 @@ namespace A_Mover_Desktop_Final.Controllers
                     // Definir valores padrão
                     encomenda.Estado = EstadoEncomenda.Pendente;
                     encomenda.DateCriacao = DateTime.Now;
-                    encomenda.DataEntrega = null; // Garantir que a data de entrega seja nula
+                    // A DataEntrega agora vem do formulário, não precisamos defini-la como null
                     encomenda.OrdemProducao = new List<OrdemProducao>(); // Inicializar a coleção
 
                     _context.Add(encomenda);

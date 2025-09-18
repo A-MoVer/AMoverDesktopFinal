@@ -85,62 +85,118 @@
         </div>
     </div>
     
-<!-- Tabela de Ordens de Produção -->
-<div class="card mb-4 mx-5">
-    <div class="card-header">
-        <h5 class="card-title">Ordens de Produção</h5>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Número</th>
-                    <th>Data Criação</th>
-                    <th>Estado</th>
-                    <th>Mota</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (ViewBag.OrdensProducao != null && ViewBag.OrdensProducao.Count > 0)
-                {
-                    @foreach (var op in ViewBag.OrdensProducao)
+    <!-- Tabela de Ordens de Produção -->
+    <div class="card mb-4 mx-5">
+        <div class="card-header">
+            <h5 class="card-title">Ordens de Produção</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Data Criação</th>
+                        <th>Estado</th>
+                        <th>Mota</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.OrdensProducao != null && ViewBag.OrdensProducao.Count > 0)
+                    {
+                        @foreach (var op in ViewBag.OrdensProducao)
+                        {
+                            <tr data-estado="@op.Estado">
+                                <td>@op.NumeroOrdem</td>
+                                <td>@op.DataCriacao.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <span class="badge bg-@(op.Estado == EstadoOrdemProducao.Pendente ? "secondary" : 
+                                                           op.Estado == EstadoOrdemProducao.EmProducao ? "warning" : 
+                                                           "success")">
+                                        @op.Estado
+                                    </span>
+                                </td>
+                                <td>@(op.Mota?.NumeroIdentificacao ?? "Não criada")</td>
+                                <td>
+                                    <a asp-controller="OrdemProducao" asp-action="FichaOP" asp-route-id="@op.IDOrdemProducao" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="bx bx-show"></i> Ver
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>@op.NumeroOrdem</td>
-                            <td>@op.DataCriacao.ToString("dd/MM/yyyy")</td>
-                            <td>
-                                <span class="badge bg-@(op.Estado == EstadoOrdemProducao.Pendente ? "secondary" : 
-                                                       op.Estado == EstadoOrdemProducao.EmProducao ? "warning" : 
-                                                       "success")">
-                                    @op.Estado
-                                </span>
-                            </td>
-                            <td>@(op.Mota?.NumeroIdentificacao ?? "Não criada")</td>
-                            <td>
-                                <a asp-controller="OrdemProducao" asp-action="FichaOP" asp-route-id="@op.IDOrdemProducao" 
-                                   class="btn btn-sm btn-primary">
-                                    <i class="bx bx-show"></i> Ver
-                                </a>
+                            <td colspan="5" class="text-center">
+                                <em>Nenhuma ordem de produção criada para esta encomenda.</em>
+                                @if (Model.Estado == EstadoEncomenda.Pendente)
+                                {
+                                    <div class="mt-2">
+                                        <span>Clique em "Iniciar Produção" para gerar as ordens de produção.</span>
+                                    </div>
+                                }
                             </td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="5" class="text-center">
-                            <em>Nenhuma ordem de produção criada para esta encomenda.</em>
-                            @if (Model.Estado == EstadoEncomenda.Pendente)
-                            {
-                                <div class="mt-2">
-                                    <span>Clique em "Iniciar Produção" para gerar as ordens de produção.</span>
-                                </div>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    @* Em Views/Encomendas/Details.cshtml *@
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Progresso da Encomenda</h5>
+        </div>
+        <div class="card-body">
+            <div class="progress" style="height: 30px;">
+                <div class="progress-bar bg-secondary @(Model.Estado >= EstadoEncomenda.Pendente ? "w-20" : "w-0")" 
+                     role="progressbar">Pendente</div>
+                <div class="progress-bar bg-warning @(Model.Estado >= EstadoEncomenda.EmProducao ? "w-20" : "w-0")" 
+                     role="progressbar">Em Produção</div>
+                <div class="progress-bar bg-success @(Model.Estado >= EstadoEncomenda.Concluida ? "w-20" : "w-0")" 
+                     role="progressbar">Concluída</div>
+                <div class="progress-bar bg-info @(Model.Estado >= EstadoEncomenda.Embalada ? "w-20" : "w-0")" 
+                     role="progressbar">Embalada</div>
+                <div class="progress-bar bg-dark @(Model.Estado >= EstadoEncomenda.Enviada ? "w-20" : "w-0")" 
+                     role="progressbar">Enviada</div>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Adicionar cores personalizadas para melhor visualização dos estados
+        $('tbody tr').each(function() {
+            var estado = $(this).attr('data-estado'); // Usando o atributo data-estado
+            
+            // Limpar classes existentes
+            $(this).removeClass('table-secondary table-warning table-success table-info table-primary table-dark');
+            
+            // Aplicar classe conforme o estado
+            switch(estado) {
+                case 'Pendente':
+                    $(this).addClass('table-secondary');
+                    break;
+                case 'EmProducao':
+                    $(this).addClass('table-warning');
+                    break;
+                case 'Concluida':
+                    $(this).addClass('table-success');
+                    break;
+                case 'Embalada':
+                    $(this).addClass('table-info');
+                    break;
+                case 'Enviada':
+                    $(this).addClass('table-primary');
+                    break;
+                case 'Entregue':
+                    $(this).addClass('table-dark');
+                    break;
+            }
+        });
+    </script>
+}

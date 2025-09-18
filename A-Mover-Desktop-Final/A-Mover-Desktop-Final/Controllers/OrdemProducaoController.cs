@@ -449,17 +449,18 @@ namespace A_Mover_Desktop_Final.Controllers
         [HttpPost]
         public async Task<IActionResult> AlterarEstado(int id, EstadoOrdemProducao novoEstado)
         {
-            var ordemProducao = await _context.OrdemProducao.FindAsync(id);
+            var ordemProducao = await _context.OrdemProducao
+                .FirstOrDefaultAsync(o => o.IDOrdemProducao == id);
             
             if (ordemProducao == null)
             {
                 return NotFound();
             }
             
-            // Atualizar o estado
+            // Atualizar o estado da ordem de produção
             ordemProducao.Estado = novoEstado;
             
-            // Se for estado Concluida e não tiver data de conclusão, atualizar
+            // Se concluída, atualizar a data de conclusão
             if (novoEstado == EstadoOrdemProducao.Concluida && !ordemProducao.DataConclusao.HasValue)
             {
                 ordemProducao.DataConclusao = DateTime.Now;
@@ -467,9 +468,12 @@ namespace A_Mover_Desktop_Final.Controllers
             
             await _context.SaveChangesAsync();
             
-            TempData["Sucesso"] = "Estado da ordem atualizado com sucesso!";
+            // Sincronizar o estado da encomenda
+            await SincronizarEstadoEncomenda(ordemProducao.IDEncomenda);
             
-            // Redirecionar para a página de origem (FichaOP ou Index)
+            TempData["Sucesso"] = $"Estado da ordem atualizado para {novoEstado}";
+            
+            // Redirecionar para a página anterior
             string returnUrl = Request.Headers["Referer"].ToString();
             if (!string.IsNullOrEmpty(returnUrl))
             {
@@ -477,6 +481,48 @@ namespace A_Mover_Desktop_Final.Controllers
             }
             
             return RedirectToAction(nameof(Index));
+        }
+
+        // Método para sincronizar o estado da encomenda com base nas ordens de produção
+        private async Task SincronizarEstadoEncomenda(int idEncomenda)
+        {
+            // Buscar a encomenda com suas ordens de produção
+            var encomenda = await _context.Encomendas
+                .Include(e => e.OrdemProducao)
+                .FirstOrDefaultAsync(e => e.IDEncomenda == idEncomenda);
+
+            if (encomenda == null || encomenda.OrdemProducao == null || !encomenda.OrdemProducao.Any())
+                return;
+
+            // Contar total de ordens e estados específicos
+            int totalOrdens = encomenda.OrdemProducao.Count();
+            int ordensPendentes = encomenda.OrdemProducao.Count(op => op.Estado == EstadoOrdemProducao.Pendente);
+            int ordensEmProducao = encomenda.OrdemProducao.Count(op => op.Estado == EstadoOrdemProducao.EmProducao);
+            int ordensConcluidas = encomenda.OrdemProducao.Count(op => op.Estado == EstadoOrdemProducao.Concluida);
+            int ordensEmbaladas = encomenda.OrdemProducao.Count(op => op.Estado == EstadoOrdemProducao.Embalada);
+            int ordensEnviadas = encomenda.OrdemProducao.Count(op => op.Estado == EstadoOrdemProducao.Enviada);
+
+            // Determinar o novo estado da encomenda
+            EstadoEncomenda novoEstado;
+
+            if (ordensEnviadas == totalOrdens)
+                novoEstado = EstadoEncomenda.Enviada;
+            else if (ordensEmbaladas + ordensEnviadas == totalOrdens)
+                novoEstado = EstadoEncomenda.Embalada;
+            else if (ordensConcluidas + ordensEmbaladas + ordensEnviadas == totalOrdens)
+                novoEstado = EstadoEncomenda.Concluida;
+            else if (ordensEmProducao > 0)
+                novoEstado = EstadoEncomenda.EmProducao;
+            else
+                novoEstado = EstadoEncomenda.Pendente;
+
+            // Atualizar apenas se o estado for diferente
+            if (encomenda.Estado != novoEstado)
+            {
+                encomenda.Estado = novoEstado;
+                await _context.SaveChangesAsync();
+                TempData["Sucesso"] = $"Estado da Encomenda #{encomenda.IDEncomenda} atualizado para {novoEstado}";
+            }
         }
 
         private bool OrdemProducaoExists(int id)

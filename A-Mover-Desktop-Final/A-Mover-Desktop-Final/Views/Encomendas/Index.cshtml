@@ -49,16 +49,30 @@
             <tbody>
                 @foreach (var encomenda in Model)
                 {
-                    <tr id="row-@encomenda.IDEncomenda" data-estado="@encomenda.Estado">
+                    var isAtrasada = encomenda.DataEntrega.HasValue && encomenda.DataEntrega.Value.Date < DateTime.Now.Date;
+                    var rowClass = isAtrasada ? "table-danger" : "";
+                    
+                    <tr id="row-@encomenda.IDEncomenda" data-estado="@encomenda.Estado" class="@rowClass">
                         <td>@encomenda.IDEncomenda</td>
                         <td><b>@Html.DisplayFor(modelItem => encomenda.DateCriacao)</b></td>
                         <td>@Html.DisplayFor(modelItem => encomenda.Cliente.Nome)</td>
                         <td>@Html.DisplayFor(modelItem => encomenda.ModeloMota.Nome)</td>
                         <td>@Html.DisplayFor(modelItem => encomenda.Quantidade)</td>
                         <td>
-                            @Html.Raw(encomenda.DataEntrega.HasValue
-                                     ? encomenda.DataEntrega.Value.ToString("dd/MM/yyyy")
-                                     : "<span class='text-muted'>Por definir</span>")
+                            @if (encomenda.DataEntrega.HasValue)
+                            {
+                                <span class="@(isAtrasada ? "text-danger fw-bold" : "")">
+                                    @encomenda.DataEntrega.Value.ToString("dd/MM/yyyy")
+                                    @if (isAtrasada)
+                                    {
+                                        <i class="bx bx-error-circle ms-1" title="Prazo vencido!"></i>
+                                    }
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Por definir</span>
+                            }
                         </td>
                         <td><b>@Html.DisplayFor(modelItem => encomenda.Estado)</b></td>
                         <td>
@@ -86,6 +100,19 @@
                 }
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="alert alert-info mb-3">
+    <div class="d-flex align-items-center">
+        <i class="bx bx-info-circle me-2 fs-5"></i>
+        <div>
+            <strong>Legenda:</strong>
+            <ul class="mb-0 mt-1">
+                <li><span class="badge bg-danger">Vermelho</span> - Encomendas com prazo de entrega vencido</li>
+                <li><span class="badge bg-light text-dark">Normal</span> - Encomendas dentro do prazo</li>
+            </ul>
+        </div>
     </div>
 </div>
 

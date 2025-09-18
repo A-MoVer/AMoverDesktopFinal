@@ -8,6 +8,8 @@ namespace A_Mover_Desktop_Final.Models
         Pendente,
         EmProducao,
         Concluida,
+        Embalada,    // Novo estado
+        Enviada,
         Entregue
     }
     public class Encomenda

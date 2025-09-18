@@ -63,6 +63,19 @@
                         <span asp-validation-for="Quantidade" class="text-danger"></span>
                     </div>
                 </div>
+
+                <!-- Data de Entrega Prevista -->
+                <div class="row mb-3">
+                    <label asp-for="DataEntrega" class="col-sm-2 col-form-label">Data de Entrega Prevista</label>
+                    <div class="col-sm-10">
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                            <input asp-for="DataEntrega" type="date" class="form-control" required />
+                        </div>
+                        <span asp-validation-for="DataEntrega" class="text-danger"></span>
+                    </div>
+                </div>
+
                 <p class="text-muted">
                     <span class="text-danger">*</span> - Preenchimento obrigatório
                 </p>
