@@ -1,0 +1,12 @@
+# Diretórios
+**/bin/
+**/obj/
+**/out/
+**/.vs/
+**/.vscode/
+**/node_modules/
+
+# Arquivos
+**/*.user
+**/*.suo
+**/.DS_Store
