@@ -1,35 +1,118 @@
 ﻿@model A_Mover_Desktop_Final.Models.Mota
 
+@{
+    // Essas listas devem ser passadas como ViewBag ou como parte de um ViewModel mais completo
+    var pecasFixas = ViewBag.PecasFixas as List<ModeloPecasFixas> ?? new List<ModeloPecasFixas>();
+    var pecasSN = ViewBag.PecasSN as List<ModeloPecasSN> ?? new List<ModeloPecasSN>();
+    var pecasInfo = ViewBag.PecasInfo as List<MotasPecasInfo> ?? new List<MotasPecasInfo>();
+    
+    // Verificar se alguma peça já tem informações salvas
+    Func<int, string> GetInformacaoAdicional = (idPeca) => {
+        return pecasInfo.FirstOrDefault(p => p.IDPeca == idPeca)?.InformacaoAdicional ?? "";
+    };
+}
+
 <form asp-action="GuardarMota" asp-controller="OrdemProducao" method="post">
+    <input type="hidden" name="IDMota" value="@Model.IDMota" />
     <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
+    <input type="hidden" name="IDModelo" value="@Model.IDModelo" />
     @Html.AntiForgeryToken()
 
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-6">
-            <label class="form-label">Número de Quadro / Número de Identificação</label>
+            <label class="form-label">NÚMERO DE QUADRO / NÚMERO DE IDENTIFICAÇÃO</label>
             <input type="text" class="form-control" name="NumeroIdentificacao" value="@Model.NumeroIdentificacao" required />
         </div>
         <div class="col-md-6">
-            <label class="form-label">Cor</label>
+            <label class="form-label">COR</label>
             <input type="text" name="Cor" class="form-control" value="@Model.Cor" required />
         </div>
     </div>
-    @if (Model.IDMota != 0)
-    {
-        <div class="row">
-            <div class="col-md-6">
-                <label class="form-label">Quilometragem</label>
-                <input type="text" class="form-control" value="@Model.Quilometragem" readonly />
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Estado</label>
-                <input type="text" class="form-control" value="@Model.Estado" readonly />
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Data de Registo</label>
-                <input type="text" class="form-control" value="@Model.DataRegisto.ToString("dd/MM/yyyy")" readonly />
+    
+    <h4 class="mt-4 mb-3">Componentes e Especificações</h4>
+    
+    <!-- Componentes com Número de Série -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Componentes</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>COMPONENTE</th>
+                            <th>PART NUMBER</th>
+                            <th>ESPECIFICAÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var peca in pecasSN)
+                        {
+                            <tr>
+                                <td>@peca.Pecas?.Descricao</td>
+                                <td>@peca.Pecas?.PartNumber</td>
+                                <td>
+                                    <input type="hidden" name="PecasSN[@peca.IDPeca].IDPeca" value="@peca.IDPeca" />
+                                    <input type="text" class="form-control" 
+                                           name="PecasSN[@peca.IDPeca].NumeroSerie" 
+                                           value="@(Model.MotasPecasSN?.FirstOrDefault(mp => mp.IDPeca == peca.IDPeca)?.NumeroSerie ?? "")" />
+                                </td>
+                            </tr>
+                        }
+                        @if (!pecasSN.Any())
+                        {
+                            <tr>
+                                <td colspan="3" class="text-center">Não há componentes com número de série associados a este modelo.</td>
+                            </tr>
+                        }
+                        @foreach (var peca in pecasFixas)
+                        {
+                            <tr>
+                                <td>@peca.Pecas?.Descricao</td>
+                                <td>@peca.Pecas?.PartNumber</td>
+                                <td>
+                                    <input type="hidden" name="PecasInfo[@peca.IDPeca].IDPeca" value="@peca.IDPeca" />
+                                    <input type="text" class="form-control" 
+                                           name="PecasInfo[@peca.IDPeca].InformacaoAdicional" 
+                                           value="@GetInformacaoAdicional(peca.IDPeca)" 
+                                           placeholder="@GetPlaceholderParaPeca(peca.Pecas?.Descricao ?? "")" />
+                                </td>
+                            </tr>
+                        }
+                        @if (!pecasFixas.Any())
+                        {
+                            <tr>
+                                <td colspan="3" class="text-center">Não há componentes fixos associados a este modelo.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-    }
-    <button type="submit" class="btn btn-success mt-3">Guardar Mota</button>
+    </div>
+
+    <div class="text-end mt-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="bx bx-save me-1"></i> Guardar Informações
+        </button>
+    </div>
 </form>
+
+@functions {
+    public string GetPlaceholderParaPeca(string descricao)
+    {
+        if (descricao.Contains("Quadro", StringComparison.OrdinalIgnoreCase))
+            return "Ex: Cor Cereja, Cor Preta";
+        else if (descricao.Contains("Suspensão", StringComparison.OrdinalIgnoreCase))
+            return "Ex: Sachs, Ohlins";
+        else if (descricao.Contains("Plásticos", StringComparison.OrdinalIgnoreCase))
+            return "Ex: Brancos, Cinzentos";
+        else if (descricao.Contains("Jantes", StringComparison.OrdinalIgnoreCase))
+            return "Ex: Cor Cereja, Cor Dourada";
+        else if (descricao.Contains("Escape", StringComparison.OrdinalIgnoreCase))
+            return "Ex: Standard, Doma";
+        
+        return "Especificação";
+    }
+}

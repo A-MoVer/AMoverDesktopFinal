@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250920150721_updatemodelCHecklist2")]
+    partial class updatemodelCHecklist2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -358,33 +361,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Motas");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasInfo", b =>
-                {
-                    b.Property<int>("IDMotasPecasInfo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDMotasPecasInfo"));
-
-                    b.Property<int>("IDMota")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IDPeca")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InformacaoAdicional")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IDMotasPecasInfo");
-
-                    b.HasIndex("IDMota");
-
-                    b.HasIndex("IDPeca");
-
-                    b.ToTable("MotasPecasInfo");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasSN", b =>
@@ -971,25 +947,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Navigation("ModeloMota");
 
                     b.Navigation("OrdemProducao");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasInfo", b =>
-                {
-                    b.HasOne("A_Mover_Desktop_Final.Models.Mota", "Mota")
-                        .WithMany()
-                        .HasForeignKey("IDMota")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("A_Mover_Desktop_Final.Models.Pecas", "Pecas")
-                        .WithMany()
-                        .HasForeignKey("IDPeca")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Mota");
-
-                    b.Navigation("Pecas");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasSN", b =>

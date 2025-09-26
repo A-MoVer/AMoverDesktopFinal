@@ -53,9 +53,65 @@ namespace A_Mover_Desktop_Final.Controllers
             ViewBag.PecasFixas = pecasFixas;
             ViewBag.PecasSN = pecasSN;
 
+            // Buscar checklists associados a este modelo
+            var checklistsAssociados = await _context.Checklist
+                .Where(c => c.IDModelo == id)
+                .ToListAsync();
+            
+            // Buscar checklists não associados (disponíveis para associação)
+            var checklistsDisponiveis = await _context.Checklist
+                .Where(c => c.IDModelo == null)
+                .ToListAsync();
+
+    ViewData["ChecklistsAssociados"] = checklistsAssociados;
+    ViewData["ChecklistsDisponiveis"] = checklistsDisponiveis;
+    
             return View(modeloMota);
         }
+        // Método para associar checklist a um modelo
+        [HttpPost]
+        public async Task<IActionResult> AssociarChecklist(int idModelo, int idChecklist)
+        {
+            var checklist = await _context.Checklist.FindAsync(idChecklist);
+            if (checklist != null)
+            {
+                checklist.IDModelo = idModelo;
+                await _context.SaveChangesAsync();
+            }
+            
+            return RedirectToAction(nameof(Details), new { id = idModelo });
+        }
 
+        // Método para eliminar checklist ao desassociar
+        [HttpPost]
+        public async Task<IActionResult> RemoverAssociacaoChecklist(int idModelo, int idChecklist)
+        {
+            var checklist = await _context.Checklist.FindAsync(idChecklist);
+            if (checklist != null)
+            {
+                // Verificar se o checklist está sendo usado em alguma ordem de produção
+                bool usadoEmMontagem = await _context.ChecklistMontagem.AnyAsync(cm => cm.IDChecklist == idChecklist);
+                bool usadoEmControlo = await _context.ChecklistControlo.AnyAsync(cc => cc.IDChecklist == idChecklist);
+                bool usadoEmEmbalagem = await _context.ChecklistEmbalagem.AnyAsync(ce => ce.IDChecklist == idChecklist);
+                
+                if (usadoEmMontagem || usadoEmControlo || usadoEmEmbalagem)
+                {
+                    // Se estiver sendo usado, apenas desassocia
+                    checklist.IDModelo = null;
+                    TempData["Warning"] = "O checklist não pôde ser eliminado porque está sendo utilizado em ordens de produção. A associação foi removida.";
+                }
+                else
+                {
+                    // Se não estiver sendo usado, elimina completamente
+                    _context.Checklist.Remove(checklist);
+                    TempData["Success"] = "Checklist eliminado com sucesso.";
+                }
+                
+                await _context.SaveChangesAsync();
+            }
+            
+            return RedirectToAction(nameof(Details), new { id = idModelo });
+        }
         // GET: ModeloMotas/Create
         public IActionResult Create()
         {

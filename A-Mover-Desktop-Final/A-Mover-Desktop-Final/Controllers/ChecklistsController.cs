@@ -44,8 +44,31 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: Checklists/Create
-        public IActionResult Create()
+        public IActionResult Create(int? modeloId)
         {
+            // Preencher ViewBag com a lista de modelos
+            ViewData["ModeloMotas"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome");
+            
+            // Se foi passado um ID de modelo, pré-seleciona-o
+            if (modeloId.HasValue)
+            {
+                // Criar um novo objeto Checklist com o modelo pré-selecionado
+                var checklist = new Checklist
+                {
+                    IDModelo = modeloId.Value
+                };
+                
+                // Opcionalmente, busque o nome do modelo para exibir na view
+                var nomeModelo = _context.ModelosMota
+                    .Where(m => m.IDModelo == modeloId.Value)
+                    .Select(m => m.Nome)
+                    .FirstOrDefault();
+                    
+                ViewData["NomeModeloSelecionado"] = nomeModelo;
+                
+                return View(checklist);
+            }
+            
             return View();
         }
 
@@ -54,7 +77,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDChecklist,Nome,Descricao,Tipo")] Checklist checklist)
+        public async Task<IActionResult> Create([Bind("IDChecklist,Nome,Descricao,Tipo,IDModelo")] Checklist checklist)
         {
             if (ModelState.IsValid)
             {
@@ -78,6 +101,7 @@ namespace A_Mover_Desktop_Final.Controllers
             {
                 return NotFound();
             }
+            ViewData["ModeloMotas"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome");
             return View(checklist);
         }
 
@@ -86,7 +110,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDChecklist,Nome,Descricao,Tipo")] Checklist checklist)
+        public async Task<IActionResult> Edit(int id, [Bind("IDChecklist,Nome,Descricao,Tipo,IDModelo")] Checklist checklist)
         {
             if (id != checklist.IDChecklist)
             {

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace A_Mover_Desktop_Final.Models
 {
@@ -21,5 +22,11 @@ namespace A_Mover_Desktop_Final.Models
 
         [Required]
         public TipoChecklist Tipo { get; set; }
+        
+        // Relacionamento com ModeloMota (null significa que é genérico)
+        public int? IDModelo { get; set; }
+        
+        [ForeignKey("IDModelo")]
+        public ModeloMota? ModeloMota { get; set; }
     }
 }

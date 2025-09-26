@@ -1,4 +1,3 @@
-
 @model A_Mover_Desktop_Final.Models.OrdemProducao
 @{
     var apenasVisualizar = Model.Estado == EstadoOrdemProducao.Concluida;
@@ -17,7 +16,15 @@
         {
             var item = Model.ChecklistMontagem.ElementAt(i);
             <tr>
-                <td>@item.Checklist?.Nome</td>
+                <td>
+                    @item.Checklist?.Nome
+                    @if (item.Checklist?.ModeloMota != null)
+                    {
+                        <span class="badge bg-info ms-1" data-bs-toggle="tooltip" title="Específico para este modelo">
+                            <i class="bx bx-car"></i> @item.Checklist.ModeloMota.Nome
+                        </span>
+                    }
+                </td>
                 <td>
                     @if (apenasVisualizar)
                     {

@@ -209,8 +209,6 @@ namespace A_Mover_Desktop_Final.Controllers
             var ordem = await _context.OrdemProducao
                 .Include(o => o.Encomenda)
                     .ThenInclude(e => e.ModeloMota)
-                        .ThenInclude(m => m.PecasSN)
-                            .ThenInclude(psn => psn.Pecas)
                 .FirstOrDefaultAsync(o => o.IDOrdemProducao == id);
 
             if (ordem == null) return NotFound();
@@ -218,13 +216,13 @@ namespace A_Mover_Desktop_Final.Controllers
             // Se já existe mota, retornar para edição
             if (ordem.Mota != null)
             {
-                return PartialView("_MotaFormulario", ordem.Mota);
+                return RedirectToAction("EditarMota", new { id = ordem.Mota.IDMota });
             }
 
-            // Gerar número de identificação aleatório de 17 caracteres começando com "AJP"
+            // Gerar número de identificação aleatório
             string numeroIdentificacao = GerarNumeroIdentificacao();
 
-            // Criar nova mota com todas as peças do modelo
+            // Criar nova mota
             var novaMota = new Mota
             {
                 IDOrdemProducao = ordem.IDOrdemProducao,
@@ -232,23 +230,23 @@ namespace A_Mover_Desktop_Final.Controllers
                 NumeroIdentificacao = numeroIdentificacao,
                 Quilometragem = 0,
                 Estado = EstadoMota.EmProdução,
-                DataRegisto = DateTime.Now,
-                MotasPecasSN = new List<MotasPecasSN>()
+                DataRegisto = DateTime.Now
             };
 
-            // Adicionar todas as peças do modelo
-            if (ordem.Encomenda.ModeloMota.PecasSN != null)
-            {
-                foreach (var pecaModelo in ordem.Encomenda.ModeloMota.PecasSN)
-                {
-                    novaMota.MotasPecasSN.Add(new MotasPecasSN
-                    {
-                        IDPeca = pecaModelo.IDPeca,
-                        Pecas = pecaModelo.Pecas,
-                        NumeroSerie = ""
-                    });
-                }
-            }
+            // Carregar peças do modelo para exibição
+            var pecasFixas = await _context.ModeloPecasFixas
+                .Include(p => p.Pecas)
+                .Where(p => p.IDModelo == novaMota.IDModelo)
+                .ToListAsync();
+
+            var pecasSN = await _context.ModeloPecasSN
+                .Include(p => p.Pecas)
+                .Where(p => p.IDModelo == novaMota.IDModelo)
+                .ToListAsync();
+
+            ViewBag.PecasFixas = pecasFixas;
+            ViewBag.PecasSN = pecasSN;
+            ViewBag.PecasInfo = new List<MotasPecasInfo>();
 
             return PartialView("_MotaFormulario", novaMota);
         }
@@ -525,9 +523,133 @@ namespace A_Mover_Desktop_Final.Controllers
             }
         }
 
+        // No método que cria a ordem de produção
+        private void AssociarChecklists(OrdemProducao ordemProducao, int idModeloMota)
+        {
+            // Buscar checklists genéricos (IDModeloMota é null) e específicos para o modelo
+            var checklists = _context.Checklist
+                .Where(c => c.IDModelo == null || c.IDModelo == idModeloMota)
+                .ToList();
+
+            // Criar instâncias para checklists de montagem
+            foreach (var checklist in checklists.Where(c => c.Tipo == TipoChecklist.Montagem))
+            {
+                ordemProducao.ChecklistMontagem.Add(new ChecklistMontagem
+                {
+                    IDChecklist = checklist.IDChecklist,
+                    IDOrdemProducao = ordemProducao.IDOrdemProducao
+                });
+            }
+
+            // Criar instâncias para checklists de controlo
+            foreach (var checklist in checklists.Where(c => c.Tipo == TipoChecklist.Controlo))
+            {
+                ordemProducao.ChecklistControlo.Add(new ChecklistControlo
+                {
+                    IDChecklist = checklist.IDChecklist,
+                    IDOrdemProducao = ordemProducao.IDOrdemProducao
+                });
+            }
+
+            // Criar instâncias para checklists de embalagem
+            foreach (var checklist in checklists.Where(c => c.Tipo == TipoChecklist.Embalagem))
+            {
+                ordemProducao.ChecklistEmbalagem.Add(new ChecklistEmbalagem
+                {
+                    IDChecklist = checklist.IDChecklist,
+                    IDOrdemProducao = ordemProducao.IDOrdemProducao
+                });
+            }
+        }
+
         private bool OrdemProducaoExists(int id)
         {
             return _context.OrdemProducao.Any(e => e.IDOrdemProducao == id);
+        }
+
+        public async Task<IActionResult> EditarMota(int id)
+        {
+            var mota = await _context.Motas.FindAsync(id);
+            if (mota == null)
+            {
+                return NotFound();
+            }
+
+            // Carregar informações do modelo
+            var modeloMota = await _context.ModelosMota
+                .FindAsync(mota.IDModelo);
+
+            // Carregar peças do modelo
+            var pecasFixas = await _context.ModeloPecasFixas
+                .Include(p => p.Pecas)
+                .Where(p => p.IDModelo == mota.IDModelo)
+                .ToListAsync();
+
+            var pecasSN = await _context.ModeloPecasSN
+                .Include(p => p.Pecas)
+                .Where(p => p.IDModelo == mota.IDModelo)
+                .ToListAsync();
+
+            // Carregar informações de peças já associadas a esta mota
+            var pecasInfo = await _context.MotasPecasInfo
+                .Where(p => p.IDMota == id)
+                .ToListAsync();
+
+            ViewBag.PecasFixas = pecasFixas;
+            ViewBag.PecasSN = pecasSN;
+            ViewBag.PecasInfo = pecasInfo;
+            ViewBag.Modelo = modeloMota;
+
+            return View(mota);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarMota(Mota mota, Dictionary<int, string> PecasInfo)
+        {
+            // Salvar informações básicas da mota
+            if (mota.IDMota == 0)
+            {
+                mota.DataRegisto = DateTime.Now;
+                mota.Estado = EstadoMota.EmProdução;
+                mota.Quilometragem = 0;
+                _context.Motas.Add(mota);
+            }
+            else
+            {
+                _context.Motas.Update(mota);
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            // Salvar informações das peças
+            foreach (var info in PecasInfo)
+            {
+                int idPeca = info.Key;
+                string valorInfo = info.Value;
+                
+                // Verificar se já existe registro para esta peça
+                var pecaInfo = await _context.MotasPecasInfo
+                    .FirstOrDefaultAsync(p => p.IDMota == mota.IDMota && p.IDPeca == idPeca);
+                    
+                if (pecaInfo != null)
+                {
+                    pecaInfo.InformacaoAdicional = valorInfo;
+                    _context.MotasPecasInfo.Update(pecaInfo);
+                }
+                else
+                {
+                    _context.MotasPecasInfo.Add(new MotasPecasInfo
+                    {
+                        IDMota = mota.IDMota,
+                        IDPeca = idPeca,
+                        InformacaoAdicional = valorInfo
+                    });
+                }
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction("Details", new { id = mota.IDOrdemProducao });
         }
     }
 }

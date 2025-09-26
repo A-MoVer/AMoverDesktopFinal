@@ -17,6 +17,7 @@
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Tipo</th>
+                    <th>Modelo de Mota</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -27,6 +28,9 @@
                         <td><b>@Html.DisplayFor(modelItem => checklist.Nome)</b></td>
                         <td>@Html.DisplayFor(modelItem => checklist.Descricao)</td>
                         <td>@Html.DisplayFor(modelItem => checklist.Tipo)</td>
+                        <td>
+                            @(checklist.ModeloMota != null ? checklist.ModeloMota.Nome : "Genérico (Todos os Modelos)")
+                        </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@checklist.IDChecklist" class="btn btn-sm btn-warning text-white me-2">
                                 <i class="fas fa-edit"></i> Editar

@@ -34,7 +34,20 @@
                         <span asp-validation-for="Descricao" class="text-danger"></span>
                     </div>
                 </div>
-
+                
+                <!-- Modelo de Mota -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="IDModelo">
+                        Modelo de Mota
+                    </label>
+                    <div class="col-sm-10">
+                        <select asp-for="IDModelo" class="form-select" asp-items="ViewBag.ModeloMotas">
+                            <option value="">-- Checklist Genérico (Todos os Modelos) --</option>
+                        </select>
+                        <span class="text-muted d-block mt-1">Deixe em branco para aplicar a todos os modelos</span>
+                    </div>
+                </div>
+                
                 <!-- Tipo -->
                 <div class="row mb-3">
                     <label class="col-sm-2 col-form-label" asp-for="Tipo">
