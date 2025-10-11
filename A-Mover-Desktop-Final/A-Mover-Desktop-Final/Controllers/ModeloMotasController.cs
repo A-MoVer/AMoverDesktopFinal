@@ -53,58 +53,81 @@ namespace A_Mover_Desktop_Final.Controllers
             ViewBag.PecasFixas = pecasFixas;
             ViewBag.PecasSN = pecasSN;
 
-            // Buscar checklists associados a este modelo
+            // Buscar checklists associados a este modelo usando a tabela de junção
             var checklistsAssociados = await _context.Checklist
-                .Where(c => c.IDModelo == id)
+                .Include(c => c.ChecklistModelos)
+                .Where(c => c.ChecklistModelos.Any(cm => cm.IDModelo == id))
                 .ToListAsync();
             
             // Buscar checklists não associados (disponíveis para associação)
             var checklistsDisponiveis = await _context.Checklist
-                .Where(c => c.IDModelo == null)
+                .Include(c => c.ChecklistModelos)
+                .Where(c => !c.ChecklistModelos.Any(cm => cm.IDModelo == id))
                 .ToListAsync();
 
-    ViewData["ChecklistsAssociados"] = checklistsAssociados;
-    ViewData["ChecklistsDisponiveis"] = checklistsDisponiveis;
+            ViewData["ChecklistsAssociados"] = checklistsAssociados;
+            ViewData["ChecklistsDisponiveis"] = checklistsDisponiveis;
     
             return View(modeloMota);
         }
+
         // Método para associar checklist a um modelo
         [HttpPost]
         public async Task<IActionResult> AssociarChecklist(int idModelo, int idChecklist)
         {
-            var checklist = await _context.Checklist.FindAsync(idChecklist);
-            if (checklist != null)
+            // Verificar se já existe associação
+            var associacaoExistente = await _context.Set<ChecklistModelo>()
+                .FirstOrDefaultAsync(cm => cm.IDChecklist == idChecklist && cm.IDModelo == idModelo);
+
+            if (associacaoExistente == null)
             {
-                checklist.IDModelo = idModelo;
+                // Criar nova associação na tabela de junção
+                _context.Add(new ChecklistModelo
+                {
+                    IDChecklist = idChecklist,
+                    IDModelo = idModelo
+                });
                 await _context.SaveChangesAsync();
             }
             
             return RedirectToAction(nameof(Details), new { id = idModelo });
         }
 
-        // Método para eliminar checklist ao desassociar
+        // Método para remover associação entre checklist e modelo
         [HttpPost]
         public async Task<IActionResult> RemoverAssociacaoChecklist(int idModelo, int idChecklist)
         {
-            var checklist = await _context.Checklist.FindAsync(idChecklist);
-            if (checklist != null)
+            // Encontrar a associação na tabela de junção
+            var associacao = await _context.Set<ChecklistModelo>()
+                .FirstOrDefaultAsync(cm => cm.IDChecklist == idChecklist && cm.IDModelo == idModelo);
+                
+            if (associacao != null)
             {
+                // Remover a associação
+                _context.Remove(associacao);
+                
                 // Verificar se o checklist está sendo usado em alguma ordem de produção
                 bool usadoEmMontagem = await _context.ChecklistMontagem.AnyAsync(cm => cm.IDChecklist == idChecklist);
                 bool usadoEmControlo = await _context.ChecklistControlo.AnyAsync(cc => cc.IDChecklist == idChecklist);
                 bool usadoEmEmbalagem = await _context.ChecklistEmbalagem.AnyAsync(ce => ce.IDChecklist == idChecklist);
                 
-                if (usadoEmMontagem || usadoEmControlo || usadoEmEmbalagem)
+                // Verificar se o checklist está associado a outros modelos
+                bool associadoOutrosModelos = await _context.Set<ChecklistModelo>()
+                    .AnyAsync(cm => cm.IDChecklist == idChecklist && cm.IDModelo != idModelo);
+                
+                // Se o checklist não estiver em uso e não estiver associado a outros modelos, pode ser eliminado
+                if (!usadoEmMontagem && !usadoEmControlo && !usadoEmEmbalagem && !associadoOutrosModelos)
                 {
-                    // Se estiver sendo usado, apenas desassocia
-                    checklist.IDModelo = null;
-                    TempData["Warning"] = "O checklist não pôde ser eliminado porque está sendo utilizado em ordens de produção. A associação foi removida.";
+                    var checklist = await _context.Checklist.FindAsync(idChecklist);
+                    if (checklist != null)
+                    {
+                        _context.Checklist.Remove(checklist);
+                        TempData["Success"] = "Checklist eliminado com sucesso.";
+                    }
                 }
                 else
                 {
-                    // Se não estiver sendo usado, elimina completamente
-                    _context.Checklist.Remove(checklist);
-                    TempData["Success"] = "Checklist eliminado com sucesso.";
+                    TempData["Warning"] = "O checklist não pôde ser eliminado porque está sendo utilizado em ordens de produção ou está associado a outros modelos. A associação foi removida.";
                 }
                 
                 await _context.SaveChangesAsync();
@@ -112,6 +135,7 @@ namespace A_Mover_Desktop_Final.Controllers
             
             return RedirectToAction(nameof(Details), new { id = idModelo });
         }
+        
         // GET: ModeloMotas/Create
         public IActionResult Create()
         {
@@ -122,8 +146,7 @@ namespace A_Mover_Desktop_Final.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-    [Bind("IDModelo,CodigoProduto,Nome,DataInicioProducao,DataLancamento,DataDescontinuacao,Estado")] ModeloMota modeloMota, string pecasFixasIds, string pecasSNIds)
+        public async Task<IActionResult> Create(ModeloMota modeloMota, string pecasFixasIds, string pecasSNIds)
         {
             ViewData["ActiveMenu"] = "GestaoModelos";
 
@@ -154,13 +177,67 @@ namespace A_Mover_Desktop_Final.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["Success"] = "Modelo criado com sucesso! Configure agora as especificações padrão.";
+                return RedirectToAction(nameof(ConfigurarEspecificacoesPadrao), new { id = modeloMota.IDModelo });
             }
 
             ViewBag.Pecas = await _context.Pecas.OrderBy(p => p.PartNumber).ToListAsync();
             return View(modeloMota);
         }
 
+        // Novo método para configurar especificações padrão
+        [HttpGet]
+        public async Task<IActionResult> ConfigurarEspecificacoesPadrao(int id)
+        {
+            var modelo = await _context.ModelosMota
+                .Include(m => m.PecasFixas).ThenInclude(p => p.Pecas)
+                .Include(m => m.PecasSN).ThenInclude(p => p.Pecas)
+                .FirstOrDefaultAsync(m => m.IDModelo == id);
+                
+            if (modelo == null)
+                return NotFound();
+                
+            return View(modelo);
+        }
+
+        // Método para salvar as especificações padrão
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SalvarEspecificacoesPadrao(int id, Dictionary<string, string> especificacoes)
+        {
+            var modelo = await _context.ModelosMota
+                .Include(m => m.PecasFixas)
+                .Include(m => m.PecasSN)
+                .FirstOrDefaultAsync(m => m.IDModelo == id);
+                
+            if (modelo == null)
+                return NotFound();
+            
+            // Processar peças fixas
+            foreach (var pecaFixa in modelo.PecasFixas)
+            {
+                string key = $"fixa_{pecaFixa.IDPeca}";
+                if (especificacoes.ContainsKey(key))
+                {
+                    pecaFixa.EspecificacaoPadrao = especificacoes[key];
+                }
+            }
+            
+            // Processar peças com número de série
+            foreach (var pecaSN in modelo.PecasSN)
+            {
+                string key = $"sn_{pecaSN.IDPeca}";
+                if (especificacoes.ContainsKey(key))
+                {
+                    pecaSN.EspecificacaoPadrao = especificacoes[key];
+                }
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            TempData["Success"] = "Especificações padrão salvas com sucesso!";
+            return RedirectToAction(nameof(Details), new { id });
+        }
 
 
 

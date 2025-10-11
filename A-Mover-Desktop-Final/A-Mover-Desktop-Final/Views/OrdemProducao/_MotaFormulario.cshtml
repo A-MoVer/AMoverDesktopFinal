@@ -1,15 +1,95 @@
 ﻿@model A_Mover_Desktop_Final.Models.Mota
 
 @{
-    // Essas listas devem ser passadas como ViewBag ou como parte de um ViewModel mais completo
+    // Listas de peças existentes
     var pecasFixas = ViewBag.PecasFixas as List<ModeloPecasFixas> ?? new List<ModeloPecasFixas>();
     var pecasSN = ViewBag.PecasSN as List<ModeloPecasSN> ?? new List<ModeloPecasSN>();
     var pecasInfo = ViewBag.PecasInfo as List<MotasPecasInfo> ?? new List<MotasPecasInfo>();
     
-    // Verificar se alguma peça já tem informações salvas
+    // Função para obter informação (mantida igual)
     Func<int, string> GetInformacaoAdicional = (idPeca) => {
-        return pecasInfo.FirstOrDefault(p => p.IDPeca == idPeca)?.InformacaoAdicional ?? "";
+        // Primeiro verificar se já existe informação salva para esta mota
+        var info = pecasInfo.FirstOrDefault(p => p.IDPeca == idPeca)?.InformacaoAdicional;
+        if (!string.IsNullOrEmpty(info)) 
+            return info;
+        
+        // Se não tem informação, buscar nas especificações padrão
+        var pecaFixa = pecasFixas.FirstOrDefault(p => p.IDPeca == idPeca);
+        if (pecaFixa != null && !string.IsNullOrEmpty(pecaFixa.EspecificacaoPadrao))
+            return pecaFixa.EspecificacaoPadrao;
+        
+        var pecaSN = pecasSN.FirstOrDefault(p => p.IDPeca == idPeca);
+        if (pecaSN != null && !string.IsNullOrEmpty(pecaSN.EspecificacaoPadrao))
+            return pecaSN.EspecificacaoPadrao;
+        
+        return "";
     };
+    
+    // Verificar se o campo é pré-preenchido
+    Func<int, bool> IsValorPadrao = (idPeca) => {
+        // Se não existe informação salva na mota, mas existe especificação padrão,
+        // então está usando valor padrão
+        if (pecasInfo.All(p => p.IDPeca != idPeca))
+        {
+            var especPadrao = pecasFixas.FirstOrDefault(p => p.IDPeca == idPeca)?.EspecificacaoPadrao
+                            ?? pecasSN.FirstOrDefault(p => p.IDPeca == idPeca)?.EspecificacaoPadrao;
+                            
+            return !string.IsNullOrEmpty(especPadrao);
+        }
+        return false;
+    };
+    
+    // Verificar se o campo é somente leitura - ATUALIZADA
+    Func<int, bool> IsCampoSomenteLeitura = (idPeca) => {
+        // Regra 1: É um valor padrão pré-preenchido
+        if (IsValorPadrao(idPeca))
+            return true;
+        
+        // Regra 2: É um componente fixo da edição Gold
+        bool isGoldEdition = ViewBag.Modelo?.Nome?.Contains("Gold", StringComparison.OrdinalIgnoreCase) ?? false;
+        
+        if (isGoldEdition)
+        {
+            var peca = pecasFixas.FirstOrDefault(p => p.IDPeca == idPeca)?.Pecas?.Descricao
+                    ?? pecasSN.FirstOrDefault(p => p.IDPeca == idPeca)?.Pecas?.Descricao;
+            
+            if (peca != null)
+            {
+                if (peca.Contains("Suspensão", StringComparison.OrdinalIgnoreCase) || 
+                    peca.Contains("Amortecedor", StringComparison.OrdinalIgnoreCase) ||
+                    peca.Contains("Escape", StringComparison.OrdinalIgnoreCase) ||
+                    peca.Contains("Jantes", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    };
+    
+    // Função para obter razão pela qual o campo é somente leitura
+    Func<int, string> GetRazaoSomenteLeitura = (idPeca) => {
+        if (IsValorPadrao(idPeca))
+            return "Este componente utiliza o valor padrão do modelo";
+            
+        return "Este componente é fixo nesta edição";
+    };
+    
+    // Criar lista combinada (mantida igual)
+    var todasPecas = new List<(Pecas Peca, bool EhSN)>();
+    
+    foreach (var pecaSN in pecasSN)
+    {
+        if (pecaSN.Pecas != null)
+            todasPecas.Add((pecaSN.Pecas, true));
+    }
+    
+    foreach (var pecaFixa in pecasFixas)
+    {
+        if (pecaFixa.Pecas != null)
+            todasPecas.Add((pecaFixa.Pecas, false));
+    }
 }
 
 <form asp-action="GuardarMota" asp-controller="OrdemProducao" method="post">
@@ -31,10 +111,10 @@
     
     <h4 class="mt-4 mb-3">Componentes e Especificações</h4>
     
-    <!-- Componentes com Número de Série -->
+    <!-- Todos os Componentes em uma Única Tabela -->
     <div class="card mb-4">
         <div class="card-header bg-light">
-            <h5 class="mb-0">Componentes</h5>
+            <h5 class="mb-0">Todos os Componentes</h5>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -47,43 +127,69 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var peca in pecasSN)
+                        @foreach (var (peca, ehSN) in todasPecas.OrderBy(p => p.Peca.Descricao))
                         {
+                            var somenteLeitura = IsCampoSomenteLeitura(peca.IDPeca);
+                            var valor = GetInformacaoAdicional(peca.IDPeca);
+                            var ehValorPadrao = IsValorPadrao(peca.IDPeca);
+                            
                             <tr>
-                                <td>@peca.Pecas?.Descricao</td>
-                                <td>@peca.Pecas?.PartNumber</td>
                                 <td>
-                                    <input type="hidden" name="PecasSN[@peca.IDPeca].IDPeca" value="@peca.IDPeca" />
-                                    <input type="text" class="form-control" 
-                                           name="PecasSN[@peca.IDPeca].NumeroSerie" 
-                                           value="@(Model.MotasPecasSN?.FirstOrDefault(mp => mp.IDPeca == peca.IDPeca)?.NumeroSerie ?? "")" />
+                                    @peca.Descricao
+                                    @if (somenteLeitura)
+                                    {
+                                        <span class="badge bg-warning ms-1" title="Componente com valor fixo">Fixo</span>
+                                    }
+                                    @if (ehSN)
+                                    {
+                                        <span class="badge bg-info ms-1" title="Requer número de série">S/N</span>
+                                    }
                                 </td>
-                            </tr>
-                        }
-                        @if (!pecasSN.Any())
-                        {
-                            <tr>
-                                <td colspan="3" class="text-center">Não há componentes com número de série associados a este modelo.</td>
-                            </tr>
-                        }
-                        @foreach (var peca in pecasFixas)
-                        {
-                            <tr>
-                                <td>@peca.Pecas?.Descricao</td>
-                                <td>@peca.Pecas?.PartNumber</td>
+                                <td><code>@peca.PartNumber</code></td>
                                 <td>
-                                    <input type="hidden" name="PecasInfo[@peca.IDPeca].IDPeca" value="@peca.IDPeca" />
-                                    <input type="text" class="form-control" 
-                                           name="PecasInfo[@peca.IDPeca].InformacaoAdicional" 
-                                           value="@GetInformacaoAdicional(peca.IDPeca)" 
-                                           placeholder="@GetPlaceholderParaPeca(peca.Pecas?.Descricao ?? "")" />
+                                    @if (ehSN)
+                                    {
+                                        <input type="hidden" name="PecasSN[@peca.IDPeca].IDPeca" value="@peca.IDPeca" />
+                                        <div class="input-group">
+                                            <input type="text" 
+                                                class="form-control @(ehValorPadrao ? "bg-light" : "") @(somenteLeitura ? "border-warning" : "")" 
+                                                name="PecasSN[@peca.IDPeca].NumeroSerie" 
+                                                value="@valor"
+                                                @(somenteLeitura ? "readonly" : "") />
+                                            
+                                            @if (somenteLeitura)
+                                            {
+                                                <span class="input-group-text bg-warning text-white">
+                                                    <i class="bx bx-lock"></i>
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="PecasInfo[@peca.IDPeca].IDPeca" value="@peca.IDPeca" />
+                                        <div class="input-group">
+                                            <input type="text" 
+                                                class="form-control @(ehValorPadrao ? "bg-light" : "") @(somenteLeitura ? "border-warning" : "")" 
+                                                name="PecasInfo[@peca.IDPeca].InformacaoAdicional" 
+                                                value="@valor"
+                                                placeholder="@GetPlaceholderParaPeca(peca.Descricao ?? "")"
+                                                @(somenteLeitura ? "readonly" : "") />
+                                            
+                                            @if (somenteLeitura)
+                                            {
+                                                <span class="input-group-text bg-warning text-white">
+                                                    <i class="bx bx-lock"></i>
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                    
+                                    @if (somenteLeitura)
+                                    {
+                                        <small class="text-warning">@GetRazaoSomenteLeitura(peca.IDPeca)</small>
+                                    }
                                 </td>
-                            </tr>
-                        }
-                        @if (!pecasFixas.Any())
-                        {
-                            <tr>
-                                <td colspan="3" class="text-center">Não há componentes fixos associados a este modelo.</td>
                             </tr>
                         }
                     </tbody>

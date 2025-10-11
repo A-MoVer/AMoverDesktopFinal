@@ -20,7 +20,6 @@ namespace A_Mover_Desktop_Final.Models
         [ForeignKey("IDPeca")]
         public Pecas? Pecas { get; set; }
 
-        [Required(ErrorMessage = "É necessário associar informação adicional da peça.")]
         public string? InformacaoAdicional { get; set; }
 
     }

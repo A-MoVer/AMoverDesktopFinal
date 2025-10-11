@@ -19,5 +19,8 @@ namespace A_Mover_Desktop_Final.Models
 
         [ForeignKey("IDPeca")]
         public Pecas? Pecas { get; set; }
+
+        [StringLength(100)]
+        public string? EspecificacaoPadrao { get; set; } // Campo novo para especificação padrão
     }
 }

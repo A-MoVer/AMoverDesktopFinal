@@ -18,10 +18,10 @@
             <tr>
                 <td>
                     @item.Checklist?.Nome
-                    @if (item.Checklist?.ModeloMota != null)
+                    @if (item.Checklist?.ChecklistModelos != null && item.Checklist.ChecklistModelos.Any())
                     {
                         <span class="badge bg-info ms-1" data-bs-toggle="tooltip" title="Específico para este modelo">
-                            <i class="bx bx-car"></i> @item.Checklist.ModeloMota.Nome
+                            <i class="bx bx-car"></i> @string.Join(", ", item.Checklist.ChecklistModelos.Select(cm => cm.ModeloMota?.Nome))
                         </span>
                     }
                 </td>

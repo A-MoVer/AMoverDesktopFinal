@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Teste de Conexão com a API";
+}
+
+<div class="card m-4">
+    <div class="card-header bg-primary text-white">
+        <h1 class="m-0">Teste de Conexão com MessageAPI</h1>
+    </div>
+    <div class="card-body">
+        <p>Base URL: <code id="baseUrl">@ViewBag.BaseUrl</code></p>
+        <p>API Key: <code id="apiKey">@ViewBag.ApiKey</code></p>
+        
+        <button id="testConnection" class="btn btn-primary">Testar Conexão</button>
+        
+        <div id="result" class="mt-4"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#testConnection').on('click', function() {
+                // Mostrar indicador de carregamento
+                $('#result').html('<div class="alert alert-info">Testando conexão...</div>');
+                
+                // Enviar requisição para testar conexão
+                $.ajax({
+                    url: '@Url.Action("TestConnection", "Message")',
+                    type: 'POST',
+                    success: function(data) {
+                        if (data.success) {
+                            $('#result').html(`
+                                <div class="alert alert-success">
+                                    <p><strong>Sucesso!</strong> ${data.message}</p>
+                                </div>
+                            `);
+                        } else {
+                            $('#result').html(`
+                                <div class="alert alert-danger">
+                                    <p><strong>Erro!</strong> ${data.message}</p>
+                                </div>
+                            `);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#result').html(`
+                            <div class="alert alert-danger">
+                                <p><strong>Erro na requisição AJAX:</strong> ${error}</p>
+                            </div>
+                        `);
+                    }
+                });
+            });
+        });
+    </script>
+}
