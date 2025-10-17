@@ -1,39 +1,127 @@
 @model A_Mover_Desktop_Final.Models.Mota
 
+@{
+    var pecasSNModelo = ViewBag.PecasSNModelo as List<ModeloPecasSN> ?? new List<ModeloPecasSN>();
+    var pecasSNRegistadas = ViewBag.PecasSNRegistadas as List<MotasPecasSN> ?? new List<MotasPecasSN>();
+    var apenasVisualizar = ViewBag.ApenasVisualizar as bool? ?? false;
+}
 
-<form asp-action="GuardarPecasSN" method="post">
-    <input type="hidden" name="IDMota" value="@Model.IDMota" />
-
-    <table class="table">
-        <thead>
+@if (apenasVisualizar)
+{
+    <!-- ✅ MODO VISUALIZAÇÃO (Ordem Concluída/Embalada/Enviada) -->
+    <div class="alert alert-success mb-4">
+        <i class="bx bx-lock-alt me-2"></i>
+        <strong>Modo Visualização:</strong> Os números de série estão bloqueados porque a ordem já foi concluída.
+    </div>
+    
+    <table class="table table-hover table-bordered">
+        <thead class="table-light">
             <tr>
-                <th>Peça</th>
-                <th>Número de Série</th>
+                <th>PEÇA</th>
+                <th>PART NUMBER</th>
+                <th>NÚMERO DE SÉRIE</th>
             </tr>
         </thead>
         <tbody>
-            @if (Model.MotasPecasSN != null && Model.MotasPecasSN.Any())
+            @if (pecasSNRegistadas.Any())
             {
-                for (int i = 0; i < Model.MotasPecasSN.Count; i++)
+                foreach (var peca in pecasSNRegistadas)
                 {
-                    var peca = Model.MotasPecasSN.ElementAt(i);
                     <tr>
                         <td>
-                            @peca.Pecas?.Descricao
-                            <input type="hidden" name="PecasSN[@i].IDPeca" value="@peca.IDPeca" />
+                            <strong>@peca.Pecas.Descricao</strong>
+                            <span class="badge bg-info ms-2">S/N</span>
+                        </td>
+                        <td class="text-danger fw-bold">
+                            @peca.Pecas.PartNumber
                         </td>
                         <td>
-                            <input type="text" class="form-control" name="PecasSN[@i].NumeroSerie" value="@peca.NumeroSerie" required />
+                            <span class="badge bg-success fs-6">@peca.NumeroSerie</span>
                         </td>
                     </tr>
                 }
             }
+            else if (pecasSNModelo.Any())
+            {
+                <tr>
+                    <td colspan="3" class="text-center text-warning py-4">
+                        <i class="bx bx-error-circle me-2"></i>
+                        Nenhum número de série foi registado para estas peças.
+                    </td>
+                </tr>
+            }
             else
             {
-                <tr><td colspan="2" class="text-muted">Esta mota ainda não tem peças associadas.</td></tr>
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-4">
+                        Este modelo não tem peças com número de série.
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
+}
+else
+{
+    <!-- ✅ MODO EDIÇÃO (Ordem em Produção) -->
+    <form asp-action="GuardarPecasSN" asp-controller="OrdemProducao" method="post">
+        <input type="hidden" name="IDMota" value="@Model.IDMota" />
+        @Html.AntiForgeryToken()
 
-    <button type="submit" class="btn btn-success">Guardar Números de Série</button>
-</form>
+        <table class="table table-hover table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>PEÇA</th>
+                    <th>PART NUMBER</th>
+                    <th>NÚMERO DE SÉRIE</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (pecasSNModelo.Any())
+                {
+                    for (int i = 0; i < pecasSNModelo.Count; i++)
+                    {
+                        var pecaModelo = pecasSNModelo[i];
+                        var pecaRegistada = pecasSNRegistadas.FirstOrDefault(p => p.IDPeca == pecaModelo.IDPeca);
+                        
+                        <tr>
+                            <td>
+                                <strong>@pecaModelo.Pecas.Descricao</strong>
+                                <span class="badge bg-info ms-2">S/N</span>
+                            </td>
+                            <td class="text-danger fw-bold">
+                                @pecaModelo.Pecas.PartNumber
+                            </td>
+                            <td>
+                                <input type="hidden" name="PecasSN[@i].IDPeca" value="@pecaModelo.IDPeca" />
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="PecasSN[@i].NumeroSerie" 
+                                       value="@pecaRegistada?.NumeroSerie" 
+                                       placeholder="Insira o número de série" 
+                                       required />
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">
+                            Este modelo não tem peças com número de série.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (pecasSNModelo.Any())
+        {
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bx bx-save me-2"></i> Guardar Números de Série
+                </button>
+            </div>
+        }
+    </form>
+}

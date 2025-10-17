@@ -1,0 +1,75 @@
+@model A_Mover_Desktop_Final.Models.Mota
+
+@{
+    var pecasInfoRegistadas = ViewBag.PecasInfoRegistadas as List<MotasPecasInfo> ?? new List<MotasPecasInfo>();
+    var pecasFixasModelo = ViewBag.PecasFixasModelo as List<ModeloPecasFixas> ?? new List<ModeloPecasFixas>();
+    var pecasSNModelo = ViewBag.PecasSNModelo as List<ModeloPecasSN> ?? new List<ModeloPecasSN>();
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <label class="form-label fw-bold">Número de Quadro / Número de Identificação</label>
+        <p class="form-control-plaintext border rounded p-2 bg-light">@Model.NumeroIdentificacao</p>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label fw-bold">Cor</label>
+        <p class="form-control-plaintext border rounded p-2 bg-light">@(Model.Cor ?? "Não especificada")</p>
+    </div>
+</div>
+
+<h4 class="mt-4 mb-3">Componentes e Especificações</h4>
+
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Todos os Componentes</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>COMPONENTE</th>
+                        <th>PART NUMBER</th>
+                        <th>ESPECIFICAÇÃO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* Mostrar peças S/N *@
+                    @foreach (var pecaSN in pecasSNModelo)
+                    {
+                        var info = pecasInfoRegistadas.FirstOrDefault(pi => pi.IDPeca == pecaSN.IDPeca);
+                        var valor = info?.InformacaoAdicional ?? pecaSN.EspecificacaoPadrao ?? "";
+                        
+                        <tr>
+                            <td>
+                                <strong>@pecaSN.Pecas.Descricao</strong>
+                                <span class="badge bg-info ms-2">S/N</span>
+                            </td>
+                            <td class="text-danger fw-bold">@pecaSN.Pecas.PartNumber</td>
+                            <td>
+                                <span class="badge bg-secondary">@valor</span>
+                            </td>
+                        </tr>
+                    }
+                    
+                    @* Mostrar peças FIXO *@
+                    @foreach (var pecaFixa in pecasFixasModelo)
+                    {
+                        var info = pecasInfoRegistadas.FirstOrDefault(pi => pi.IDPeca == pecaFixa.IDPeca);
+                        var valor = info?.InformacaoAdicional ?? pecaFixa.EspecificacaoPadrao ?? "";
+                        
+                        <tr>
+                            <td>
+                                <strong>@pecaFixa.Pecas.Descricao</strong>
+                            </td>
+                            <td class="text-danger fw-bold">@pecaFixa.Pecas.PartNumber</td>
+                            <td>
+                                <span class="badge bg-warning text-dark">@valor</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -145,28 +145,79 @@ namespace A_Mover_Desktop_Final.Controllers
             return RedirectToAction(nameof(FichaOP), new { id = ordem.IDOrdemProducao });
         }
 
-        public async Task<IActionResult> Continuar(int id) => await FichaOP(id);
+        public async Task<IActionResult> Continuar(int id)
+{
+    // ✅ CORRIGIR: Redirecionar para a action FichaOP em vez de chamar o método
+    return RedirectToAction("FichaOP", new { id = id });
+}
 
         public async Task<IActionResult> FichaOP(int id)
         {
             var ordem = await _context.OrdemProducao
-                .Include(o => o.Encomenda).ThenInclude(e => e.Cliente)
-                .Include(o => o.Encomenda).ThenInclude(e => e.ModeloMota)
-                .Include(o => o.ChecklistMontagem).ThenInclude(c => c.Checklist)
-                .Include(o => o.ChecklistControlo).ThenInclude(c => c.Checklist)
-                .Include(o => o.ChecklistEmbalagem).ThenInclude(c => c.Checklist)
-                .Include(o => o.Mota)
-                    .ThenInclude(m => m.MotasPecasSN)
-                        .ThenInclude(mp => mp.Pecas)
+                .Include(o => o.Encomenda)
+                    .ThenInclude(e => e.Cliente)
+                .Include(o => o.Encomenda)
+                    .ThenInclude(e => e.ModeloMota)
                 .Include(o => o.Mota)
                     .ThenInclude(m => m.ModeloMota)
-                        .ThenInclude(mm => mm.PecasSN)
-                            .ThenInclude(psn => psn.Pecas)
+                .Include(o => o.ChecklistMontagem)
+                    .ThenInclude(cm => cm.Checklist)
+                        .ThenInclude(c => c.ChecklistModelos)
+                            .ThenInclude(cm => cm.ModeloMota)
+                .Include(o => o.ChecklistControlo)
+                    .ThenInclude(cc => cc.Checklist)
+                .Include(o => o.ChecklistEmbalagem)
+                    .ThenInclude(ce => ce.Checklist)
                 .FirstOrDefaultAsync(o => o.IDOrdemProducao == id);
 
+            if (ordem == null)
+                return NotFound();
 
-            if (ordem == null) return NotFound();
-            return View("FichaOP", ordem);
+            // ✅ Verificar se a ordem está em modo apenas leitura
+            var apenasVisualizar = ordem.Estado == EstadoOrdemProducao.Concluida || 
+                                  ordem.Estado == EstadoOrdemProducao.Embalada || 
+                                  ordem.Estado == EstadoOrdemProducao.Enviada;
+            
+            ViewBag.ApenasVisualizar = apenasVisualizar;
+
+            // ✅ SEMPRE carregar ViewBag para _PecasMota
+            if (ordem.Mota != null)
+            {
+                var pecasSNModelo = await _context.ModeloPecasSN
+                    .Include(p => p.Pecas)
+                    .Where(p => p.IDModelo == ordem.Mota.IDModelo)
+                    .ToListAsync();
+                
+                var pecasSNRegistadas = await _context.MotasPecasSN
+                    .Include(p => p.Pecas)
+                    .Where(p => p.IDMota == ordem.Mota.IDMota)
+                    .ToListAsync();
+
+                var pecasInfoRegistadas = await _context.MotasPecasInfo
+                    .Include(pi => pi.Pecas)
+                    .Where(pi => pi.IDMota == ordem.Mota.IDMota)
+                    .ToListAsync();
+                
+                // ✅ Carregar também as peças fixas do modelo para mostrar tudo
+                var pecasFixasModelo = await _context.ModeloPecasFixas
+                    .Include(p => p.Pecas)
+                    .Where(p => p.IDModelo == ordem.Mota.IDModelo)
+                    .ToListAsync();
+                
+                ViewBag.PecasSNModelo = pecasSNModelo;
+                ViewBag.PecasSNRegistadas = pecasSNRegistadas;
+                ViewBag.PecasInfoRegistadas = pecasInfoRegistadas;
+                ViewBag.PecasFixasModelo = pecasFixasModelo;
+            }
+            else
+            {
+                ViewBag.PecasSNModelo = new List<ModeloPecasSN>();
+                ViewBag.PecasSNRegistadas = new List<MotasPecasSN>();
+                ViewBag.PecasInfoRegistadas = new List<MotasPecasInfo>();
+                ViewBag.PecasFixasModelo = new List<ModeloPecasFixas>();
+            }
+
+            return View(ordem);
         }
 
         [HttpPost]
@@ -247,40 +298,6 @@ namespace A_Mover_Desktop_Final.Controllers
             ViewBag.Modelo = ordem.Encomenda.ModeloMota; // Importante: passar o modelo para verificar o tipo
 
             return PartialView("_MotaFormulario", novaMota);
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> GuardarPecasSN(int IDMota, List<MotasPecasSN> PecasSN)
-        {
-            var mota = await _context.Motas
-                .Include(m => m.MotasPecasSN)
-                .FirstOrDefaultAsync(m => m.IDMota == IDMota);
-
-            if (mota == null)
-                return NotFound();
-
-            foreach (var peca in PecasSN)
-            {
-                var existente = mota.MotasPecasSN?.FirstOrDefault(x => x.IDPeca == peca.IDPeca);
-
-                if (existente != null)
-                {
-                    existente.NumeroSerie = peca.NumeroSerie;
-                }
-                else
-                {
-                    _context.MotasPecasSN.Add(new MotasPecasSN
-                    {
-                        IDMota = IDMota,
-                        IDPeca = peca.IDPeca,
-                        NumeroSerie = peca.NumeroSerie
-                    });
-                }
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(FichaOP), new { id = mota.IDOrdemProducao });
         }
 
 
@@ -511,19 +528,23 @@ namespace A_Mover_Desktop_Final.Controllers
             return _context.OrdemProducao.Any(e => e.IDOrdemProducao == id);
         }
 
+        [HttpGet]
         public async Task<IActionResult> EditarMota(int id)
         {
-            var mota = await _context.Motas.FindAsync(id);
+            var mota = await _context.Motas
+                .Include(m => m.ModeloMota)
+                .Include(m => m.MotasPecasSN)
+                    .ThenInclude(mp => mp.Pecas)
+                .Include(m => m.MotasPecasInfo)
+                    .ThenInclude(mpi => mpi.Pecas)
+                .FirstOrDefaultAsync(m => m.IDMota == id);
+
             if (mota == null)
             {
                 return NotFound();
             }
 
-            // Carregar informações do modelo
-            var modeloMota = await _context.ModelosMota
-                .FindAsync(mota.IDModelo);
-
-            // Carregar peças do modelo
+            // Carregar peças do modelo COM especificações padrão
             var pecasFixas = await _context.ModeloPecasFixas
                 .Include(p => p.Pecas)
                 .Where(p => p.IDModelo == mota.IDModelo)
@@ -534,74 +555,207 @@ namespace A_Mover_Desktop_Final.Controllers
                 .Where(p => p.IDModelo == mota.IDModelo)
                 .ToListAsync();
 
-            // Carregar informações de peças já associadas a esta mota
+            // Carregar informações já salvas (apenas as alteradas)
             var pecasInfo = await _context.MotasPecasInfo
+                .Include(pi => pi.Pecas)
                 .Where(p => p.IDMota == id)
                 .ToListAsync();
 
             ViewBag.PecasFixas = pecasFixas;
             ViewBag.PecasSN = pecasSN;
             ViewBag.PecasInfo = pecasInfo;
-            ViewBag.Modelo = modeloMota;
+            ViewBag.Modelo = mota.ModeloMota;
+            ViewBag.IDOrdemProducao = mota.IDOrdemProducao;
 
-            return View(mota);
+            return PartialView("_MotaFormulario", mota);
         }
 
         [HttpPost]
-        public async Task<IActionResult> GuardarMota(Mota mota, Dictionary<int, string> PecasInfo, Dictionary<int, string> PecasSN)
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> GuardarMota(int IDMota, int IDOrdemProducao, int IDModelo, string NumeroIdentificacao, string? Cor, List<KeyValuePair<int, string>> TodasPecas)
+{
+    try
+    {
+        Mota mota;
+        
+        if (IDMota > 0)
         {
-            // Salvar a mota
-            if (mota.IDMota == 0)
+            // ✅ EDITAR mota existente
+            mota = await _context.Motas.FindAsync(IDMota);
+                
+            if (mota == null)
+                return NotFound();
+                
+            mota.NumeroIdentificacao = NumeroIdentificacao;
+            mota.Cor = Cor;
+            
+            _context.Motas.Update(mota);
+        }
+        else
+        {
+            // ✅ CRIAR nova mota
+            mota = new Mota
             {
-                mota.DataRegisto = DateTime.Now;
-                mota.Estado = EstadoMota.EmProdução;
-                mota.Quilometragem = 0;
-                _context.Motas.Add(mota);
+                IDOrdemProducao = IDOrdemProducao,
+                IDModelo = IDModelo,
+                NumeroIdentificacao = NumeroIdentificacao,
+                Cor = Cor,
+                DataRegisto = DateTime.Now,
+                Estado = EstadoMota.EmProdução,
+                Quilometragem = 0
+            };
+            
+            _context.Motas.Add(mota);
+        }
+        
+        await _context.SaveChangesAsync();
+        
+        // ✅ Remover TODAS as informações antigas de peças
+        var pecasInfoAntigas = await _context.MotasPecasInfo
+            .Where(p => p.IDMota == mota.IDMota)
+            .ToListAsync();
+        _context.MotasPecasInfo.RemoveRange(pecasInfoAntigas);
+        
+        await _context.SaveChangesAsync();
+        
+        // ✅ Guardar TODAS as peças em MotasPecasInfo (FIXO e S/N)
+        if (TodasPecas != null && TodasPecas.Any())
+        {
+            foreach (var peca in TodasPecas)
+            {
+                int idPeca = peca.Key;
+                string info = peca.Value;
+                
+                // ✅ Guardar se tiver valor
+                if (!string.IsNullOrWhiteSpace(info))
+                {
+                    _context.MotasPecasInfo.Add(new MotasPecasInfo
+                    {
+                        IDMota = mota.IDMota,
+                        IDPeca = idPeca,
+                        InformacaoAdicional = info
+                    });
+                }
+            }
+        }
+        
+        await _context.SaveChangesAsync();
+        
+        TempData["SuccessMessage"] = "Mota registada com sucesso!";
+        return RedirectToAction("FichaOP", new { id = IDOrdemProducao });
+    }
+    catch (Exception ex)
+    {
+        TempData["ErrorMessage"] = $"Erro ao guardar a mota: {ex.Message}";
+        return RedirectToAction("FichaOP", new { id = IDOrdemProducao });
+    }
+}
+
+        [HttpGet]
+        public async Task<IActionResult> RegistarPecasSN(int id)
+        {
+            // ✅ Buscar a ordem de produção (não a mota diretamente)
+            var ordem = await _context.OrdemProducao
+                .Include(o => o.Mota)
+                    .ThenInclude(m => m.ModeloMota)
+                .Include(o => o.Encomenda)
+                    .ThenInclude(e => e.ModeloMota)
+                .FirstOrDefaultAsync(o => o.IDOrdemProducao == id);
+            
+            if (ordem == null)
+                return NotFound();
+
+            // ✅ Determinar o IDModelo
+            int idModelo;
+            int? idMota = null;
+
+            if (ordem.Mota != null)
+            {
+                // Se já tem mota registada, usar o modelo dela
+                idModelo = ordem.Mota.IDModelo;
+                idMota = ordem.Mota.IDMota;
             }
             else
             {
-                _context.Motas.Update(mota);
+                // Se não tem mota, usar o modelo da encomenda
+                idModelo = ordem.Encomenda.IDModelo;
             }
             
-            await _context.SaveChangesAsync();
+            // ✅ Buscar as peças S/N do MODELO
+            var pecasSNModelo = await _context.ModeloPecasSN
+                .Include(p => p.Pecas)
+                .Where(p => p.IDModelo == idModelo)
+                .ToListAsync();
             
-            // Processar informações das peças fixas
-            if (PecasInfo != null)
+            // ✅ Buscar os números de série JÁ REGISTADOS (se existir mota)
+            var pecasSNRegistadas = new List<MotasPecasSN>();
+            if (idMota.HasValue)
             {
-                foreach (var pair in PecasInfo)
+                pecasSNRegistadas = await _context.MotasPecasSN
+                    .Include(p => p.Pecas)
+                    .Where(p => p.IDMota == idMota.Value)
+                    .ToListAsync();
+            }
+            
+            // ✅ Criar uma mota temporária se não existir
+            var mota = ordem.Mota ?? new Mota
+            {
+                IDOrdemProducao = ordem.IDOrdemProducao,
+                IDModelo = idModelo
+            };
+            
+            // ✅ Passar para o ViewBag
+            ViewBag.PecasSNModelo = pecasSNModelo;
+            ViewBag.PecasSNRegistadas = pecasSNRegistadas;
+            
+            return PartialView("_PecasMota", mota);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GuardarPecasSN(int IDMota, List<MotasPecasSN> PecasSN)
+        {
+            try
+            {
+                var mota = await _context.Motas.FindAsync(IDMota);
+                if (mota == null)
+                    return NotFound();
+                
+                // ✅ Remover números de série antigos
+                var pecasSNAntigas = await _context.MotasPecasSN
+                    .Where(p => p.IDMota == IDMota)
+                    .ToListAsync();
+                _context.MotasPecasSN.RemoveRange(pecasSNAntigas);
+                
+                await _context.SaveChangesAsync();
+                
+                // ✅ Adicionar novos números de série
+                if (PecasSN != null && PecasSN.Any())
                 {
-                    int idPeca = pair.Key;
-                    string info = pair.Value;
-                    
-                    var pecaInfo = await _context.MotasPecasInfo
-                        .FirstOrDefaultAsync(p => p.IDMota == mota.IDMota && p.IDPeca == idPeca);
-                        
-                    if (pecaInfo != null)
+                    foreach (var peca in PecasSN)
                     {
-                        pecaInfo.InformacaoAdicional = info;
-                        _context.MotasPecasInfo.Update(pecaInfo);
-                    }
-                    else
-                    {
-                        _context.MotasPecasInfo.Add(new MotasPecasInfo
+                        if (!string.IsNullOrWhiteSpace(peca.NumeroSerie))
                         {
-                            IDMota = mota.IDMota,
-                            IDPeca = idPeca,
-                            InformacaoAdicional = info
-                        });
+                            _context.MotasPecasSN.Add(new MotasPecasSN
+                            {
+                                IDMota = IDMota,
+                                IDPeca = peca.IDPeca,
+                                NumeroSerie = peca.NumeroSerie
+                            });
+                        }
                     }
+                    
+                    await _context.SaveChangesAsync();
                 }
+                
+                TempData["SuccessMessage"] = "Números de série guardados com sucesso!";
+                return RedirectToAction("FichaOP", new { id = mota.IDOrdemProducao });
             }
-            
-            // Processar informações das peças com número de série
-            if (PecasSN != null)
+            catch (Exception ex)
             {
-                // Lógica similar para salvar peças com S/N
+                TempData["ErrorMessage"] = $"Erro ao guardar: {ex.Message}";
+                return RedirectToAction("Index");
             }
-            
-            await _context.SaveChangesAsync();
-            
-            return RedirectToAction("Details", new { id = mota.IDOrdemProducao });
         }
     }
 }

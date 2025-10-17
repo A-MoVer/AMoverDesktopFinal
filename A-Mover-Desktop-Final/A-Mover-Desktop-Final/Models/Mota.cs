@@ -39,6 +39,7 @@ namespace A_Mover_Desktop_Final.Models
         public EstadoMota Estado { get; set; }
 
         public ICollection<MotasPecasSN>? MotasPecasSN { get; set; } = new List<MotasPecasSN>();
+        public ICollection<MotasPecasInfo> MotasPecasInfo { get; set; } = new List<MotasPecasInfo>();
 
     }
 }
