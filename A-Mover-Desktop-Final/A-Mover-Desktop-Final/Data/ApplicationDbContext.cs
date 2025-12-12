@@ -25,6 +25,8 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ModeloPecasSN> ModeloPecasSN { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Mota> Motas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.MotasPecasSN> MotasPecasSN { get; set; }
+
+        public DbSet<A_Mover_Desktop_Final.Models.MotasPecasInfo> MotasPecasInfo { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Servico> Servico { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ServicosPecasAlteradas> ServicosPecasAlteradas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Utilizador> Utilizadores { get; set; }
@@ -43,7 +45,6 @@ namespace A_Mover_Desktop_Final.Data
                 .HasOne(m => m.Pecas)
                 .WithMany()
                 .HasForeignKey(m => m.IDPeca);
-
             modelBuilder.Entity<ModeloPecasSN>()
                 .HasOne(m => m.ModeloMota)
                 .WithMany()

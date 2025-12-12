@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Ficha da Ordem de Produção";
-    var apenasVisualizar = Model.Estado == EstadoOrdemProducao.Concluida;
+    var apenasVisualizar = ViewBag.ApenasVisualizar as bool? ?? false;
     var corEstado = Model.Estado switch 
     {
         EstadoOrdemProducao.Pendente => "warning",
@@ -196,19 +196,6 @@
                         </div>
                     </div>
                 }
-                else
-                {
-                    <div class="col-lg-3 col-md-6">
-                        <div class="stats-card">
-                            <div class="text-warning-custom mb-2">
-                                <i class="bx bx-time fs-1"></i>
-                            </div>
-                            <h6 class="text-muted mb-1">Tempo Decorrido</h6>
-                            <p class="fw-bold mb-0">@((DateTime.Now - Model.DataCriacao).Days) dias</p>
-                            <small class="text-muted">Em progresso</small>
-                        </div>
-                    </div>
-                }
             </div>
         </div>
     </div>
@@ -237,7 +224,8 @@
         <div class="card-header bg-white border-bottom">
             <ul class="nav nav-pills nav-justified" id="tabSelector" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link tab-custom active" id="mota-tab" data-bs-toggle="tab" data-bs-target="#mota" type="button" role="tab">
+                    <!-- ✅ CORRIGIR: id deve ser "info" não "mota" -->
+                    <button class="nav-link tab-custom active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
                         <i class="bx bx-cycling me-2"></i>
                         Informações da Mota
                     </button>
@@ -263,64 +251,70 @@
 
         <div class="card-body p-4" style="background-color: #fbfcfd;">
             <div class="tab-content" id="tabContent">
-                <!-- Aba: Informações da Mota -->
-                <div class="tab-pane fade show active" id="mota" role="tabpanel">
+                <!-- ✅ Aba: Informações da Mota -->
+                <div class="tab-pane fade show active" id="info" role="tabpanel">
                     @if (Model.Mota != null)
                     {
-                        <div class="mota-showcase">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <h3 class="mb-3">
-                                        <i class="bx bx-badge-check me-2"></i>
-                                        Mota Registada
-                                    </h3>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <h5 class="opacity-75 mb-1">Número de Quadro / Número de Identificação</h5>
-                                            <h4 class="fw-bold">@Model.Mota.NumeroIdentificacao</h4>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <h5 class="opacity-75 mb-1">Cor</h5>
-                                            <h4 class="fw-bold">@Model.Mota.Cor</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 text-center">
-                                    <i class="bx bx-cycling display-1 opacity-50"></i>
-                                </div>
+                        @if (apenasVisualizar)
+                        {
+                            <!-- ✅ MODO VISUALIZAÇÃO -->
+                            @await Html.PartialAsync("_MotaVisualizacao", Model.Mota)
+                        }
+                        else
+                        {
+                            <!-- ✅ MODO EDIÇÃO -->
+                            <div class="alert alert-info mb-4">
+                                <i class="bx bx-info-circle me-2"></i>
+                                <strong>Informações da Mota:</strong> Clique no botão abaixo para editar as informações da mota.
                             </div>
-                        </div>
+                            
+                            <div class="text-center mb-4">
+                                <button type="button" class="btn btn-primary btn-lg" id="btnAdicionarMota" data-id="@Model.IDOrdemProducao">
+                                    <i class="bx bx-edit me-2"></i>Editar Informações
+                                </button>
+                            </div>
+                            
+                            <div id="formMotaAjax"></div>
+                        }
                     }
                     else
                     {
-                        <div class="text-center py-5">
-                            <i class="bx bx-cycling display-1 text-muted mb-3"></i>
-                            <h4 class="text-muted mb-4">Nenhuma mota registada</h4>
-                            <p class="text-muted mb-4">Crie uma mota para esta ordem de produção para continuar o processo.</p>
-                        </div>
+                        @if (apenasVisualizar)
+                        {
+                            <div class="alert alert-warning">
+                                <i class="bx bx-error-circle me-2"></i>
+                                Esta ordem não tem mota associada.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info mb-4">
+                                <i class="bx bx-info-circle me-2"></i>
+                                <strong>Primeira Etapa:</strong> Registe a mota para continuar com a produção.
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="button" class="btn btn-success btn-lg" id="btnAdicionarMota" data-id="@Model.IDOrdemProducao">
+                                    <i class="bx bx-plus-circle me-2"></i>Registar Mota
+                                </button>
+                            </div>
+                            
+                            <div id="formMotaAjax" class="mt-4"></div>
+                        }
                     }
-
-                    @if (!apenasVisualizar)
-                    {
-                        <div class="text-center mt-4">
-                            <button type="button" id="btnAdicionarMota" class="btn btn-primary btn-lg px-5" data-id="@Model.IDOrdemProducao">
-                                <i class="bx @(Model.Mota == null ? "bx-plus" : "bx-edit") me-2"></i>
-                                @(Model.Mota == null ? "Registar Mota" : "Editar Informações")
-                            </button>
-                        </div>
-                    }
-
-                    <div id="formMotaAjax" class="mt-4"></div>
                 </div>
 
-                <!-- Aba: Peças da Mota -->
+                <!-- ✅ Aba: Peças da Mota -->
                 <div class="tab-pane fade" id="pecas" role="tabpanel">
                     @if (Model.Mota != null)
                     {
-                        <div class="alert alert-info mb-4">
-                            <i class="bx bx-info-circle me-2"></i>
-                            <strong>Gestão de Peças:</strong> Aqui pode gerir todas as peças com número de série associadas à mota <strong>@Model.Mota.NumeroIdentificacao</strong>.
-                        </div>
+                        @if (!apenasVisualizar)
+                        {
+                            <div class="alert alert-info mb-4">
+                                <i class="bx bx-info-circle me-2"></i>
+                                <strong>Gestão de Peças:</strong> Aqui pode gerir todas as peças com número de série associadas à mota <strong>@Model.Mota.NumeroIdentificacao</strong>.
+                            </div>
+                        }
                         @await Html.PartialAsync("_PecasMota", Model.Mota)
                     }
                     else
@@ -329,19 +323,22 @@
                             <i class="bx bx-wrench display-1 text-muted mb-3"></i>
                             <h4 class="text-muted mb-3">Peças Indisponíveis</h4>
                             <p class="text-muted">A mota ainda não foi criada. Registe-a primeiro na aba anterior para poder gerir as peças.</p>
-                            <button class="btn btn-outline-secondary" onclick="$('#mota-tab').click()">
+                            <button class="btn btn-outline-secondary" onclick="$('#info-tab').click()">
                                 <i class="bx bx-arrow-left me-1"></i> Ir para Informações da Mota
                             </button>
                         </div>
                     }
                 </div>
 
-                <!-- Aba: Checklists -->
+                <!-- ✅ Aba: Checklists -->
                 <div class="tab-pane fade" id="checklists" role="tabpanel">
-                    <div class="alert alert-primary mb-4">
-                        <i class="bx bx-list-check me-2"></i>
-                        <strong>Controlo de Qualidade:</strong> Complete todos os checklists para garantir a qualidade da produção.
-                    </div>
+                    @if (!apenasVisualizar)
+                    {
+                        <div class="alert alert-primary mb-4">
+                            <i class="bx bx-list-check me-2"></i>
+                            <strong>Controlo de Qualidade:</strong> Complete todos os checklists para garantir a qualidade da produção.
+                        </div>
+                    }
 
                     <form asp-action="GuardarChecklists" method="post">
                         <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
@@ -371,11 +368,13 @@
             </a>
         </div>
         <div class="col-md-6 text-end">
+            <!-- ✅ Botão "Finalizar Ordem" - só aparece se NÃO for apenas visualizar -->
             @if (!apenasVisualizar)
             {
-                <a asp-action="Finalizar" asp-route-id="@Model.IDOrdemProducao" class="btn btn-success btn-lg px-5">
+                <button onclick="location.href='@Url.Action("Finalizar", new { id = Model.IDOrdemProducao })'" 
+                        class="btn btn-success btn-lg">
                     <i class="bx bx-check-circle me-2"></i> Finalizar Ordem de Produção
-                </a>
+                </button>
             }
             else
             {
@@ -448,14 +447,21 @@
             $(document).on("click", "#btnAdicionarMota", function () {
                 const id = $(this).data("id");
                 const btn = $(this);
+                const motaExiste = '@Model.Mota' !== ''; // ✅ Verificar se mota existe
                 
                 btn.prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin me-2"></i>Carregando...');
 
-                $.get("/OrdemProducao/AdicionarMota", { id: id }, function (html) {
+                // ✅ Chamar método correto baseado na existência da mota
+                const url = motaExiste 
+                    ? "/OrdemProducao/EditarMota?id=" + @(Model.Mota?.IDMota ?? 0)
+                    : "/OrdemProducao/AdicionarMota?id=" + id;
+
+                $.get(url, function (html) {
                     $("#formMotaAjax").html(html).hide().fadeIn(300);
                     btn.prop('disabled', false).html('<i class="bx bx-edit me-2"></i>Editar Informações');
                 }).fail(function() {
                     btn.prop('disabled', false).html('<i class="bx bx-error me-2"></i>Erro ao Carregar');
+                    alert('Erro ao carregar o formulário. Tente novamente.');
                 });
             });
 

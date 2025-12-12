@@ -2,57 +2,105 @@
     ViewData["Title"] = "Enviar Mensagem";
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4">Enviar Mensagem para a API</h2>
+<div class="card m-4">
+    <div class="card-header bg-primary text-white">
+        <h2 class="m-0">Enviar Mensagem para a API</h2>
+    </div>
+    <div class="card-body">
+        <form id="messageForm">
+            <div class="mb-3">
+                <label for="recipientId" class="form-label">ID do Destinatário</label>
+                <input type="text" id="recipientId" name="recipientId" class="form-control" placeholder="Insira o ID do destinatário" required />
+                <small class="form-text text-muted">Exemplo: XYZ1234567890</small>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Mensagem</label>
+                <textarea id="message" name="message" class="form-control" rows="4" placeholder="Insira a mensagem" required></textarea>
+            </div>
 
-    <form id="messageForm">
-        <div class="mb-3">
-            <label for="vin" class="form-label">VIN</label>
-            <input type="text" id="vin" name="vin" class="form-control" placeholder="Insira o VIN do veículo" required />
+            <button type="button" id="sendMessageButton" class="btn btn-primary">
+                <i class="bx bx-send me-1"></i> Enviar Mensagem
+            </button>
+        </form>
+
+        <div id="responseContainer" class="mt-4" style="display: none;">
+            <div id="responseCard" class="alert" role="alert">
+                <div class="d-flex align-items-center mb-2">
+                    <i id="responseIcon" class="bx bx-loader bx-spin fs-3 me-2"></i>
+                    <h5 id="responseTitle" class="mb-0">Processando...</h5>
+                </div>
+                <p id="responseMessage" class="mb-0"></p>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="message" class="form-label">Mensagem</label>
-            <textarea id="message" name="message" class="form-control" rows="4" placeholder="Insira a mensagem" required></textarea>
-        </div>
-
-        <button type="button" id="sendMessageButton" class="btn btn-primary">Enviar Mensagem</button>
-    </form>
-
-    <div id="responseContainer" class="mt-4" style="display: none;">
-        <h4>Resposta da API:</h4>
-        <pre id="responseContent" class="bg-light p-3 border rounded"></pre>
     </div>
 </div>
 
 @section Scripts {
     <script>
         document.getElementById("sendMessageButton").addEventListener("click", async function () {
-    const vin = document.getElementById("vin").value;
-    const message = document.getElementById("message").value;
-    const sender = "DefaultSender"; // Substitua por um valor apropriado ou adicione um campo no formulário
+            const recipientId = document.getElementById("recipientId").value;
+            const message = document.getElementById("message").value;
 
-    const responseContainer = document.getElementById("responseContainer");
-    const responseContent = document.getElementById("responseContent");
+            if (!recipientId || !message) {
+                alert("Por favor, preencha todos os campos!");
+                return;
+            }
 
-    try {
-        const response = await fetch(`https://localhost:7221/api/message/${vin}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": "@ViewBag.ApiKey"
-            },
-            body: JSON.stringify({ sender, message }) // Inclua o campo Sender
+            const responseContainer = document.getElementById("responseContainer");
+            const responseCard = document.getElementById("responseCard");
+            const responseIcon = document.getElementById("responseIcon");
+            const responseTitle = document.getElementById("responseTitle");
+            const responseMessage = document.getElementById("responseMessage");
+
+            // Mostrar indicador de carregamento
+            responseContainer.style.display = "block";
+            responseCard.className = "alert alert-info";
+            responseIcon.className = "bx bx-loader bx-spin fs-3 me-2";
+            responseTitle.textContent = "Enviando mensagem...";
+            responseMessage.textContent = "Por favor, aguarde.";
+
+            try {
+                // Usar a URL da API do ViewBag
+                const baseUrl = '@ViewBag.BaseUrl';
+                const apiKey = '@ViewBag.ApiKey';
+                
+                console.log(`Enviando para: ${baseUrl}/api/message/${recipientId}`);
+                
+                const response = await fetch(`${baseUrl}/api/message/${recipientId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": apiKey
+                    },
+                    body: JSON.stringify({ 
+                        message: message 
+                    })
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    
+                    // Sucesso
+                    responseCard.className = "alert alert-success";
+                    responseIcon.className = "bx bx-check-circle fs-3 me-2";
+                    responseTitle.textContent = "Mensagem enviada com sucesso!";
+                    responseMessage.textContent = responseData.message || "A mensagem foi entregue ao destinatário.";
+                } else {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    
+                    // Erro
+                    responseCard.className = "alert alert-danger";
+                    responseIcon.className = "bx bx-error-circle fs-3 me-2";
+                    responseTitle.textContent = "Erro ao enviar mensagem";
+                    responseMessage.textContent = errorData.message || `Código de erro: ${response.status}`;
+                }
+            } catch (error) {
+                // Exceção
+                responseCard.className = "alert alert-danger";
+                responseIcon.className = "bx bx-error-circle fs-3 me-2";
+                responseTitle.textContent = "Falha na comunicação";
+                responseMessage.textContent = `Não foi possível conectar à API: ${error.message}`;
+            }
         });
-
-        const responseData = await response.json();
-
-        responseContainer.style.display = "block";
-        responseContent.textContent = JSON.stringify(responseData, null, 2);
-    } catch (error) {
-        responseContainer.style.display = "block";
-        responseContent.textContent = `Erro ao enviar a mensagem: ${error.message}`;
-    }
-});
     </script>
 }

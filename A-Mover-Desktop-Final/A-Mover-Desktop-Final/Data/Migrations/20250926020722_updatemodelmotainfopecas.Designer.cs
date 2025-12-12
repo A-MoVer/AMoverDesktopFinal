@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250926020722_updatemodelmotainfopecas")]
+    partial class updatemodelmotainfopecas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +37,9 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("IDModelo")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -42,6 +48,8 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("IDChecklist");
+
+                    b.HasIndex("IDModelo");
 
                     b.ToTable("Checklist");
                 });
@@ -96,29 +104,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.HasIndex("IDOrdemProducao");
 
                     b.ToTable("ChecklistEmbalagem");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistModelo", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("IDChecklist")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IDModelo")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("IDChecklist");
-
-                    b.HasIndex("IDModelo");
-
-                    b.ToTable("ChecklistModelo");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistMontagem", b =>
@@ -294,10 +279,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDMPF"));
 
-                    b.Property<string>("EspecificacaoPadrao")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<int>("IDModelo")
                         .HasColumnType("int");
 
@@ -320,10 +301,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDModeloPSN"));
-
-                    b.Property<string>("EspecificacaoPadrao")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("IDModelo")
                         .HasColumnType("int");
@@ -401,6 +378,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("InformacaoAdicional")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IDMotasPecasInfo");
@@ -833,6 +811,15 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Checklist", b =>
+                {
+                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", "ModeloMota")
+                        .WithMany()
+                        .HasForeignKey("IDModelo");
+
+                    b.Navigation("ModeloMota");
+                });
+
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistControlo", b =>
                 {
                     b.HasOne("A_Mover_Desktop_Final.Models.Checklist", "Checklist")
@@ -869,25 +856,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Navigation("Checklist");
 
                     b.Navigation("OrdemProducao");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistModelo", b =>
-                {
-                    b.HasOne("A_Mover_Desktop_Final.Models.Checklist", "Checklist")
-                        .WithMany("ChecklistModelos")
-                        .HasForeignKey("IDChecklist")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", "ModeloMota")
-                        .WithMany("ChecklistModelos")
-                        .HasForeignKey("IDModelo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Checklist");
-
-                    b.Navigation("ModeloMota");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ChecklistMontagem", b =>
@@ -1169,11 +1137,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Checklist", b =>
-                {
-                    b.Navigation("ChecklistModelos");
-                });
-
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Cliente", b =>
                 {
                     b.Navigation("OrdensProducao");
@@ -1186,8 +1149,6 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloMota", b =>
                 {
-                    b.Navigation("ChecklistModelos");
-
                     b.Navigation("OrdensProducao");
 
                     b.Navigation("PecasFixas");

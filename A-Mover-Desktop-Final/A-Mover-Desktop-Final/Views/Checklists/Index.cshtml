@@ -1,66 +1,60 @@
 ﻿@model IEnumerable<A_Mover_Desktop_Final.Models.Checklist>
 
 @{
-    ViewData["Title"] = "Gestão de Checklists";
+    ViewData["Title"] = "Checklists";
 }
 
-<div class="card m-5 p-1">
-    <div class="d-flex justify-content-between align-items-center m-3">
-        <h1 class="m-0">Gestão de Checklists</h1>
-        <a type="button" class="btn btn-primary" asp-action="Create">Adicionar Checklist</a>
-    </div>
+<h1>Checklists</h1>
 
-    <div class="table-responsive text-nowrap">
-        <table class="table" id="tabela">
-            <thead class="table-light">
-                <tr>
-                    <th>Nome</th>
-                    <th>Descrição</th>
-                    <th>Tipo</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var checklist in Model)
-                {
-                    <tr id="row-@checklist.IDChecklist">
-                        <td><b>@Html.DisplayFor(modelItem => checklist.Nome)</b></td>
-                        <td>@Html.DisplayFor(modelItem => checklist.Descricao)</td>
-                        <td>@Html.DisplayFor(modelItem => checklist.Tipo)</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@checklist.IDChecklist" class="btn btn-sm btn-warning text-white me-2">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@checklist.IDChecklist" class="btn btn-sm btn-danger text-white">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </a>
-                        </td>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Criar Novo</a>
+</p>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Tipo</th>
+                        <th>Modelos</th>
+                        <th>Ações</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Nome)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Descricao)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Tipo)</td>
+                            <td>
+                                @if (item.ChecklistModelos != null && item.ChecklistModelos.Any())
+                                {
+                                    <ul class="list-unstyled">
+                                        @foreach (var cm in item.ChecklistModelos)
+                                        {
+                                            <li>@cm.ModeloMota?.Nome</li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Genérico (todos os modelos)</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Edit" asp-route-id="@item.IDChecklist" class="btn btn-sm btn-outline-primary">Editar</a>
+                                    <a asp-action="Details" asp-route-id="@item.IDChecklist" class="btn btn-sm btn-outline-info">Detalhes</a>
+                                    <a asp-action="Delete" asp-route-id="@item.IDChecklist" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#tabela').DataTable({
-                "pageLength": 10,
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registos por página",
-                    "paginate": {
-                        "first": "Primeira",
-                        "last": "Última",
-                        "next": "Próxima",
-                        "previous": "Anterior"
-                    },
-                    "info": "_START_ a _END_ de _TOTAL_ registos",
-                    "infoEmpty": "Nenhum registo disponível",
-                    "search": "Pesquisar:",
-                    "zeroRecords": "Nenhum registro encontrado"
-                }
-            });
-        });
-    </script>
-}

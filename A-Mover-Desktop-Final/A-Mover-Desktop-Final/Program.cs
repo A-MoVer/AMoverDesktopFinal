@@ -47,6 +47,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Adicione esta linha ao seu Program.cs antes de "var app = builder.Build();"
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Seed roles

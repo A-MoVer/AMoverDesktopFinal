@@ -29,6 +29,7 @@ namespace A_Mover_Desktop_Final.Models
         // Make these properties public for Entity Framework to map them properly
         public virtual List<ModeloPecasFixas> PecasFixas { get; set; } = new List<ModeloPecasFixas>();
         public virtual List<ModeloPecasSN> PecasSN { get; set; } = new List<ModeloPecasSN>();
+        public virtual ICollection<ChecklistModelo>? ChecklistModelos { get; set; } = new List<ChecklistModelo>();
 
         // Properties for form handling (not stored in database)
         [NotMapped]

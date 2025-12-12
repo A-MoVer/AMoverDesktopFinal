@@ -1,35 +1,152 @@
 ﻿@model A_Mover_Desktop_Final.Models.Mota
 
+@{
+    var pecasFixas = ViewBag.PecasFixas as List<ModeloPecasFixas> ?? new List<ModeloPecasFixas>();
+    var pecasSN = ViewBag.PecasSN as List<ModeloPecasSN> ?? new List<ModeloPecasSN>();
+    var pecasInfo = ViewBag.PecasInfo as List<MotasPecasInfo> ?? new List<MotasPecasInfo>();
+    
+    // ✅ Função ÚNICA para obter valor - SEMPRE de MotasPecasInfo
+    Func<int, bool, string> GetValorPeca = (idPeca, ehSN) => {
+        // 1º: Verificar se já foi salvo em MotasPecasInfo (tem prioridade)
+        var infoSalva = pecasInfo.FirstOrDefault(p => p.IDPeca == idPeca)?.InformacaoAdicional;
+        if (!string.IsNullOrEmpty(infoSalva)) 
+            return infoSalva;
+        
+        // 2º: Se não, usar especificação padrão do modelo
+        if (ehSN)
+        {
+            var especificacaoPadrao = pecasSN.FirstOrDefault(p => p.IDPeca == idPeca)?.EspecificacaoPadrao;
+            return especificacaoPadrao ?? "";
+        }
+        else
+        {
+            var especificacaoPadrao = pecasFixas.FirstOrDefault(p => p.IDPeca == idPeca)?.EspecificacaoPadrao;
+            return especificacaoPadrao ?? "";
+        }
+    };
+    
+    // ✅ Verificar se tem especificação padrão do modelo (deve ser bloqueado)
+    Func<int, bool, bool> TemEspecificacaoPadrao = (idPeca, ehSN) => {
+        if (ehSN)
+        {
+            var pecaSN = pecasSN.FirstOrDefault(p => p.IDPeca == idPeca);
+            return !string.IsNullOrEmpty(pecaSN?.EspecificacaoPadrao);
+        }
+        else
+        {
+            var pecaFixa = pecasFixas.FirstOrDefault(p => p.IDPeca == idPeca);
+            return !string.IsNullOrEmpty(pecaFixa?.EspecificacaoPadrao);
+        }
+    };
+    
+    // Criar lista combinada
+    var todasPecas = new List<(Pecas Peca, bool EhSN, string PartNumber)>();
+    
+    foreach (var pecaSN in pecasSN)
+    {
+        todasPecas.Add((pecaSN.Pecas, true, pecaSN.Pecas.PartNumber));
+    }
+    
+    foreach (var pecaFixa in pecasFixas)
+    {
+        todasPecas.Add((pecaFixa.Pecas, false, pecaFixa.Pecas.PartNumber));
+    }
+}
+
 <form asp-action="GuardarMota" asp-controller="OrdemProducao" method="post">
-    <input type="hidden" name="IDOrdemProducao" value="@Model.IDOrdemProducao" />
+    <input type="hidden" name="IDMota" value="@Model.IDMota" />
+    <input type="hidden" name="IDOrdemProducao" value="@(Model.IDOrdemProducao > 0 ? Model.IDOrdemProducao : ViewBag.IDOrdemProducao)" />
+    <input type="hidden" name="IDModelo" value="@Model.IDModelo" />
     @Html.AntiForgeryToken()
 
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-6">
             <label class="form-label">Número de Quadro / Número de Identificação</label>
-            <input type="text" class="form-control" name="NumeroIdentificacao" value="@Model.NumeroIdentificacao" required />
+            <input type="text" name="NumeroIdentificacao" value="@Model.NumeroIdentificacao" class="form-control" required />
         </div>
         <div class="col-md-6">
             <label class="form-label">Cor</label>
-            <input type="text" name="Cor" class="form-control" value="@Model.Cor" required />
+            <input type="text" name="Cor" value="@Model.Cor" class="form-control" />
         </div>
     </div>
-    @if (Model.IDMota != 0)
-    {
-        <div class="row">
-            <div class="col-md-6">
-                <label class="form-label">Quilometragem</label>
-                <input type="text" class="form-control" value="@Model.Quilometragem" readonly />
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Estado</label>
-                <input type="text" class="form-control" value="@Model.Estado" readonly />
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Data de Registo</label>
-                <input type="text" class="form-control" value="@Model.DataRegisto.ToString("dd/MM/yyyy")" readonly />
+    
+    <h4 class="mt-4 mb-3">Componentes e Especificações</h4>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Todos os Componentes</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>COMPONENTE</th>
+                            <th>PART NUMBER</th>
+                            <th>ESPECIFICAÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int indexPeca = 0;
+                        }
+                        @foreach (var item in todasPecas)
+                        {
+                            var peca = item.Peca;
+                            var ehSN = item.EhSN;
+                            var valor = GetValorPeca(peca.IDPeca, ehSN);
+                            var temEspecificacaoPadrao = TemEspecificacaoPadrao(peca.IDPeca, ehSN);
+                            
+                            <tr>
+                                <td>
+                                    @peca.Descricao
+                                    @if (ehSN)
+                                    {
+                                        <span class="badge bg-info ms-2">S/N</span>
+                                    }
+                                </td>
+                                <td class="text-danger fw-bold">@item.PartNumber</td>
+                                <td>
+                                    @if (temEspecificacaoPadrao)
+                                    {
+                                        <!-- ✅ Peças com especificação padrão = BLOQUEADAS -->
+                                        <div class="input-group">
+                                            <input type="text" 
+                                                   value="@valor" 
+                                                   class="form-control bg-warning bg-opacity-10" 
+                                                   readonly />
+                                            <span class="input-group-text bg-warning bg-opacity-25">
+                                                <i class="bx bx-lock-alt"></i>
+                                            </span>
+                                        </div>
+                                        <small class="text-muted">Este componente utiliza o valor padrão do modelo</small>
+                                    }
+                                    else
+                                    {
+                                        <!-- ✅ Peças sem especificação padrão = EDITÁVEIS -->
+                                        <input type="hidden" name="TodasPecas[@indexPeca].Key" value="@peca.IDPeca" />
+                                        <input type="text" 
+                                               name="TodasPecas[@indexPeca].Value" 
+                                               value="@valor" 
+                                               class="form-control" 
+                                               placeholder="@(ehSN ? "Especificação" : peca.Descricao)" />
+                                        indexPeca++;
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-    }
-    <button type="submit" class="btn btn-success mt-3">Guardar Mota</button>
+    </div>
+
+    <div class="text-end mt-4">
+        <button type="button" class="btn btn-secondary me-2" onclick="$('#formMotaAjax').empty()">
+            <i class="bx bx-x me-1"></i> Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="bx bx-save me-1"></i> Guardar Informações
+        </button>
+    </div>
 </form>

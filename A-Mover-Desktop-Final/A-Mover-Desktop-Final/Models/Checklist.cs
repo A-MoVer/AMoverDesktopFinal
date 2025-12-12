@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace A_Mover_Desktop_Final.Models
 {
@@ -21,5 +23,12 @@ namespace A_Mover_Desktop_Final.Models
 
         [Required]
         public TipoChecklist Tipo { get; set; }
+        
+        // Collection of models associated with this checklist
+        public ICollection<ChecklistModelo>? ChecklistModelos { get; set; } = new List<ChecklistModelo>();
+
+        // Property to check if the checklist is generic (not associated with any model)
+        [NotMapped]
+        public bool IsGeneric => ChecklistModelos == null || !ChecklistModelos.Any();
     }
 }

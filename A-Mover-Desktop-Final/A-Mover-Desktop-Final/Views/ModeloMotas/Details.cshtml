@@ -4,129 +4,352 @@
     ViewData["Title"] = "Detalhes do Modelo";
 }
 
-<div class="card m-5 p-3">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Detalhes do Modelo</h1>
-        <div>
-            <a asp-action="Edit" asp-route-id="@Model.IDModelo" class="btn btn-warning text-white">
-                <i class="fas fa-edit me-1"></i> Editar
-            </a>
-            <a asp-action="Index" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Voltar à Lista
-            </a>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h4>Informações Gerais</h4>
-                </div>
-                <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-4">Código do Produto:</dt>
-                        <dd class="col-sm-8">@Model.CodigoProduto</dd>
-
-                        <dt class="col-sm-4">Nome:</dt>
-                        <dd class="col-sm-8">@Model.Nome</dd>
-
-                        <dt class="col-sm-4">Início de Produção:</dt>
-                        <dd class="col-sm-8">@Model.DataInicioProducao.ToString("dd/MM/yyyy")</dd>
-
-                        @if (Model.DataLancamento.HasValue)
-                        {
-                            <dt class="col-sm-4">Lançamento:</dt>
-                            <dd class="col-sm-8">@Model.DataLancamento.Value.ToString("dd/MM/yyyy")</dd>
-                        }
-
-                        @if (Model.DataDescontinuacao.HasValue)
-                        {
-                            <dt class="col-sm-4">Descontinuação:</dt>
-                            <dd class="col-sm-8">@Model.DataDescontinuacao.Value.ToString("dd/MM/yyyy")</dd>
-                        }
-
-                        <dt class="col-sm-4">Estado:</dt>
-                        <dd class="col-sm-8">@Model.Estado</dd>
-                    </dl>
-                </div>
+<div class="card shadow-sm m-5">
+    <div class="card-header bg-primary bg-opacity-10 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="mb-0 fw-bold" style="color: white;">@Model.Nome</h1>
+                <p class="text-muted mb-0">Código: @Model.CodigoProduto</p>
+            </div>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.IDModelo" class="btn btn-warning text-white me-2">
+                    <i class="bx bx-edit me-1"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bx bx-arrow-back me-1"></i> Voltar
+                </a>
             </div>
         </div>
     </div>
 
-    <h3 class="mt-4 mb-3">Peças Associadas</h3>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h4>Peças Fixas</h4>
-                </div>
-                <div class="card-body">
-                    @if (ViewBag.PecasFixas != null && ViewBag.PecasFixas.Count > 0)
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Part Number</th>
-                                        <th>Descrição</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in ViewBag.PecasFixas)
-                                    {
-                                        <tr>
-                                            <td>@item.Pecas.PartNumber</td>
-                                            <td>@item.Pecas.Descricao</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+    <div class="card-body p-4">
+        <!-- Informações do Modelo -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom border-primary border-opacity-25">
+                        <h4 class="mb-0"><i class="bx bx-info-circle text-primary me-2"></i>Informações Gerais</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="p-3 rounded bg-light">
+                                    <small class="text-muted d-block">Início de Produção</small>
+                                    <strong class="d-block">@Model.DataInicioProducao.ToString("dd/MM/yyyy")</strong>
+                                </div>
+                            </div>
+                            
+                            @if (Model.DataLancamento.HasValue)
+                            {
+                                <div class="col-6">
+                                    <div class="p-3 rounded bg-light">
+                                        <small class="text-muted d-block">Lançamento</small>
+                                        <strong class="d-block">@Model.DataLancamento.Value.ToString("dd/MM/yyyy")</strong>
+                                    </div>
+                                </div>
+                            }
+                            
+                            @if (Model.DataDescontinuacao.HasValue)
+                            {
+                                <div class="col-6">
+                                    <div class="p-3 rounded bg-light">
+                                        <small class="text-muted d-block">Descontinuação</small>
+                                        <strong class="d-block">@Model.DataDescontinuacao.Value.ToString("dd/MM/yyyy")</strong>
+                                    </div>
+                                </div>
+                            }
+                            
+                            <div class="col-6">
+                                <div class="p-3 rounded bg-light">
+                                    <small class="text-muted d-block">Estado</small>
+                                    <span class="badge bg-@(Model.Estado == EstadoModelo.Ativo ? "success" : (Model.Estado == EstadoModelo.EmProdução ? "primary" : "secondary")) px-3 py-2">
+                                        @Model.Estado
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted">Não existem peças fixas associadas a este modelo.</p>
-                    }
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom border-primary border-opacity-25">
+                        <h4 class="mb-0"><i class="bx bx-line-chart text-primary me-2"></i>Estatísticas</h4>
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                        <div class="text-center p-4">
+                            <div class="d-flex justify-content-center gap-4">
+                                <div class="text-center">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                                        <h3 class="mb-0 text-white">@(ViewBag.PecasFixas?.Count ?? 0)</h3>
+                                    </div>
+                                    <p class="mt-2 mb-0">Peças Fixas</p>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="rounded-circle bg-info bg-opacity-10 p-3 d-inline-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                                        <h3 class="mb-0 text-white">@(ViewBag.PecasSN?.Count ?? 0)</h3>
+                                    </div>
+                                    <p class="mt-2 mb-0">Peças com SN</p>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="rounded-circle bg-success bg-opacity-10 p-3 d-inline-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                                        <h3 class="mb-0 text-white">@(((IEnumerable<Checklist>)ViewData["ChecklistsAssociados"])?.Count() ?? 0)</h3>
+                                    </div>
+                                    <p class="mt-2 mb-0">Checklists</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h4>Peças com Número de Série</h4>
-                </div>
-                <div class="card-body">
-                    @if (ViewBag.PecasSN != null && ViewBag.PecasSN.Count > 0)
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Part Number</th>
-                                        <th>Descrição</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in ViewBag.PecasSN)
-                                    {
-                                        <tr>
-                                            <td>@item.Pecas.PartNumber</td>
-                                            <td>@item.Pecas.Descricao</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+        <!-- Tabs para Peças e Checklists -->
+        <ul class="nav nav-tabs nav-fill mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pecas-tab" data-bs-toggle="tab" data-bs-target="#pecas" type="button" role="tab" aria-controls="pecas" aria-selected="true">
+                    <i class="bx bx-cog me-2"></i>Peças
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="checklists-tab" data-bs-toggle="tab" data-bs-target="#checklists" type="button" role="tab" aria-controls="checklists" aria-selected="false">
+                    <i class="bx bx-list-check me-2"></i>Checklists
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Conteúdo das Tabs -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Tab Peças -->
+            <div class="tab-pane fade show active" id="pecas" role="tabpanel" aria-labelledby="pecas-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bx bx-cube text-primary me-2"></i>Peças Fixas</h5>
+                                <span class="badge bg-primary rounded-pill">@(ViewBag.PecasFixas?.Count ?? 0)</span>
+                            </div>
+                            <div class="card-body p-0">
+                                @if (ViewBag.PecasFixas != null && ViewBag.PecasFixas.Count > 0)
+                                {
+                                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="ps-3">Part Number</th>
+                                                    <th>Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in ViewBag.PecasFixas)
+                                                {
+                                                    <tr>
+                                                        <td class="ps-3"><code>@item.Pecas.PartNumber</code></td>
+                                                        <td>@item.Pecas.Descricao</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="p-4 text-center">
+                                        <i class="bx bx-info-circle text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted mt-2">Não existem peças fixas associadas a este modelo.</p>
+                                    </div>
+                                }
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted">Não existem peças com número de série associadas a este modelo.</p>
-                    }
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bx bx-barcode text-primary me-2"></i>Peças com Número de Série</h5>
+                                <span class="badge bg-primary rounded-pill">@(ViewBag.PecasSN?.Count ?? 0)</span>
+                            </div>
+                            <div class="card-body p-0">
+                                @if (ViewBag.PecasSN != null && ViewBag.PecasSN.Count > 0)
+                                {
+                                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="ps-3">Part Number</th>
+                                                    <th>Descrição</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in ViewBag.PecasSN)
+                                                {
+                                                    <tr>
+                                                        <td class="ps-3"><code>@item.Pecas.PartNumber</code></td>
+                                                        <td>@item.Pecas.Descricao</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="p-4 text-center">
+                                        <i class="bx bx-info-circle text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted mt-2">Não existem peças com número de série associadas a este modelo.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Checklists -->
+            <div class="tab-pane fade" id="checklists" role="tabpanel" aria-labelledby="checklists-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bx bx-check-shield text-primary me-2"></i>Checklists Específicos</h5>
+                                <div>
+                                    <!-- Botão para criar novo checklist associado -->
+                                    <a asp-controller="Checklists" asp-action="Create" asp-route-modeloId="@Model.IDModelo" 
+                                       class="btn btn-sm btn-primary me-2" data-bs-toggle="tooltip" title="Criar novo checklist para este modelo">
+                                        <i class="bx bx-plus"></i> Novo Checklist
+                                    </a>
+                                    <span class="badge bg-primary rounded-pill">@(((IEnumerable<Checklist>)ViewData["ChecklistsAssociados"])?.Count() ?? 0)</span>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                @if (((IEnumerable<Checklist>)ViewData["ChecklistsAssociados"]).Any())
+                                {
+                                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="ps-3">Nome</th>
+                                                    <th>Tipo</th>
+                                                    <th class="text-end pe-3">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var checklist in (IEnumerable<Checklist>)ViewData["ChecklistsAssociados"])
+                                                {
+                                                    <tr>
+                                                        <td class="ps-3">@checklist.Nome</td>
+                                                        <td>
+                                                            <span class="badge @(checklist.Tipo == TipoChecklist.Montagem ? "bg-primary" : (checklist.Tipo == TipoChecklist.Controlo ? "bg-warning text-dark" : "bg-success"))">
+                                                                @checklist.Tipo
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-end pe-3">
+                                                            <form asp-action="RemoverAssociacaoChecklist" method="post" class="d-inline">
+                                                                <input type="hidden" name="idModelo" value="@Model.IDModelo" />
+                                                                <input type="hidden" name="idChecklist" value="@checklist.IDChecklist" />
+                                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                    <i class="bx bx-unlink"></i>
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="p-4 text-center">
+                                        <i class="bx bx-info-circle text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted mt-2">Nenhum checklist específico associado a este modelo.</p>
+                                        <a asp-controller="Checklists" asp-action="Create" asp-route-modeloId="@Model.IDModelo" 
+                                           class="btn btn-outline-primary mt-2">
+                                            <i class="bx bx-plus me-1"></i> Criar Primeiro Checklist
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bx bx-list-plus text-primary me-2"></i>Checklists Disponíveis</h5>
+                                <span class="badge bg-primary rounded-pill">@(((IEnumerable<Checklist>)ViewData["ChecklistsDisponiveis"])?.Count() ?? 0)</span>
+                            </div>
+                            <div class="card-body p-0">
+                                @if (((IEnumerable<Checklist>)ViewData["ChecklistsDisponiveis"]).Any())
+                                {
+                                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="ps-3">Nome</th>
+                                                    <th>Tipo</th>
+                                                    <th class="text-end pe-3">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var checklist in (IEnumerable<Checklist>)ViewData["ChecklistsDisponiveis"])
+                                                {
+                                                    <tr>
+                                                        <td class="ps-3">@checklist.Nome</td>
+                                                        <td>
+                                                            <span class="badge @(checklist.Tipo == TipoChecklist.Montagem ? "bg-primary" : (checklist.Tipo == TipoChecklist.Controlo ? "bg-warning text-dark" : "bg-success"))">
+                                                                @checklist.Tipo
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-end pe-3">
+                                                            <form asp-action="AssociarChecklist" method="post" class="d-inline">
+                                                                <input type="hidden" name="idModelo" value="@Model.IDModelo" />
+                                                                <input type="hidden" name="idChecklist" value="@checklist.IDChecklist" />
+                                                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                                                    <i class="bx bx-link"></i>
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="p-4 text-center">
+                                        <i class="bx bx-info-circle text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted mt-2">Nenhum checklist genérico disponível para associação.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            // Ativar tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+            
+            // Manter aba ativa após recarregar a página (opcional)
+            $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                localStorage.setItem('activeModeloTab', $(e.target).attr('id'));
+            });
+            
+            var activeTab = localStorage.getItem('activeModeloTab');
+            if(activeTab){
+                $('#' + activeTab).tab('show');
+            }
+        });
+    </script>
+}

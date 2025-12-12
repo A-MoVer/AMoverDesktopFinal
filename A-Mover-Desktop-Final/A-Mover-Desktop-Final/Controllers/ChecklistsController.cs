@@ -22,7 +22,12 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Checklists
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Checklist.ToListAsync());
+            var checklists = await _context.Checklist
+                .Include(c => c.ChecklistModelos)
+                    .ThenInclude(cm => cm.ModeloMota)
+                .ToListAsync();
+            
+            return View(checklists);
         }
 
         // GET: Checklists/Details/5
@@ -34,7 +39,10 @@ namespace A_Mover_Desktop_Final.Controllers
             }
 
             var checklist = await _context.Checklist
+                .Include(c => c.ChecklistModelos)
+                    .ThenInclude(cm => cm.ModeloMota)
                 .FirstOrDefaultAsync(m => m.IDChecklist == id);
+                
             if (checklist == null)
             {
                 return NotFound();
@@ -44,24 +52,57 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: Checklists/Create
-        public IActionResult Create()
+        public IActionResult Create(int? modeloId)
         {
-            return View();
+            // Preencher ViewBag com a lista de modelos
+            ViewData["ModeloMotas"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome");
+            
+            var checklist = new Checklist();
+            
+            // Se foi passado um ID de modelo, vamos pré-selecioná-lo
+            if (modeloId.HasValue)
+            {
+                // Opcionalmente, busque o nome do modelo para exibir na view
+                var nomeModelo = _context.ModelosMota
+                    .Where(m => m.IDModelo == modeloId.Value)
+                    .Select(m => m.Nome)
+                    .FirstOrDefault();
+                    
+                ViewData["NomeModeloSelecionado"] = nomeModelo;
+                ViewData["SelectedModelId"] = modeloId.Value;
+            }
+            
+            return View(checklist);
         }
 
         // POST: Checklists/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDChecklist,Nome,Descricao,Tipo")] Checklist checklist)
+        public async Task<IActionResult> Create([Bind("IDChecklist,Nome,Descricao,Tipo")] Checklist checklist, int[] selectedModelos)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(checklist);
                 await _context.SaveChangesAsync();
+                
+                // Add associated models
+                if (selectedModelos != null && selectedModelos.Length > 0)
+                {
+                    foreach (var modeloId in selectedModelos)
+                    {
+                        _context.Add(new ChecklistModelo
+                        {
+                            IDChecklist = checklist.IDChecklist,
+                            IDModelo = modeloId
+                        });
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                
                 return RedirectToAction(nameof(Index));
             }
+            
+            ViewData["ModeloMotas"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome");
             return View(checklist);
         }
 
@@ -73,20 +114,28 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
-            var checklist = await _context.Checklist.FindAsync(id);
+            var checklist = await _context.Checklist
+                .Include(c => c.ChecklistModelos)
+                .FirstOrDefaultAsync(m => m.IDChecklist == id);
+                
             if (checklist == null)
             {
                 return NotFound();
             }
+            
+            // Get IDs of models already associated with this checklist
+            var selectedModeloIds = checklist.ChecklistModelos.Select(cm => cm.IDModelo).ToList();
+            
+            ViewData["ModeloMotas"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome");
+            ViewData["SelectedModeloIds"] = selectedModeloIds;
+            
             return View(checklist);
         }
 
         // POST: Checklists/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDChecklist,Nome,Descricao,Tipo")] Checklist checklist)
+        public async Task<IActionResult> Edit(int id, [Bind("IDChecklist,Nome,Descricao,Tipo")] Checklist checklist, int[] selectedModelos)
         {
             if (id != checklist.IDChecklist)
             {
@@ -97,7 +146,30 @@ namespace A_Mover_Desktop_Final.Controllers
             {
                 try
                 {
+                    // Update the checklist entity itself
                     _context.Update(checklist);
+                    
+                    // Get current model associations
+                    var existingAssociations = await _context.Set<ChecklistModelo>()
+                        .Where(cm => cm.IDChecklist == id)
+                        .ToListAsync();
+                    
+                    // Remove all existing associations
+                    _context.RemoveRange(existingAssociations);
+                    
+                    // Add new associations based on selected models
+                    if (selectedModelos != null)
+                    {
+                        foreach (var modeloId in selectedModelos)
+                        {
+                            _context.Add(new ChecklistModelo 
+                            { 
+                                IDChecklist = checklist.IDChecklist, 
+                                IDModelo = modeloId 
+                            });
+                        }
+                    }
+                    
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -113,6 +185,8 @@ namespace A_Mover_Desktop_Final.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            
+            ViewData["ModeloMotas"] = new SelectList(_context.ModelosMota, "IDModelo", "Nome");
             return View(checklist);
         }
 
@@ -125,7 +199,10 @@ namespace A_Mover_Desktop_Final.Controllers
             }
 
             var checklist = await _context.Checklist
+                .Include(c => c.ChecklistModelos)
+                    .ThenInclude(cm => cm.ModeloMota)
                 .FirstOrDefaultAsync(m => m.IDChecklist == id);
+                
             if (checklist == null)
             {
                 return NotFound();
@@ -139,6 +216,14 @@ namespace A_Mover_Desktop_Final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // First, delete all associations
+            var associations = await _context.Set<ChecklistModelo>()
+                .Where(cm => cm.IDChecklist == id)
+                .ToListAsync();
+                
+            _context.RemoveRange(associations);
+            
+            // Then, delete the checklist
             var checklist = await _context.Checklist.FindAsync(id);
             if (checklist != null)
             {
