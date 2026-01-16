@@ -77,6 +77,13 @@
 				<div>Gestão de Peças</div>
 			</a>
 		</li>
+		<li class="menu-item @(ViewData["ActiveMenu"] as string == "GestaoFornecedores" ? "active" : "")">
+			<a asp-controller="Fornecedors" asp-action="Index" class="menu-link">
+				<i class="menu-icon tf-icons"></i>
+				<div>Gestão de Fornecedores</div>
+			</a>
+		</li>
+
     </ul> 
 </li>
 

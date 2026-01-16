@@ -19,6 +19,7 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ModeloMota> ModelosMota { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.OrdemProducao> OrdemProducao { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Pecas> Pecas { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.Fornecedor> Fornecedores { get; set; } = default!;
         public DbSet<A_Mover_Desktop_Final.Models.Documento> Documento { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.DocumentosModelo> DocumentosModelo { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ModeloPecasFixas> ModeloPecasFixas { get; set; }
@@ -68,6 +69,17 @@ namespace A_Mover_Desktop_Final.Data
                 .WithMany()
                 .HasForeignKey(s => s.IDMotasPecasSN)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Fornecedor>().ToTable("Fornecedores");
+            modelBuilder.Entity<Pecas>().ToTable("Pecas");
+
+            modelBuilder.Entity<Pecas>()
+                .HasOne(p => p.Fornecedor)
+                .WithMany(f => f.Pecas)
+                .HasForeignKey(p => p.FornecedorId)   
+                .OnDelete(DeleteBehavior.Cascade);
+
+
         }
     }
 }

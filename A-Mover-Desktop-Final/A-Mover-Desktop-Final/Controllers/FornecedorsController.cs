@@ -1,67 +1,71 @@
-﻿using A_Mover_Desktop_Final.Data;
-using A_Mover_Desktop_Final.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using A_Mover_Desktop_Final.Data;
+using A_Mover_Desktop_Final.Models;
 
 namespace A_Mover_Desktop_Final.Controllers
 {
-    public class PecasController : Controller
+    public class FornecedorsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public PecasController(ApplicationDbContext context)
+        public FornecedorsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Pecas
+        // GET: Fornecedors
         public async Task<IActionResult> Index()
         {
-            var pecas = await _context.Pecas
-                .Include(p => p.Fornecedor)
-                .ToListAsync();
-            return View(pecas);
+            return View(await _context.Fornecedores.ToListAsync());
         }
 
-        // GET: Pecas/Create
+        // GET: Fornecedors/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var fornecedor = await _context.Fornecedores
+                .FirstOrDefaultAsync(m => m.IDFornecedor == id);
+            if (fornecedor == null)
+            {
+                return NotFound();
+            }
+
+            return View(fornecedor);
+        }
+
+        // GET: Fornecedors/Create
         public IActionResult Create()
         {
-            ViewData["FornecedorId"] = new SelectList(
-                _context.Fornecedores.OrderBy(f => f.Nome),
-                "IDFornecedor",
-                "Nome"
-            );
-
             return View();
         }
 
-
-        // POST: Pecas/Create
+        // POST: Fornecedors/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDPeca,PartNumber,Descricao,FornecedorId")] Pecas pecas)
+        public async Task<IActionResult> Create([Bind("IDFornecedor,Nome,Email")] Fornecedor fornecedor)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(pecas);
+                _context.Add(fornecedor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["FornecedorId"] = new SelectList(
-                _context.Fornecedores.OrderBy(f => f.Nome),
-                "IDFornecedor",
-                "Nome",
-                pecas.FornecedorId
-            );
-
-            return View(pecas);
+            return View(fornecedor);
         }
 
-        // GET: Pecas/Edit/5
+        // GET: Fornecedors/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -69,22 +73,22 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
-            var pecas = await _context.Pecas.FindAsync(id);
-            if (pecas == null)
+            var fornecedor = await _context.Fornecedores.FindAsync(id);
+            if (fornecedor == null)
             {
                 return NotFound();
             }
-            return View(pecas);
+            return View(fornecedor);
         }
 
-        // POST: Pecas/Edit/5
+        // POST: Fornecedors/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDPeca,PartNumber,Descricao")] Pecas pecas)
+        public async Task<IActionResult> Edit(int id, [Bind("IDFornecedor,Nome,Email")] Fornecedor fornecedor)
         {
-            if (id != pecas.IDPeca)
+            if (id != fornecedor.IDFornecedor)
             {
                 return NotFound();
             }
@@ -93,12 +97,12 @@ namespace A_Mover_Desktop_Final.Controllers
             {
                 try
                 {
-                    _context.Update(pecas);
+                    _context.Update(fornecedor);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PecasExists(pecas.IDPeca))
+                    if (!FornecedorExists(fornecedor.IDFornecedor))
                     {
                         return NotFound();
                     }
@@ -109,10 +113,10 @@ namespace A_Mover_Desktop_Final.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(pecas);
+            return View(fornecedor);
         }
 
-        // GET: Pecas/Delete/5
+        // GET: Fornecedors/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -120,34 +124,34 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
-            var pecas = await _context.Pecas
-                .FirstOrDefaultAsync(m => m.IDPeca == id);
-            if (pecas == null)
+            var fornecedor = await _context.Fornecedores
+                .FirstOrDefaultAsync(m => m.IDFornecedor == id);
+            if (fornecedor == null)
             {
                 return NotFound();
             }
 
-            return View(pecas);
+            return View(fornecedor);
         }
 
-        // POST: Pecas/Delete/5
+        // POST: Fornecedors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pecas = await _context.Pecas.FindAsync(id);
-            if (pecas != null)
+            var fornecedor = await _context.Fornecedores.FindAsync(id);
+            if (fornecedor != null)
             {
-                _context.Pecas.Remove(pecas);
+                _context.Fornecedores.Remove(fornecedor);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PecasExists(int id)
+        private bool FornecedorExists(int id)
         {
-            return _context.Pecas.Any(e => e.IDPeca == id);
+            return _context.Fornecedores.Any(e => e.IDFornecedor == id);
         }
     }
 }
