@@ -1,0 +1,34 @@
+name: Deploy na VPS Amen (A-MoVer)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Executar comandos na VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd /root/CicloVidaMota
+            
+            # 1. Se a pasta .git não existir, clonamos o repo
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/A-MoVer/AMoverDesktopFinal.git .
+            fi
+            
+            # 2. Atualizar o código na VPS
+            git pull origin main
+            
+            # 3. Entrar na pasta onde está o docker-compose e fazer build
+            cd A-Mover-Desktop-Final/A-Mover-Desktop-Final
+            docker-compose up -d --build
