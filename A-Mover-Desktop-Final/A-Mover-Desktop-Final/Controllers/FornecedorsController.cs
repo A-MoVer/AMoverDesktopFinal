@@ -22,7 +22,13 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Fornecedors
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Fornecedores.ToListAsync());
+            var fornecedores = await _context.Fornecedores
+                .AsNoTracking()
+                .Include(f => f.Pecas)
+                .ToListAsync();
+
+
+            return View(fornecedores);
         }
 
         // GET: Fornecedors/Details/5
@@ -34,7 +40,9 @@ namespace A_Mover_Desktop_Final.Controllers
             }
 
             var fornecedor = await _context.Fornecedores
+                 .Include(f => f.Pecas)
                 .FirstOrDefaultAsync(m => m.IDFornecedor == id);
+                
             if (fornecedor == null)
             {
                 return NotFound();
@@ -125,6 +133,7 @@ namespace A_Mover_Desktop_Final.Controllers
             }
 
             var fornecedor = await _context.Fornecedores
+                 .Include(f => f.Pecas)
                 .FirstOrDefaultAsync(m => m.IDFornecedor == id);
             if (fornecedor == null)
             {

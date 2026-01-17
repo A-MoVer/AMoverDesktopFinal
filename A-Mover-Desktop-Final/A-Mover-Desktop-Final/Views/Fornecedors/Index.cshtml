@@ -1,41 +1,67 @@
 ﻿@model IEnumerable<A_Mover_Desktop_Final.Models.Fornecedor>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gestão de Fornecedores";
 }
 
-<h1>Index</h1>
+<div class="card m-5 p-1">
+    <div class="d-flex justify-content-between align-items-center m-3">
+        <h1 class="m-0">Gestão de Fornecedores</h1>
+        <a type="button" class="btn btn-primary" asp-action="Create">Adicionar Fornecedor</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IDFornecedor">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IDFornecedor">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IDFornecedor">Delete</a>
-            </td>
-        </tr>
+    <div class="table-responsive text-nowrap">
+        <table class="table" id="tabela">
+            <thead class="table-light">
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Nº Peças</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fornecedor in Model)
+                {
+                    <tr id="row-@fornecedor.IDFornecedor">
+                        <td><b>@Html.DisplayFor(modelItem => fornecedor.Nome)</b></td>
+                        <td>@Html.DisplayFor(modelItem => fornecedor.Email)</td>
+                        <td>@(fornecedor.Pecas?.Count ?? 0)</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@fornecedor.IDFornecedor" class="btn btn-sm btn-warning text-white me-2">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@fornecedor.IDFornecedor" class="btn btn-sm btn-danger text-white">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tabela').DataTable({
+                "pageLength": 10,
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado"
+                }
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
