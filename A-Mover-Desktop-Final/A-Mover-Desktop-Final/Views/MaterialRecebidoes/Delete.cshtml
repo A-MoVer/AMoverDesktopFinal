@@ -1,0 +1,51 @@
+﻿@model A_Mover_Desktop_Final.Models.MaterialRecebido
+
+@{
+    ViewData["Title"] = "Eliminar Receção";
+}
+
+<div class="card m-5 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="m-0">Eliminar Receção</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+    </div>
+
+    <div class="alert alert-warning">
+        Tem a certeza que pretende eliminar este registo de receção?
+    </div>
+
+    <div class="table-responsive text-nowrap mb-3">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th style="width: 220px;">Data</th>
+                    <td><b>@Model.DataRececao.ToString("yyyy-MM-dd")</b></td>
+                </tr>
+                <tr>
+                    <th>Peça</th>
+                    <td>@Model.Peca?.PartNumber</td>
+                </tr>
+                <tr>
+                    <th>Fornecedor</th>
+                    <td>@Model.Fornecedor?.Nome</td>
+                </tr>
+                <tr>
+                    <th>Quantidade</th>
+                    <td>@Model.Quantidade</td>
+                </tr>
+                <tr>
+                    <th>Documento</th>
+                    <td>@Model.Documento</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="IDMaterialRecebido" />
+        <div class="d-flex">
+            <input type="submit" value="Eliminar" class="btn btn-danger me-2" />
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>

@@ -32,6 +32,7 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ServicosPecasAlteradas> ServicosPecasAlteradas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Utilizador> Utilizadores { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.UtilizadorMota> UtilizadorMota { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.MaterialRecebido> MateriaisRecebidos { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -72,12 +73,25 @@ namespace A_Mover_Desktop_Final.Data
 
             modelBuilder.Entity<Fornecedor>().ToTable("Fornecedores");
             modelBuilder.Entity<Pecas>().ToTable("Pecas");
+            modelBuilder.Entity<MaterialRecebido>().ToTable("MateriaisRecebidos");
 
             modelBuilder.Entity<Pecas>()
                 .HasOne(p => p.Fornecedor)
                 .WithMany(f => f.Pecas)
                 .HasForeignKey(p => p.FornecedorId)   
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MaterialRecebido>()
+                  .HasOne(m => m.Peca)
+                  .WithMany()
+                  .HasForeignKey(m => m.PecaId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaterialRecebido>()
+                .HasOne(m => m.Fornecedor)
+                .WithMany()
+                .HasForeignKey(m => m.FornecedorId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
         }
