@@ -18,24 +18,36 @@
         <table class="table">
             <tbody>
                 <tr>
-                    <th style="width: 220px;">Data</th>
-                    <td><b>@Model.DataRececao.ToString("yyyy-MM-dd")</b></td>
+                    <th style="width: 220px;">Peça</th>
+                    <td><b>@(Model.Peca?.PartNumber ?? "-")</b></td>
                 </tr>
                 <tr>
-                    <th>Peça</th>
-                    <td>@Model.Peca?.PartNumber</td>
+                    <th>Descrição</th>
+                    <td>@(Model.Peca?.Descricao ?? "-")</td>
                 </tr>
                 <tr>
                     <th>Fornecedor</th>
-                    <td>@Model.Fornecedor?.Nome</td>
+                    <td>@(Model.Fornecedor?.Nome ?? "-")</td>
+                </tr>
+                <tr>
+                    <th>Data de Receção</th>
+                    <td>@Model.DataRececao.ToString("yyyy-MM-dd")</td>
                 </tr>
                 <tr>
                     <th>Quantidade</th>
                     <td>@Model.Quantidade</td>
                 </tr>
                 <tr>
+                    <th>Lote</th>
+                    <td>@Model.Lote</td>
+                </tr>
+                <tr>
                     <th>Documento</th>
                     <td>@Model.Documento</td>
+                </tr>
+                <tr>
+                    <th>Observações</th>
+                    <td>@Model.Observacoes</td>
                 </tr>
             </tbody>
         </table>
@@ -43,6 +55,7 @@
 
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="IDMaterialRecebido" />
+
         <div class="d-flex">
             <input type="submit" value="Eliminar" class="btn btn-danger me-2" />
             <a asp-action="Index" class="btn btn-secondary">Cancelar</a>

@@ -11,8 +11,8 @@
     </div>
 
     <form asp-action="Edit" method="post">
-        <input type="hidden" asp-for="IDMaterialRecebido" />
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <input type="hidden" asp-for="IDMaterialRecebido" />
 
         <div class="row mb-3">
             <label asp-for="PecaId" class="col-sm-2 col-form-label"></label>
@@ -35,18 +35,18 @@
         </div>
 
         <div class="row mb-3">
-            <label asp-for="Quantidade" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="Quantidade" class="form-control" />
-                <span asp-validation-for="Quantidade" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="row mb-3">
             <label asp-for="DataRececao" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-10">
                 <input asp-for="DataRececao" class="form-control" type="date" />
                 <span asp-validation-for="DataRececao" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label asp-for="Quantidade" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="Quantidade" class="form-control" />
+                <span asp-validation-for="Quantidade" class="text-danger"></span>
             </div>
         </div>
 

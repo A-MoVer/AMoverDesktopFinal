@@ -20,11 +20,21 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: MaterialRecebidoes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchLote)
         {
-            var applicationDbContext = _context.MateriaisRecebidos.Include(m => m.Fornecedor).Include(m => m.Peca);
-            return View(await applicationDbContext.ToListAsync());
+            var materiais = _context.MateriaisRecebidos
+                .Include(m => m.Fornecedor)
+                .Include(m => m.Peca)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchLote))
+            {
+                materiais = materiais.Where(m => m.Lote != null && m.Lote.Contains(searchLote));
+            }
+
+            return View(await materiais.ToListAsync());
         }
+
 
         // GET: MaterialRecebidoes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -49,12 +59,8 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: MaterialRecebidoes/Create
         public IActionResult Create()
         {
-            ViewBag.Fornecedores = new SelectList(
-                _context.Fornecedores.OrderBy(f => f.Nome), "IDFornecedor", "Nome"
-            );
-            ViewBag.Pecas = new SelectList(
-                _context.Pecas.OrderBy(p => p.PartNumber), "IDPeca", "PartNumber"
-            );
+            ViewData["FornecedorId"] = new SelectList(_context.Fornecedores, "IDFornecedor", "Nome");
+            ViewData["PecaId"] = new SelectList(_context.Pecas, "IDPeca", "Descricao");
             return View();
         }
 
@@ -71,15 +77,10 @@ namespace A_Mover_Desktop_Final.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Fornecedores = new SelectList(
-                _context.Fornecedores.OrderBy(f => f.Nome), "IDFornecedor", "Nome", materialRecebido.FornecedorId
-            );
-            ViewBag.Pecas = new SelectList(
-                _context.Pecas.OrderBy(p => p.PartNumber), "IDPeca", "PartNumber", materialRecebido.PecaId
-            );
+            ViewData["FornecedorId"] = new SelectList(_context.Fornecedores, "IDFornecedor", "Nome", materialRecebido.FornecedorId);
+            ViewData["PecaId"] = new SelectList(_context.Pecas, "IDPeca", "Descricao", materialRecebido.PecaId);
             return View(materialRecebido);
         }
-
 
         // GET: MaterialRecebidoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
