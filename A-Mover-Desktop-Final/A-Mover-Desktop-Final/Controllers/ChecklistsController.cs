@@ -24,7 +24,7 @@ namespace A_Mover_Desktop_Final.Controllers
         {
             var checklists = await _context.Checklist
                 .Include(c => c.ChecklistModelos)
-                    .ThenInclude(cm => cm.ModeloMota)
+                .ThenInclude(cm => cm.ModeloMota)
                 .ToListAsync();
             
             return View(checklists);
@@ -40,7 +40,7 @@ namespace A_Mover_Desktop_Final.Controllers
 
             var checklist = await _context.Checklist
                 .Include(c => c.ChecklistModelos)
-                    .ThenInclude(cm => cm.ModeloMota)
+                .ThenInclude(cm => cm.ModeloMota)
                 .FirstOrDefaultAsync(m => m.IDChecklist == id);
                 
             if (checklist == null)

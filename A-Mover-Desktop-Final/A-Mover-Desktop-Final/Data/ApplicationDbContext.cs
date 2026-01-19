@@ -14,6 +14,8 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ChecklistControlo> ChecklistControlo { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ChecklistEmbalagem> ChecklistEmbalagem { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ChecklistMontagem> ChecklistMontagem { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.ChecklistModelo> ChecklistModelo { get; set; }
+
         public DbSet<A_Mover_Desktop_Final.Models.Cliente> Clientes { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Encomenda> Encomendas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ModeloMota> ModelosMota { get; set; }

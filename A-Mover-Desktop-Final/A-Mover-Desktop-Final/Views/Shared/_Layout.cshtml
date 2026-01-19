@@ -172,14 +172,7 @@
                     }
 
                     <!-- Log Out -->
-                    <li class="menu-item">
-                        <form asp-controller="Authentication" asp-action="Logout" method="post" style="display: inline;">
-                            <button type="submit" class="menu-link btn btn-link p-0 text-start" style="width: 100%; border: none; background: none;">
-                                <i class="menu-icon tf-icons bx bx-power-off"></i>
-                                <div data-i18n="Logout">Logout</div>
-                            </button>
-                        </form>
-                    </li>
+                   
                     <li class="menu-item">
                         <a class="menu-link" asp-controller="Message" asp-action="SendMessage">
                             <i class="menu-icon tf-icons bx bx-message-square-dots"></i>
@@ -191,6 +184,14 @@
                             <i class="menu-icon tf-icons bx bx-plug"></i>
                             <div data-i18n="Testar Conexão">Testar Conexão</div>
                         </a>
+                    </li>
+                    <li class="menu-item">
+                        <form asp-controller="Authentication" asp-action="Logout" method="post" style="display: inline;">
+                            <button type="submit" class="menu-link btn btn-link p-0 text-start" style="width: 100%; border: none; background: none;">
+                                <i class="menu-icon tf-icons bx bx-power-off"></i>
+                                <div data-i18n="Logout">Logout</div>
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </aside>
