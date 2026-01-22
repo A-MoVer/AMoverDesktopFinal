@@ -11,13 +11,15 @@ services:
       - db
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=172.20.0.16,1433;Database=LCMDatabase;User Id=sa;Password=Fulgora3000;TrustServerCertificate=True;
+      # CORREÇÃO: Mudamos o IP pelo nome do serviço 'db' e garantimos o TrustServerCertificate
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=LCMDatabase;User Id=sa;Password=Fulgora3000;TrustServerCertificate=True;
 
   db:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    # CORREÇÃO: Mudamos para 2022 para ser compatível com o backup que restauraste
+    image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Fulgora3000
+      - MSSQL_SA_PASSWORD=Fulgora3000
     ports:
       - "1433:1433"
     volumes:
