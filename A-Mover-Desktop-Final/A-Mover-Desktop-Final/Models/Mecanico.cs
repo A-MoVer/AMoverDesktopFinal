@@ -20,7 +20,7 @@ namespace A_Mover_Desktop_Final.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Oficina a que pertence
-        public int? OficinaId { get; set; }
+        public String OficinaId { get; set; }
 
         public string? UserId { get; set; }
 

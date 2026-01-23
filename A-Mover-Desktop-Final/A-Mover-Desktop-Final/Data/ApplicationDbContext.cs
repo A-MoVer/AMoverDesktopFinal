@@ -35,6 +35,9 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.Utilizador> Utilizadores { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.UtilizadorMota> UtilizadorMota { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.MaterialRecebido> MateriaisRecebidos { get; set; } = default!;
+
+        public DbSet<A_Mover_Desktop_Final.Models.Mecanico> Mecanicos { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -94,6 +97,10 @@ namespace A_Mover_Desktop_Final.Data
                 .WithMany()
                 .HasForeignKey(m => m.FornecedorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mecanico>()
+                .HasIndex(m => new { m.OficinaId, m.Email })
+                .IsUnique();
 
 
         }

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Mecanico>
+@{
+    ViewData["Title"] = "Mecânicos";
+}
+
+<h1>Mecânicos</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<a class="btn btn-primary mb-3" asp-action="Create">Adicionar Mecânico</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telemóvel</th>
+            <th>Estado</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.Nome</td>
+                <td>@m.Email</td>
+                <td>@m.Telemovel</td>
+                <td>@(m.IsActive ? "Ativo" : "Inativo")</td>
+                <td>
+                    @if (m.IsActive)
+                    {
+                        <form asp-action="Deactivate" asp-route-id="@m.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-warning" type="submit"
+                                    onclick="return confirm('Desativar este mecânico?');">
+                                Desativar
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Reactivate" asp-route-id="@m.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-success" type="submit"
+                                    onclick="return confirm('Reativar este mecânico?');">
+                                Reativar
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
