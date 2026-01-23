@@ -118,8 +118,8 @@ namespace A_Mover_Desktop_Final.Controllers
                 Telemovel = vm.Telemovel?.Trim(),
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
-                OficinaId = oficinaUserId,  // ✅ aqui está a associação correta
-                UserId = user.Id                // ✅ user do mecânico
+                OficinaId = oficinaUserId,  // aqui está a associação correta
+                UserId = user.Id                // user do mecânico
             };
 
             _context.Mecanicos.Add(mecanico);
@@ -240,7 +240,7 @@ namespace A_Mover_Desktop_Final.Controllers
         {
             if (string.IsNullOrWhiteSpace(nome)) return "mecanico";
 
-            // "João Silva" -> "joao-silva"
+            // "John Doe" -> "john-doe"
             var trimmed = nome.Trim().ToLower();
 
             // mantém letras/dígitos e troca espaços por hífen

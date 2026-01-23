@@ -19,6 +19,7 @@
             <th>Email</th>
             <th>Telemóvel</th>
             <th>Estado</th>
+            <td>Nome</td>
             <th>Ações</th>
         </tr>
     </thead>
@@ -29,6 +30,12 @@
                 <td>@m.Nome</td>
                 <td>@m.Email</td>
                 <td>@m.Telemovel</td>
+                <td>
+                    <div>@m.Nome</div>
+                    <small class="text-muted">
+                        Criado em: @m.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                    </small>
+                </td>
                 <td>@(m.IsActive ? "Ativo" : "Inativo")</td>
                 <td>
                     @if (m.IsActive)
