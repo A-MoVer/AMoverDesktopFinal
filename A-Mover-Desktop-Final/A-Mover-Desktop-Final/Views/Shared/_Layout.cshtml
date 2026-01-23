@@ -162,6 +162,10 @@
                     {
                         @await Html.PartialAsync("_MenuOficinaPartial.cshtml")
                     }
+                    else if (User.IsInRole("Mecanico"))
+                    {
+                        @await Html.PartialAsync("_MenuMecanicoPartial.cshtml")
+                    }
                     else if (User.IsInRole("Fabricante"))
                     {
                         @await Html.PartialAsync("_MenuFabricantePartial.cshtml")

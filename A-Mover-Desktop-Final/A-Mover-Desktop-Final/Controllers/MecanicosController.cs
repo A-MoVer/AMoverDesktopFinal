@@ -269,5 +269,66 @@ namespace A_Mover_Desktop_Final.Controllers
 
             return candidate;
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Deactivate(int id)
+        {
+            string oficinaUserId = _userManager.GetUserId(User)!;
+
+            // só mexe no mecânico se pertencer a esta oficina
+            var mecanico = await _context.Mecanicos
+                .FirstOrDefaultAsync(m => m.Id == id && m.OficinaId == oficinaUserId);
+
+            if (mecanico == null) return NotFound();
+
+            mecanico.IsActive = false;
+
+            // bloquear login do mecânico (se houver conta Identity associada)
+            if (!string.IsNullOrWhiteSpace(mecanico.UserId))
+            {
+                var user = await _userManager.FindByIdAsync(mecanico.UserId);
+                if (user != null)
+                {
+                    await _userManager.SetLockoutEnabledAsync(user, true);
+                    await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Mecânico desativado com sucesso.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reactivate(int id)
+        {
+            string oficinaUserId = _userManager.GetUserId(User)!;
+
+            var mecanico = await _context.Mecanicos
+                .FirstOrDefaultAsync(m => m.Id == id && m.OficinaId == oficinaUserId);
+
+            if (mecanico == null) return NotFound();
+
+            mecanico.IsActive = true;
+
+            // desbloquear login
+            if (!string.IsNullOrWhiteSpace(mecanico.UserId))
+            {
+                var user = await _userManager.FindByIdAsync(mecanico.UserId);
+                if (user != null)
+                {
+                    // remover lockout
+                    await _userManager.SetLockoutEndDateAsync(user, null);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Mecânico reativado com sucesso.";
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
