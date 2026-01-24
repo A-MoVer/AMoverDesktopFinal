@@ -52,7 +52,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequireUppercase = true;      // tens a inicial maiúscula
-    options.Password.RequireLowercase = true;      // "mecanic" já cumpre
+    options.Password.RequireLowercase = true;      // "mecanico" já cumpre
     options.Password.RequireNonAlphanumeric = true; // o "." cumpre
     options.Password.RequiredLength = 8;           // ajusta se precisares
 });

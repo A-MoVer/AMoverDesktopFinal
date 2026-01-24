@@ -1,8 +1,11 @@
 ﻿using A_Mover_Desktop_Final.Data;
 using A_Mover_Desktop_Final.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
+using System.Drawing.Imaging;
 
 namespace A_Mover_Desktop_Final.Controllers
 {
@@ -238,5 +241,78 @@ namespace A_Mover_Desktop_Final.Controllers
 
             return Json(lista);
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GerarQr(int id)
+        {
+            var mota = await _context.Motas.FirstOrDefaultAsync(m => m.IDMota == id);
+            if (mota == null) return NotFound();
+
+            if (string.IsNullOrWhiteSpace(mota.QrToken))
+            {
+                mota.QrToken = Guid.NewGuid().ToString("N");
+                mota.QrCriadoEm = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> QrImage(int id)
+        {
+            var mota = await _context.Motas.FirstOrDefaultAsync(m => m.IDMota == id);
+            if (mota == null) return NotFound();
+            if (string.IsNullOrWhiteSpace(mota.QrToken)) return NotFound();
+
+            // Conteúdo do QR: URL de “ligação/identificação”
+            var url = $"{Request.Scheme}://{Request.Host}{Url.Action("Conectar", "Motas", new { token = mota.QrToken })}";
+
+            var bytes = GenerateQrPng(url);
+            return File(bytes, "image/png");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DownloadQr(int id)
+        {
+            var mota = await _context.Motas.FirstOrDefaultAsync(m => m.IDMota == id);
+            if (mota == null) return NotFound();
+            if (string.IsNullOrWhiteSpace(mota.QrToken)) return NotFound();
+
+            var url = $"{Request.Scheme}://{Request.Host}{Url.Action("Conectar", "Motas", new { token = mota.QrToken })}";
+            var bytes = GenerateQrPng(url);
+
+            return File(bytes, "image/png", $"QR_Mota_{id}.png");
+        }
+
+        // Endpoint que o QR abre quando é lido
+        [AllowAnonymous] // ou mantém [Authorize] se quiseres obrigar login ao ler
+        [HttpGet]
+        public async Task<IActionResult> Conectar(string token)
+        {
+            var mota = await _context.Motas.FirstOrDefaultAsync(m => m.QrToken == token);
+            if (mota == null) return NotFound();
+
+            // aqui podes guardar em sessão “mota ligada” e redirecionar p/ dashboard
+            // HttpContext.Session.SetInt32("ConnectedMotaId", mota.IDMota);
+
+            return RedirectToAction(nameof(Details), new { id = mota.IDMota });
+        }
+
+        private static byte[] GenerateQrPng(string payload)
+        {
+            using var generator = new QRCodeGenerator();
+            using var data = generator.CreateQrCode(payload, QRCodeGenerator.ECCLevel.Q);
+            using var qrCode = new QRCode(data);
+            using var bitmap = qrCode.GetGraphic(20);
+
+            using var ms = new MemoryStream();
+            bitmap.Save(ms, ImageFormat.Png);
+            return ms.ToArray();
+        }
+
+
     }
 }

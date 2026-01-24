@@ -10,6 +10,7 @@
 		<div class="text-center mb-4">
 			<h1 class="fw-bold text-primary">Ficha da Mota</h1>
 			<p class="text-muted">Informações detalhadas sobre a mota e as suas peças</p>
+
 			<!-- Exportar/Imprimir -->
 			<div class="text-center mt-4 no-print">
 				<button onclick="printFicha()" class="btn btn-outline-dark me-2">
@@ -44,6 +45,24 @@
 						<span class="badge @(Model.Estado.ToString() == "Inativa" ? "bg-danger" : "bg-success")">
 							<i class="bi @(Model.Estado.ToString() == "Inativa" ? "bi-x-circle" : "bi-check-circle")"></i> @Model.Estado
 						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- QR Code -->
+		<div class="card mb-3 border-0 shadow-sm">
+			<div class="card-body">
+				<h4 class="text-primary"><i class="bi bi-qr-code"></i> QR-Code de Identificação</h4>
+				<hr />
+				<div class="row align-items-center">
+					<div class="col-md-4 text-center">
+						<div id="qrCodeContainer" class="d-inline-block p-2 border rounded bg-white"></div>
+					</div>
+					<div class="col-md-8">
+						<div><strong>Conteúdo:</strong> link para esta ficha</div>
+						<div class="text-muted">Ao ler o QR, abre esta página para identificar rapidamente a mota.</div>
+						<div class="mt-2"><strong>Nº Identificação:</strong> @Model.NumeroIdentificacao</div>
 					</div>
 				</div>
 			</div>
@@ -95,6 +114,9 @@
 @section Scripts {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+	<!-- QRCode generator -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 	<script>
 		function printFicha() {
 			window.print();
@@ -112,6 +134,22 @@
 
 			html2pdf().set(opt).from(element).save();
 		}
+
+		// Gera o QR ao carregar a página
+		document.addEventListener("DOMContentLoaded", function () {
+			const container = document.getElementById("qrCodeContainer");
+			if (!container) return;
+
+			
+			const payload = "@Url.Action("Details", "Motas", new { id = Model.IDMota }, Context.Request.Scheme)";
+
+
+			container.innerHTML = "";
+			new QRCode(container, {
+				text: payload,
+				width: 170,
+				height: 170
+			});
+		});
 	</script>
 }
-
