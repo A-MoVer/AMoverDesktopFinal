@@ -37,7 +37,9 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.MaterialRecebido> MateriaisRecebidos { get; set; } = default!;
 
         public DbSet<A_Mover_Desktop_Final.Models.Mecanico> Mecanicos { get; set; }
-        
+        public DbSet<A_Mover_Desktop_Final.Models.Compras> Compras { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

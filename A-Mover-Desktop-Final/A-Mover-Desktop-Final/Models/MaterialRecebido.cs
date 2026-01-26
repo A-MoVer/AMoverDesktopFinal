@@ -41,5 +41,9 @@ namespace A_Mover_Desktop_Final.Models
 
         [StringLength(300)]
         public string? Observacoes { get; set; }
+
+        public int? CompraId { get; set; }
+        public Compras? Compra { get; set; }
+
     }
 }

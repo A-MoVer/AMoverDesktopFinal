@@ -89,6 +89,12 @@
 				<div>Gestão de Material Recebido</div>
 			</a>
 		</li>
+		<li class="menu-item @(ViewData["ActiveMenu"] as string == "GestaoCompras" ? "active" : "")">
+			<a asp-controller="Compras" asp-action="Index" class="menu-link">
+				<i class="menu-icon tf-icons"></i>
+				<div>Gestão de Compras</div>
+			</a>
+		</li>
 
     </ul> 
 </li>
