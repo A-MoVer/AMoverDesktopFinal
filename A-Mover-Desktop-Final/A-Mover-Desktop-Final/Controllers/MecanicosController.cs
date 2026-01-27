@@ -330,5 +330,40 @@ namespace A_Mover_Desktop_Final.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        private async Task<int> GetMecanicoIdAsync()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var mecanicoId = await _context.Mecanicos
+                .AsNoTracking()
+                .Where(m => m.UserId == userId)
+                .Select(m => m.Id)
+                .FirstOrDefaultAsync();
+
+            if (mecanicoId == 0)
+                throw new Exception("Mecânico não encontrado para o utilizador autenticado.");
+
+            return mecanicoId;
+        }
+
+        // LISTA: só serviços atribuídos ao mecânico autenticado
+        public async Task<IActionResult> MeusAgendamentos()
+        {
+            int mecanicoId = await GetMecanicoIdAsync();
+
+            var lista = await _context.Servico
+                .AsNoTracking()
+                .Where(s => s.IDMecanico == mecanicoId)
+                .Include(s => s.Mota)                // ajusta conforme o teu model
+                .ThenInclude(m => m.ModeloMota)      // se existir
+                .OrderByDescending(s => s.DataServico)
+                .ToListAsync();
+
+            return View(lista);
+        }
+
+
+
     }
 }
