@@ -72,16 +72,31 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: Servicos/AgendarIntervencao
+
         public IActionResult AgendarIntervencao()
         {
             ViewData["Motas"] = _context.Motas
+                .AsNoTracking()
                 .Select(m => new SelectListItem
                 {
                     Value = m.IDMota.ToString(),
                     Text = m.NumeroIdentificacao
                 }).ToList();
 
-            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico)).Cast<TipoServico>().ToList();
+            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico))
+                .Cast<TipoServico>()
+                .ToList();
+
+            // ✅ NOVO: Mecânicos para o dropdown
+            ViewData["Mecanicos"] = _context.Mecanicos
+                .AsNoTracking()
+                //.Where(m => m.IsActive) // se tiveres campo de ativo
+                .OrderBy(m => m.Nome)
+                .Select(m => new SelectListItem
+                {
+                    Value = m.Id.ToString(),
+                    Text = m.Nome
+                }).ToList();
 
             var servico = new Servico
             {
@@ -98,9 +113,45 @@ namespace A_Mover_Desktop_Final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AgendarIntervencao(Servico servico)
         {
+            // ✅ NOVO: validação do mecânico para evitar FK conflict
+            if (servico.IDMecanico == null)
+            {
+                ModelState.AddModelError(nameof(servico.IDMecanico), "Selecione um mecânico.");
+            }
+            else
+            {
+                bool existe = await _context.Mecanicos
+                    .AnyAsync(m => m.Id == servico.IDMecanico /* && m.IsActive */);
+
+                if (!existe)
+                    ModelState.AddModelError(nameof(servico.IDMecanico), "Mecânico inválido.");
+            }
+
             if (!ModelState.IsValid)
             {
-                ViewData["IDMota"] = new SelectList(_context.Motas.Include(m => m.ModeloMota), "IDMota", "NumeroIdentificacao", servico.IDMota);
+                // ✅ IMPORTANTE: recarregar tudo o que a View precisa
+                ViewData["Motas"] = _context.Motas
+                    .AsNoTracking()
+                    .Select(m => new SelectListItem
+                    {
+                        Value = m.IDMota.ToString(),
+                        Text = m.NumeroIdentificacao
+                    }).ToList();
+
+                ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico))
+                    .Cast<TipoServico>()
+                    .ToList();
+
+                ViewData["Mecanicos"] = _context.Mecanicos
+                    .AsNoTracking()
+                    //.Where(m => m.IsActive)
+                    .OrderBy(m => m.Nome)
+                    .Select(m => new SelectListItem
+                    {
+                        Value = m.Id.ToString(),
+                        Text = m.Nome
+                    }).ToList();
+
                 return View(servico);
             }
 
@@ -112,6 +163,7 @@ namespace A_Mover_Desktop_Final.Controllers
             TempData["SuccessMessage"] = "Intervenção agendada com sucesso.";
             return RedirectToAction(nameof(Index));
         }
+
 
         public async Task<IActionResult> RegistarIntervencao()
         {

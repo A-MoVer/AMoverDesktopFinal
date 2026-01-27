@@ -104,6 +104,15 @@ namespace A_Mover_Desktop_Final.Data
                 .HasIndex(m => new { m.OficinaId, m.Email })
                 .IsUnique();
 
+            modelBuilder.Entity<Servico>()
+                .HasOne(s => s.Mecanico)
+                .WithMany() // não precisas de ICollection no Mecanico
+                .HasForeignKey(s => s.IDMecanico)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Servico>()
+                .Property(s => s.IDMecanico)
+                .HasColumnName("MecanicoId");
 
         }
     }

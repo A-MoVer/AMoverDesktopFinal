@@ -43,5 +43,9 @@ namespace A_Mover_Desktop_Final.Models
         public string? NotasServico { get; set; }
 
         public ICollection<ServicosPecasAlteradas>? PecasAlteradas { get; set; }
+
+        public int? IDMecanico { get; set; }
+        public Mecanico? Mecanico { get; set; }
+
     }
 }
