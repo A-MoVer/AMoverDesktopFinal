@@ -69,7 +69,10 @@ using (var scope = app.Services.CreateScope())
     var logger = services.GetRequiredService<ILogger<Program>>();
     try
     {
-        await SeedRolesAsync(services, logger);
+        var context = services.GetRequiredService<ApplicationDbContext>(); // Chama a Base de Dados
+        await context.Database.MigrateAsync(); // ORDEM: "Atualiza as tabelas se houver novidades"
+        
+        await SeedRolesAsync(services, logger); 
     }
     catch (Exception ex)
     {
