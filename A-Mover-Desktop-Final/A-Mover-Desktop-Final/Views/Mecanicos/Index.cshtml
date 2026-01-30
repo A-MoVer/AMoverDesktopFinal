@@ -58,6 +58,14 @@
                             </button>
                         </form>
                     }
+                    <!-- ✅ Eliminar -->
+                    <form asp-action="Delete" asp-route-id="@m.Id" method="post" class="d-inline ms-1">
+                        @Html.AntiForgeryToken()
+                        <button class="btn btn-sm btn-danger" type="submit"
+                                onclick="return confirm('Eliminar este mecânico? Esta ação é irreversível.');">
+                            Eliminar
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

@@ -205,8 +205,10 @@ public class AuthenticationController : Controller
             await _context.SaveChangesAsync();
         }
 
+        await _signInManager.SignOutAsync(); // recomendado
         TempData["Success"] = "Password alterada com sucesso. Inicia sessão novamente.";
         return RedirectToAction("Login", "Authentication");
+
 
     }
 
