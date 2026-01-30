@@ -1,6 +1,7 @@
 ﻿using A_Mover_Desktop_Final.Data;
 using A_Mover_Desktop_Final.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace A_Mover_Desktop_Final.Controllers
@@ -17,21 +18,31 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Pecas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Pecas.ToListAsync());
+            var pecas = await _context.Pecas
+                .Include(p => p.Fornecedor)
+                .ToListAsync();
+            return View(pecas);
         }
 
         // GET: Pecas/Create
         public IActionResult Create()
         {
+            ViewData["FornecedorId"] = new SelectList(
+                _context.Fornecedores.OrderBy(f => f.Nome),
+                "IDFornecedor",
+                "Nome"
+            );
+
             return View();
         }
+
 
         // POST: Pecas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDPeca,PartNumber,Descricao")] Pecas pecas)
+        public async Task<IActionResult> Create([Bind("IDPeca,PartNumber,Descricao,FornecedorId")] Pecas pecas)
         {
             if (ModelState.IsValid)
             {
@@ -39,6 +50,14 @@ namespace A_Mover_Desktop_Final.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["FornecedorId"] = new SelectList(
+                _context.Fornecedores.OrderBy(f => f.Nome),
+                "IDFornecedor",
+                "Nome",
+                pecas.FornecedorId
+            );
+
             return View(pecas);
         }
 

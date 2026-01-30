@@ -1,0 +1,56 @@
+﻿@model A_Mover_Desktop_Final.Models.MaterialRecebido
+
+@{
+    ViewData["Title"] = "Detalhes da Receção";
+}
+
+<div class="card m-5 p-1">
+    <div class="d-flex justify-content-between align-items-center m-3">
+        <h1 class="m-0">Detalhes da Receção</h1>
+        <div class="d-flex">
+            <a asp-action="Edit" asp-route-id="@Model.IDMaterialRecebido" class="btn btn-warning text-white me-2">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+        </div>
+    </div>
+
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th style="width: 220px;">Peça</th>
+                    <td><b>@(Model.Peca?.PartNumber ?? "-")</b></td>
+                </tr>
+                <tr>
+                    <th>Descrição</th>
+                    <td>@(Model.Peca?.Descricao ?? "-")</td>
+                </tr>
+                <tr>
+                    <th>Fornecedor</th>
+                    <td>@(Model.Fornecedor?.Nome ?? "-")</td>
+                </tr>
+                <tr>
+                    <th>Data de Receção</th>
+                    <td>@Model.DataRececao.ToString("yyyy-MM-dd")</td>
+                </tr>
+                <tr>
+                    <th>Quantidade</th>
+                    <td>@Model.Quantidade</td>
+                </tr>
+                <tr>
+                    <th>Lote</th>
+                    <td>@Model.Lote</td>
+                </tr>
+                <tr>
+                    <th>Documento</th>
+                    <td>@Model.Documento</td>
+                </tr>
+                <tr>
+                    <th>Observações</th>
+                    <td>@Model.Observacoes</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

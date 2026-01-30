@@ -24,6 +24,14 @@
             <span class="badge @statusClass fs-6 me-2">@Model.Estado</span>
             <span class="badge @tipoClass fs-6">@Model.Tipo</span>
         </div>
+        <div class="text-center mt-4 no-print">
+            <button onclick="printFicha()" class="btn btn-outline-dark me-2">
+                <i class="bi bi-printer"></i> Imprimir
+            </button>
+            <button onclick="downloadPDF()" class="btn btn-outline-primary">
+                <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+            </button>
+        </div>
     </div>
     
     <div class="card-body">
@@ -304,6 +312,23 @@
             // Implementar lógica de impressão baseada no tipo selecionado
             alert('Funcionalidade de impressão de ' + tipo + ' será implementada em breve.');
             $('#modalImprimirServico').modal('hide');
+        }
+
+        function printFicha() {
+            window.print();
+        }
+
+        function downloadPDF() {
+            const element = document.querySelector('.card.shadow-lg');
+            const opt = {
+                margin: 0.5,
+                filename: 'DetalhesManuetenção.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
         }
     </script>
 }

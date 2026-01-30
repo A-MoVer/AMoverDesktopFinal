@@ -17,7 +17,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.23")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -176,6 +176,35 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Compras", b =>
+                {
+                    b.Property<int>("IDCompra")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDCompra"));
+
+                    b.Property<DateTime>("DataPedido")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FornecedorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PecaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("IDCompra");
+
+                    b.HasIndex("FornecedorId");
+
+                    b.HasIndex("PecaId");
+
+                    b.ToTable("Compras");
+                });
+
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Documento", b =>
                 {
                     b.Property<int>("IDDocumento")
@@ -251,6 +280,120 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.HasIndex("IDModelo");
 
                     b.ToTable("Encomendas");
+                });
+
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Fornecedor", b =>
+                {
+                    b.Property<int>("IDFornecedor")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDFornecedor"));
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("IDFornecedor");
+
+                    b.ToTable("Fornecedores", (string)null);
+                });
+
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.MaterialRecebido", b =>
+                {
+                    b.Property<int>("IDMaterialRecebido")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDMaterialRecebido"));
+
+                    b.Property<int?>("CompraId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataRececao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Documento")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("FornecedorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Lote")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Observacoes")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("PecaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("IDMaterialRecebido");
+
+                    b.HasIndex("CompraId");
+
+                    b.HasIndex("FornecedorId");
+
+                    b.HasIndex("PecaId");
+
+                    b.ToTable("MateriaisRecebidos", (string)null);
+                });
+
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Mecanico", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("OficinaId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Telemovel")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OficinaId", "Email")
+                        .IsUnique();
+
+                    b.ToTable("Mecanicos");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloMota", b =>
@@ -371,6 +514,12 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
                     b.Property<string>("NumeroIdentificacao")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("QrCriadoEm")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("QrToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Quilometragem")
@@ -501,13 +650,18 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FornecedorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PartNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IDPeca");
 
-                    b.ToTable("Pecas");
+                    b.HasIndex("FornecedorId");
+
+                    b.ToTable("Pecas", (string)null);
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Servico", b =>
@@ -530,6 +684,10 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Property<int>("Estado")
                         .HasColumnType("int");
 
+                    b.Property<int?>("IDMecanico")
+                        .HasColumnType("int")
+                        .HasColumnName("MecanicoId");
+
                     b.Property<int>("IDMota")
                         .HasColumnType("int");
 
@@ -540,6 +698,8 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("IDServico");
+
+                    b.HasIndex("IDMecanico");
 
                     b.HasIndex("IDMota");
 
@@ -909,6 +1069,25 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Navigation("OrdemProducao");
                 });
 
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Compras", b =>
+                {
+                    b.HasOne("A_Mover_Desktop_Final.Models.Fornecedor", "Fornecedor")
+                        .WithMany()
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("A_Mover_Desktop_Final.Models.Pecas", "Peca")
+                        .WithMany()
+                        .HasForeignKey("PecaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fornecedor");
+
+                    b.Navigation("Peca");
+                });
+
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.DocumentosModelo", b =>
                 {
                     b.HasOne("A_Mover_Desktop_Final.Models.Documento", "Documento")
@@ -945,6 +1124,31 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Navigation("Cliente");
 
                     b.Navigation("ModeloMota");
+                });
+
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.MaterialRecebido", b =>
+                {
+                    b.HasOne("A_Mover_Desktop_Final.Models.Compras", "Compra")
+                        .WithMany("MateriaisRecebidos")
+                        .HasForeignKey("CompraId");
+
+                    b.HasOne("A_Mover_Desktop_Final.Models.Fornecedor", "Fornecedor")
+                        .WithMany()
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("A_Mover_Desktop_Final.Models.Pecas", "Peca")
+                        .WithMany()
+                        .HasForeignKey("PecaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Compra");
+
+                    b.Navigation("Fornecedor");
+
+                    b.Navigation("Peca");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloPecasFixas", b =>
@@ -1011,7 +1215,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.MotasPecasInfo", b =>
                 {
                     b.HasOne("A_Mover_Desktop_Final.Models.Mota", "Mota")
-                        .WithMany()
+                        .WithMany("MotasPecasInfo")
                         .HasForeignKey("IDMota")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1069,13 +1273,31 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Navigation("Encomenda");
                 });
 
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Pecas", b =>
+                {
+                    b.HasOne("A_Mover_Desktop_Final.Models.Fornecedor", "Fornecedor")
+                        .WithMany("Pecas")
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fornecedor");
+                });
+
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Servico", b =>
                 {
+                    b.HasOne("A_Mover_Desktop_Final.Models.Mecanico", "Mecanico")
+                        .WithMany("Servicos")
+                        .HasForeignKey("IDMecanico")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("A_Mover_Desktop_Final.Models.Mota", "Mota")
                         .WithMany()
                         .HasForeignKey("IDMota")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Mecanico");
 
                     b.Navigation("Mota");
                 });
@@ -1179,9 +1401,24 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Navigation("OrdensProducao");
                 });
 
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Compras", b =>
+                {
+                    b.Navigation("MateriaisRecebidos");
+                });
+
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Encomenda", b =>
                 {
                     b.Navigation("OrdemProducao");
+                });
+
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Fornecedor", b =>
+                {
+                    b.Navigation("Pecas");
+                });
+
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Mecanico", b =>
+                {
+                    b.Navigation("Servicos");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloMota", b =>
@@ -1197,6 +1434,8 @@ namespace A_Mover_Desktop_Final.Data.Migrations
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Mota", b =>
                 {
+                    b.Navigation("MotasPecasInfo");
+
                     b.Navigation("MotasPecasSN");
                 });
 

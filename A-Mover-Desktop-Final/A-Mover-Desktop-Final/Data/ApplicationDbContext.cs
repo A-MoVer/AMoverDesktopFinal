@@ -14,11 +14,14 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ChecklistControlo> ChecklistControlo { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ChecklistEmbalagem> ChecklistEmbalagem { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ChecklistMontagem> ChecklistMontagem { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.ChecklistModelo> ChecklistModelo { get; set; }
+
         public DbSet<A_Mover_Desktop_Final.Models.Cliente> Clientes { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Encomenda> Encomendas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ModeloMota> ModelosMota { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.OrdemProducao> OrdemProducao { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Pecas> Pecas { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.Fornecedor> Fornecedores { get; set; } = default!;
         public DbSet<A_Mover_Desktop_Final.Models.Documento> Documento { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.DocumentosModelo> DocumentosModelo { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.ModeloPecasFixas> ModeloPecasFixas { get; set; }
@@ -31,6 +34,12 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.ServicosPecasAlteradas> ServicosPecasAlteradas { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Utilizador> Utilizadores { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.UtilizadorMota> UtilizadorMota { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.MaterialRecebido> MateriaisRecebidos { get; set; } = default!;
+
+        public DbSet<A_Mover_Desktop_Final.Models.Mecanico> Mecanicos { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.Compras> Compras { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -68,6 +77,43 @@ namespace A_Mover_Desktop_Final.Data
                 .WithMany()
                 .HasForeignKey(s => s.IDMotasPecasSN)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Fornecedor>().ToTable("Fornecedores");
+            modelBuilder.Entity<Pecas>().ToTable("Pecas");
+            modelBuilder.Entity<MaterialRecebido>().ToTable("MateriaisRecebidos");
+
+            modelBuilder.Entity<Pecas>()
+                .HasOne(p => p.Fornecedor)
+                .WithMany(f => f.Pecas)
+                .HasForeignKey(p => p.FornecedorId)   
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MaterialRecebido>()
+                  .HasOne(m => m.Peca)
+                  .WithMany()
+                  .HasForeignKey(m => m.PecaId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaterialRecebido>()
+                .HasOne(m => m.Fornecedor)
+                .WithMany()
+                .HasForeignKey(m => m.FornecedorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mecanico>()
+                .HasIndex(m => new { m.OficinaId, m.Email })
+                .IsUnique();
+
+            modelBuilder.Entity<Servico>()
+                .HasOne(s => s.Mecanico)
+                 .WithMany(m => m.Servicos) 
+                .HasForeignKey(s => s.IDMecanico)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Servico>()
+                .Property(s => s.IDMecanico)
+                .HasColumnName("MecanicoId");
+
         }
     }
 }

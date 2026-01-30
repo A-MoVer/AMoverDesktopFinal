@@ -49,6 +49,16 @@
             <input type="datetime-local" class="form-control" asp-for="DataServico"
                    value="@Model.DataServico.ToString("yyyy-MM-ddTHH:mm")" />
         </div>
+        <div class="mb-3">
+            <label asp-for="IDMecanico" class="form-label"></label>
+            <select asp-for="IDMecanico"
+                    class="form-select"
+                    asp-items="@(ViewData["Mecanicos"] as List<SelectListItem>)">
+                <option value="">-- Selecionar mecânico --</option>
+            </select>
+            <span asp-validation-for="IDMecanico" class="text-danger"></span>
+        </div>
+
 
         <button type="submit" class="btn btn-primary" id="btnSubmit" disabled>Agendar</button>
         <a asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>

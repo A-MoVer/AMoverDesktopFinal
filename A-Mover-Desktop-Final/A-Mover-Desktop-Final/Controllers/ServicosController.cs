@@ -1,5 +1,6 @@
 ﻿using A_Mover_Desktop_Final.Data;
 using A_Mover_Desktop_Final.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,12 @@ namespace A_Mover_Desktop_Final.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public ServicosController(ApplicationDbContext context)
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public ServicosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -40,26 +44,63 @@ namespace A_Mover_Desktop_Final.Controllers
 
             return View(servico);
         }
+
+
+        private async Task<int> GetMecanicoIdAsync()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            int mecanicoId = await _context.Mecanicos
+                .AsNoTracking()
+                .Where(m => m.UserId == userId)
+                .Select(m => m.Id)
+                .FirstOrDefaultAsync();
+
+            if (mecanicoId == 0)
+                throw new Exception("Mecânico não encontrado para o utilizador autenticado.");
+
+            return mecanicoId;
+        }
+
+
         public async Task<IActionResult> CalendarioIntervencoes()
         {
-            var servicos = await _context.Servico
+            var query = _context.Servico
+                .AsNoTracking()
                 .Include(s => s.Mota)
-                .ToListAsync();
+                .AsQueryable();
 
+            if (User.IsInRole("Mecanico"))
+            {
+                int mecanicoId = await GetMecanicoIdAsync();
+                query = query.Where(s => s.IDMecanico == mecanicoId); // se for MecanicoID ajusta aqui
+            }
+
+            var servicos = await query.ToListAsync();
             return View(servicos);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetIntervencoesAgendadas()
         {
-            var servicos = await _context.Servico
+            var query = _context.Servico
+                .AsNoTracking()
                 .Include(s => s.Mota)
-                .Where(s => s.Estado != EstadoServico.Concluido)
-                .ToListAsync();
+                .Where(s => s.Estado != EstadoServico.Concluido);
+
+            if (User.IsInRole("Mecanico"))
+            {
+                int mecanicoId = await GetMecanicoIdAsync();
+                query = query.Where(s => s.IDMecanico == mecanicoId); // se for MecanicoID ajusta aqui
+            }
+
+            var servicos = await query.ToListAsync();
 
             var eventos = servicos.Select(s => new
             {
+                id = s.IDServico,
                 title = $"{s.Mota?.NumeroIdentificacao} - {s.Tipo}",
-                start = s.DataServico.ToString("s"), // formato ISO 8601
+                start = s.DataServico.ToString("s"),
                 extendedProps = new
                 {
                     vin = s.Mota?.NumeroIdentificacao,
@@ -71,17 +112,33 @@ namespace A_Mover_Desktop_Final.Controllers
             return Json(eventos);
         }
 
+
         // GET: Servicos/AgendarIntervencao
+
         public IActionResult AgendarIntervencao()
         {
             ViewData["Motas"] = _context.Motas
+                .AsNoTracking()
                 .Select(m => new SelectListItem
                 {
                     Value = m.IDMota.ToString(),
                     Text = m.NumeroIdentificacao
                 }).ToList();
 
-            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico)).Cast<TipoServico>().ToList();
+            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico))
+                .Cast<TipoServico>()
+                .ToList();
+
+            // ✅ NOVO: Mecânicos para o dropdown
+            ViewData["Mecanicos"] = _context.Mecanicos
+                .AsNoTracking()
+                //.Where(m => m.IsActive) // se tiveres campo de ativo
+                .OrderBy(m => m.Nome)
+                .Select(m => new SelectListItem
+                {
+                    Value = m.Id.ToString(),
+                    Text = m.Nome
+                }).ToList();
 
             var servico = new Servico
             {
@@ -91,16 +148,49 @@ namespace A_Mover_Desktop_Final.Controllers
             return View(servico);
         }
 
-
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AgendarIntervencao(Servico servico)
         {
+            // ✅ NOVO: validação do mecânico para evitar FK conflict
+            if (servico.IDMecanico == null)
+            {
+                ModelState.AddModelError(nameof(servico.IDMecanico), "Selecione um mecânico.");
+            }
+            else
+            {
+                bool existe = await _context.Mecanicos
+                    .AnyAsync(m => m.Id == servico.IDMecanico /* && m.IsActive */);
+
+                if (!existe)
+                    ModelState.AddModelError(nameof(servico.IDMecanico), "Mecânico inválido.");
+            }
+
             if (!ModelState.IsValid)
             {
-                ViewData["IDMota"] = new SelectList(_context.Motas.Include(m => m.ModeloMota), "IDMota", "NumeroIdentificacao", servico.IDMota);
+                // ✅ IMPORTANTE: recarregar tudo o que a View precisa
+                ViewData["Motas"] = _context.Motas
+                    .AsNoTracking()
+                    .Select(m => new SelectListItem
+                    {
+                        Value = m.IDMota.ToString(),
+                        Text = m.NumeroIdentificacao
+                    }).ToList();
+
+                ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico))
+                    .Cast<TipoServico>()
+                    .ToList();
+
+                ViewData["Mecanicos"] = _context.Mecanicos
+                    .AsNoTracking()
+                    //.Where(m => m.IsActive)
+                    .OrderBy(m => m.Nome)
+                    .Select(m => new SelectListItem
+                    {
+                        Value = m.Id.ToString(),
+                        Text = m.Nome
+                    }).ToList();
+
                 return View(servico);
             }
 
@@ -112,6 +202,7 @@ namespace A_Mover_Desktop_Final.Controllers
             TempData["SuccessMessage"] = "Intervenção agendada com sucesso.";
             return RedirectToAction(nameof(Index));
         }
+
 
         public async Task<IActionResult> RegistarIntervencao()
         {

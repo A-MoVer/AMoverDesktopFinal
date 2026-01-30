@@ -1,4 +1,6 @@
+﻿using A_Mover_Desktop_Final.Data;
 using A_Mover_Desktop_Final.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,13 +12,15 @@ public class AuthenticationController : Controller
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<AuthenticationController> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, ILogger<AuthenticationController> logger)
+    public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager, ILogger<AuthenticationController> logger, ApplicationDbContext context)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _logger = logger;
+        _context = context;
     }
 
     // Log IN
@@ -25,6 +29,8 @@ public class AuthenticationController : Controller
     {
         return View();
     }
+
+
 
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel model)
@@ -43,11 +49,29 @@ public class AuthenticationController : Controller
             return View(model);
         }
 
-        var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+        var result = await _signInManager.PasswordSignInAsync(
+            user.UserName,
+            model.Password,
+            model.RememberMe,
+            lockoutOnFailure: false
+        );
 
         if (result.Succeeded)
         {
             _logger.LogInformation("User {EmailUsername} logged in successfully.", model.EmailUsername);
+
+            // ✅ NOVO: Se for mecânico e ainda tiver de mudar password, força o ecrã de alteração
+            if (await _userManager.IsInRoleAsync(user, "Mecanico"))
+            {
+                var mustChange = await _context.Mecanicos
+                    .Where(m => m.UserId == user.Id && m.IsActive)
+                    .Select(m => m.MustChangePassword)
+                    .FirstOrDefaultAsync();
+
+                if (mustChange)
+                    return RedirectToAction("ForceChangePassword", "Authentication");
+            }
+
             return RedirectToAction("Index", "Home");
         }
         else if (result.IsLockedOut)
@@ -63,8 +87,9 @@ public class AuthenticationController : Controller
         }
     }
 
-    // Register
-    [HttpGet]
+
+// Register
+[HttpGet]
     public async Task<IActionResult> Register()
     {
         // Fetch roles dynamically from the database
@@ -144,4 +169,48 @@ public class AuthenticationController : Controller
         _logger.LogInformation("User logged out.");
         return RedirectToAction("Login", "Home");
     }
+
+    [Authorize(Roles = "Mecanico")]
+    [HttpGet]
+    public IActionResult ForceChangePassword()
+    {
+        return View(new ForceChangePasswordVM());
+    }
+
+    [Authorize(Roles = "Mecanico")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForceChangePassword(ForceChangePasswordVM vm)
+    {
+        if (!ModelState.IsValid) return View(vm);
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return RedirectToAction("Login");
+
+        // muda password (exige a atual, que é a temporária do email)
+        var res = await _userManager.ChangePasswordAsync(user, vm.CurrentPassword, vm.NewPassword);
+        if (!res.Succeeded)
+        {
+            foreach (var e in res.Errors)
+                ModelState.AddModelError("", e.Description);
+
+            return View(vm);
+        }
+
+        // marcar que já não precisa alterar
+        var mec = await _context.Mecanicos.FirstOrDefaultAsync(m => m.UserId == user.Id);
+        if (mec != null)
+        {
+            mec.MustChangePassword = false;
+            await _context.SaveChangesAsync();
+        }
+
+        await _signInManager.SignOutAsync(); // recomendado
+        TempData["Success"] = "Password alterada com sucesso. Inicia sessão novamente.";
+        return RedirectToAction("Login", "Authentication");
+
+
+    }
+
+
 }

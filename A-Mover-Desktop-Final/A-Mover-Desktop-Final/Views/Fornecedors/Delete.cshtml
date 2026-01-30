@@ -1,0 +1,44 @@
+﻿@model A_Mover_Desktop_Final.Models.Fornecedor
+
+@{
+    ViewData["Title"] = "Eliminar Fornecedor";
+}
+
+<div class="card m-5 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="m-0">Eliminar Fornecedor</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+    </div>
+
+    <div class="alert alert-warning">
+        Tem a certeza que pretende eliminar este fornecedor?
+    </div>
+
+    <div class="table-responsive text-nowrap mb-3">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th style="width: 220px;">@Html.DisplayNameFor(m => m.Nome)</th>
+                    <td>@Html.DisplayFor(m => m.Nome)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.Email)</th>
+                    <td>@Html.DisplayFor(m => m.Email)</td>
+                </tr>
+                <tr>
+                    <th>Nº de Peças</th>
+                    <td>@(Model.Pecas?.Count ?? 0)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="IDFornecedor" />
+
+        <div class="d-flex">
+            <input type="submit" value="Eliminar" class="btn btn-danger me-2" />
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
