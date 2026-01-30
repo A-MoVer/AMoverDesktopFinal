@@ -42,44 +42,38 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-             .AllowAnyMethod()
-             .AllowAnyHeader();
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
+
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 8;
+    options.Password.RequireUppercase = true;      // tens a inicial maiúscula
+    options.Password.RequireLowercase = true;      // "mecanico" já cumpre
+    options.Password.RequireNonAlphanumeric = true; // o "." cumpre
+    options.Password.RequiredLength = 8;           // ajusta se precisares
 });
 
+// Adicione esta linha ao seu Program.cs antes de "var app = builder.Build();"
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
-// Bloco de Inicialização: Migrations Automáticas e Seed de Roles
+// Seed roles
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
     try
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        
-        // Aplica as migrations automaticamente na VPS
-        logger.LogInformation("A verificar e aplicar migrations pendentes na VPS...");
-        await context.Database.MigrateAsync();
-        logger.LogInformation("Base de dados atualizada com sucesso.");
-
-        // Executa o seed das roles
         await SeedRolesAsync(services, logger);
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Ocorreu um erro no arranque da App (Migration ou Seed).");
+        logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
 
@@ -91,6 +85,7 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -102,8 +97,10 @@ app.UseSession();
 // Usar CORS
 app.UseCors("AllowAll");
 
-app.UseAuthentication(); 
+app.UseAuthentication(); // Ensure authentication is used
 app.UseAuthorization();
+
+
 
 app.MapControllerRoute(
     name: "default",
@@ -112,24 +109,27 @@ app.MapRazorPages();
 
 app.Run();
 
-// Método para Seed de Roles
 async Task SeedRolesAsync(IServiceProvider serviceProvider, ILogger logger)
 {
+    // Get the role manager service
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    // Define the roles you want to create
     var roles = new[] { "Oficina", "Fabricante", "Concessionaria" };
 
     foreach (var role in roles)
     {
+        // Check if the role already exists; if not, create it
         if (!await roleManager.RoleExistsAsync(role))
         {
             var result = await roleManager.CreateAsync(new IdentityRole(role));
             if (result.Succeeded)
             {
-                logger.LogInformation("Role {Role} criada com sucesso.", role);
+                logger.LogInformation("Role {Role} created successfully.", role);
             }
             else
             {
-                logger.LogError("Erro ao criar role {Role}: {Errors}", role, string.Join(", ", result.Errors.Select(e => e.Description)));
+                logger.LogError("Error creating role {Role}: {Errors}", role, string.Join(", ", result.Errors.Select(e => e.Description)));
             }
         }
     }
