@@ -24,5 +24,10 @@ namespace A_Mover_Desktop_Final.Models
 
         public string? UserId { get; set; }
 
+        public bool MustChangePassword { get; set; } = true;
+
+        public ICollection<Servico>? Servicos { get; set; }
+
+
     }
 }

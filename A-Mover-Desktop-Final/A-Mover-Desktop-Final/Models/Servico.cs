@@ -44,8 +44,12 @@ namespace A_Mover_Desktop_Final.Models
 
         public ICollection<ServicosPecasAlteradas>? PecasAlteradas { get; set; }
 
+        [Column("MecanicoId")]
         public int? IDMecanico { get; set; }
+
+        [ForeignKey(nameof(IDMecanico))]
         public Mecanico? Mecanico { get; set; }
+
 
     }
 }

@@ -106,7 +106,7 @@ namespace A_Mover_Desktop_Final.Data
 
             modelBuilder.Entity<Servico>()
                 .HasOne(s => s.Mecanico)
-                .WithMany() // não precisas de ICollection no Mecanico
+                 .WithMany(m => m.Servicos) 
                 .HasForeignKey(s => s.IDMecanico)
                 .OnDelete(DeleteBehavior.Restrict);
 

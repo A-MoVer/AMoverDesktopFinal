@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace A_Mover_Desktop_Final.Controllers
@@ -16,11 +17,12 @@ namespace A_Mover_Desktop_Final.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-
-        public MecanicosController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        private readonly IConfiguration _config;
+        public MecanicosController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IConfiguration config)
         {
             _context = context;
             _userManager = userManager;
+            _config = config;
         }
 
         // GET: Mecanicos
@@ -69,14 +71,14 @@ namespace A_Mover_Desktop_Final.Controllers
         {
             if (!ModelState.IsValid) return View(vm);
 
-            // ✅ a oficina autenticada é o próprio utilizador (UserId)
+            // Oficina autenticada é o próprio utilizador (UserId)
             string oficinaUserId = _userManager.GetUserId(User)!;
             if (string.IsNullOrWhiteSpace(oficinaUserId))
-                throw new InvalidOperationException("Utilizador oficina não autenticado.");
+                return Unauthorized();
 
             string email = vm.Email.Trim().ToLower();
 
-            // ✅ impedir duplicados por oficina (por UserId da oficina)
+            // Evitar duplicados por oficina
             bool exists = await _context.Mecanicos
                 .AnyAsync(m => m.OficinaId == oficinaUserId && m.Email == email);
 
@@ -86,48 +88,103 @@ namespace A_Mover_Desktop_Final.Controllers
                 return View(vm);
             }
 
-            // ✅ password default (tua regra)
-            string defaultPassword = BuildDefaultPassword(vm.Nome);
-            string username = await EnsureUniqueUsernameAsync(vm.Nome);
+            // Password temporária + username único
+            string tempPassword = GenerateTemporaryPassword();
+            string usernameBase = BuildUsernameFromName(vm.Nome);
+            string username = await EnsureUniqueUsernameAsync(usernameBase);
 
-            // ✅ criar conta Identity do mecânico
-            var user = new IdentityUser
-            {
-                UserName = username,
-                Email = email,
-                EmailConfirmed = true
-            };
+            IdentityUser? user = null;
+            Mecanico? mecanico = null;
 
-            var createUser = await _userManager.CreateAsync(user, defaultPassword);
-            if (!createUser.Succeeded)
+            try
             {
-                foreach (var e in createUser.Errors)
-                    ModelState.AddModelError("", e.Description);
+                user = new IdentityUser
+                {
+                    UserName = username,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+
+                // Criar conta Identity
+                var createUser = await _userManager.CreateAsync(user, tempPassword);
+                if (!createUser.Succeeded)
+                {
+                    foreach (var e in createUser.Errors)
+                        ModelState.AddModelError("", e.Description);
+
+                    return View(vm);
+                }
+
+                // Atribuir role
+                var roleRes = await _userManager.AddToRoleAsync(user, "Mecanico");
+                if (!roleRes.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+
+                    foreach (var e in roleRes.Errors)
+                        ModelState.AddModelError("", e.Description);
+
+                    return View(vm);
+                }
+
+                // Criar registo Mecanico
+                mecanico = new Mecanico
+                {
+                    Nome = vm.Nome.Trim(),
+                    Email = email,
+                    Telemovel = vm.Telemovel?.Trim(),
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+
+                    OficinaId = oficinaUserId,
+                    UserId = user.Id,
+                    MustChangePassword = true
+                };
+
+                _context.Mecanicos.Add(mecanico);
+                await _context.SaveChangesAsync();
+
+                // Enviar email com credenciais (SMTP2GO)
+                await SendMechanicCredentialsEmailAsync(
+                    toEmail: email,
+                    nome: vm.Nome.Trim(),
+                    username: username,
+                    tempPassword: tempPassword
+                );
+
+                TempData["Success"] = "Mecânico criado. As credenciais foram enviadas por email.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // rollback do registo do mecânico (se já tiver sido gravado)
+                try
+                {
+                    if (mecanico != null)
+                    {
+                        _context.Mecanicos.Remove(mecanico);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                catch { /* opcional: log */ }
+
+                // rollback da conta Identity
+                try
+                {
+                    if (user != null)
+                        await _userManager.DeleteAsync(user);
+                }
+                catch { /* opcional: log */ }
+
+                ModelState.AddModelError("", "Não foi possível concluir a criação do mecânico (envio de email incluído). Tenta novamente.");
+                // Em DEV podes manter este detalhe, em PROD é melhor registar em log e não mostrar.
+                ModelState.AddModelError("", $"Detalhe: {ex.Message}");
 
                 return View(vm);
             }
-
-            // ✅ role mecânico
-            await _userManager.AddToRoleAsync(user, "Mecanico");
-
-            // ✅ criar registo Mecanico ligado à oficina (UserId) + UserId do mecânico
-            var mecanico = new Mecanico
-            {
-                Nome = vm.Nome.Trim(),
-                Email = email,
-                Telemovel = vm.Telemovel?.Trim(),
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                OficinaId = oficinaUserId,  // aqui está a associação correta
-                UserId = user.Id                // user do mecânico
-            };
-
-            _context.Mecanicos.Add(mecanico);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = $"Mecânico criado. Password por defeito: {defaultPassword}";
-            return RedirectToAction(nameof(Index));
         }
+
+
 
         // GET: Mecanicos/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -218,21 +275,39 @@ namespace A_Mover_Desktop_Final.Controllers
             return _context.Mecanicos.Any(e => e.Id == id);
         }
 
-     
 
 
-        private static string BuildDefaultPassword(string nome)
+
+        private static string GenerateTemporaryPassword(int length = 12)
         {
-            var token = (nome ?? "").Trim();
-            token = token.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "User";
+            const string lower = "abcdefghijklmnopqrstuvwxyz";
+            const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string digits = "0123456789";
+            const string symbols = "!@#$%^&*()-_=+.";
 
-            // mantém só letras (evita espaços, hífens, etc.)
-            token = new string(token.Where(char.IsLetter).ToArray());
-            if (string.IsNullOrWhiteSpace(token)) token = "User";
+            if (length < 8) length = 8;
 
-            token = char.ToUpper(token[0]) + token.Substring(1).ToLower();
+            char Pick(string s) => s[RandomNumberGenerator.GetInt32(s.Length)];
 
-            return $"mecanico{token}.";
+            var chars = new List<char>
+            {
+                Pick(lower),
+                Pick(upper),
+                Pick(digits),
+                Pick(symbols)
+            };
+
+            string all = lower + upper + digits + symbols;
+            while (chars.Count < length) chars.Add(Pick(all));
+
+            // baralhar (Fisher–Yates)
+            for (int i = chars.Count - 1; i > 0; i--)
+            {
+                int j = RandomNumberGenerator.GetInt32(i + 1);
+                (chars[i], chars[j]) = (chars[j], chars[i]);
+            }
+
+            return new string(chars.ToArray());
         }
 
 
@@ -240,16 +315,14 @@ namespace A_Mover_Desktop_Final.Controllers
         {
             if (string.IsNullOrWhiteSpace(nome)) return "mecanico";
 
-            // "John Doe" -> "john-doe"
             var trimmed = nome.Trim().ToLower();
 
-            // mantém letras/dígitos e troca espaços por hífen
+            // letras/dígitos e espaços -> hífen
             var cleaned = new string(trimmed.Select(c =>
                 char.IsLetterOrDigit(c) ? c :
                 char.IsWhiteSpace(c) ? '-' : '\0'
             ).Where(c => c != '\0').ToArray());
 
-            // remove hífens repetidos
             while (cleaned.Contains("--")) cleaned = cleaned.Replace("--", "-");
             cleaned = cleaned.Trim('-');
 
@@ -264,12 +337,50 @@ namespace A_Mover_Desktop_Final.Controllers
             while (await _userManager.FindByNameAsync(candidate) != null)
             {
                 i++;
-                candidate = $"{baseUsername}{i}"; // ex: "joao-silva2", "joao-silva3"
+                candidate = $"{baseUsername}{i}";
             }
 
             return candidate;
         }
 
+
+        private async Task SendMechanicCredentialsEmailAsync(string toEmail, string nome, string username, string tempPassword)
+        {
+            var host = _config["Smtp2Go:Host"]!;
+            var port = int.Parse(_config["Smtp2Go:Port"] ?? "2525");
+            var enableSsl = bool.Parse(_config["Smtp2Go:EnableSsl"] ?? "true");
+            var smtpUser = _config["Smtp2Go:Username"]!;
+            var smtpPass = _config["Smtp2Go:Password"]!;
+            var fromEmail = _config["Smtp2Go:FromEmail"]!;
+            var fromName = _config["Smtp2Go:FromName"] ?? "A-MoVeR";
+
+
+
+            if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(smtpUser) ||
+                string.IsNullOrWhiteSpace(smtpPass) || string.IsNullOrWhiteSpace(fromEmail))
+                throw new InvalidOperationException("Configuração SMTP2GO incompleta no appsettings.json.");
+
+            var subject = "Acesso criado - Password temporária";
+            var body =
+                    $@"Olá {nome},
+
+            A tua conta de mecânico foi criada.
+
+            Username: {username}
+            Password temporária: {tempPassword}
+
+            No primeiro login vais ser obrigado(a) a alterar a password.";
+
+            Console.WriteLine($"SMTP Host={host} Port={port} User={smtpUser} From={fromEmail}");
+
+
+            await EmailHelper.SendAsync(
+                host, port, enableSsl,
+                smtpUser, smtpPass,
+                fromEmail, fromName,
+                toEmail, subject, body
+            );
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

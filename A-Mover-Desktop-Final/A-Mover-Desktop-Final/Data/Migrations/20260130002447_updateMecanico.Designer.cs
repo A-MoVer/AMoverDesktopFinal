@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260127114247_addMecanicoToServico")]
-    partial class addMecanicoToServico
+    [Migration("20260130002447_updateMecanico")]
+    partial class updateMecanico
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -370,6 +370,9 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                         .HasColumnType("nvarchar(160)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("MustChangePassword")
                         .HasColumnType("bit");
 
                     b.Property<string>("Nome")
@@ -1287,7 +1290,7 @@ namespace A_Mover_Desktop_Final.Data.Migrations
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Servico", b =>
                 {
                     b.HasOne("A_Mover_Desktop_Final.Models.Mecanico", "Mecanico")
-                        .WithMany()
+                        .WithMany("Servicos")
                         .HasForeignKey("IDMecanico")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -1414,6 +1417,11 @@ namespace A_Mover_Desktop_Final.Data.Migrations
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Fornecedor", b =>
                 {
                     b.Navigation("Pecas");
+                });
+
+            modelBuilder.Entity("A_Mover_Desktop_Final.Models.Mecanico", b =>
+                {
+                    b.Navigation("Servicos");
                 });
 
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.ModeloMota", b =>
