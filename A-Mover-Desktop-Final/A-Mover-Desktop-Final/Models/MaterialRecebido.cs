@@ -45,5 +45,15 @@ namespace A_Mover_Desktop_Final.Models
         public int? CompraId { get; set; }
         public Compras? Compra { get; set; }
 
+
+        [StringLength(50)]
+        [Display(Name = "Nº Chassi (1ª peça)")]
+        public string? NumeroChassiPrimeiraPeca { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Nº Chassi (últ. peça)")]
+        public string? NumeroChassiUltimaPeca { get; set; }
+
+
     }
 }
