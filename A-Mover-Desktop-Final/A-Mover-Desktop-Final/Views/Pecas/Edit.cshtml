@@ -35,6 +35,18 @@
                         <span asp-validation-for="Descricao" class="text-danger"></span>
                     </div>
                 </div>
+                <!-- Fornecedor -->
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label" asp-for="FornecedorId">
+                        Fornecedor <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <select asp-for="FornecedorId" class="form-control" asp-items="@(ViewData["FornecedorId"] as SelectList)">
+                            <option value="">--Selecionar fornecedor--</option>
+                        </select>
+                        <span asp-validation-for="FornecedorId" class="text-danger"></span>
+                    </div>
+                </div>
 
                 <p class="text-muted"><span class="text-danger">*</span> - Preenchimento obrigatório</p>
 
