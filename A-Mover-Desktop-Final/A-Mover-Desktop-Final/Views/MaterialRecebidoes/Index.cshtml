@@ -1,9 +1,7 @@
 ﻿@model IEnumerable<A_Mover_Desktop_Final.Models.MaterialRecebido>
-
 @{
     ViewData["Title"] = "Materiais Recebidos";
 }
-
 <div class="card m-5 p-1">
     <div class="d-flex justify-content-between align-items-center m-3">
         <h1 class="m-0">Materiais Recebidos</h1>
@@ -18,6 +16,8 @@
                     <th>Fornecedor</th>
                     <th>Data de Receção</th>
                     <th>Quantidade</th>
+                    <th>Nº Chassi (1ª)</th>
+                    <th>Nº Chassi (últ.)</th>
                     <th>Lote</th>
                     <th>Documento</th>
                     <th>Observações</th>
@@ -32,6 +32,8 @@
                         <td>@(item.Fornecedor?.Nome ?? "-")</td>
                         <td>@item.DataRececao.ToString("yyyy-MM-dd")</td>
                         <td>@item.Quantidade</td>
+                        <td>@(item.NumeroChassiPrimeiraPeca ?? "-")</td>
+                        <td>@(item.NumeroChassiUltimaPeca ?? "-")</td>
                         <td>@item.Lote</td>
                         <td>@item.Documento</td>
                         <td>@item.Observacoes</td>
@@ -55,21 +57,21 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
+        $(function () {
             $('#tabela').DataTable({
-                "pageLength": 10,
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registos por página",
-                    "paginate": {
-                        "first": "Primeira",
-                        "last": "Última",
-                        "next": "Próxima",
-                        "previous": "Anterior"
+                pageLength: 10,
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registos por página",
+                    paginate: {
+                        first: "Primeira",
+                        last: "Última",
+                        next: "Próxima",
+                        previous: "Anterior"
                     },
-                    "info": "_START_ a _END_ de _TOTAL_ registos",
-                    "infoEmpty": "Nenhum registo disponível",
-                    "search": "Pesquisar:",
-                    "zeroRecords": "Nenhum registro encontrado"
+                    info: "_START_ a _END_ de _TOTAL_ registos",
+                    infoEmpty: "Nenhum registo disponível",
+                    search: "Pesquisar:",
+                    zeroRecords: "Nenhum registo encontrado"
                 }
             });
         });

@@ -50,6 +50,22 @@
         </div>
 
         <div class="row mb-3">
+            <label asp-for="NumeroChassiPrimeiraPeca" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="NumeroChassiPrimeiraPeca" class="form-control" />
+                <span asp-validation-for="NumeroChassiPrimeiraPeca" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label asp-for="NumeroChassiUltimaPeca" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="NumeroChassiUltimaPeca" class="form-control" />
+                <span asp-validation-for="NumeroChassiUltimaPeca" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
             <label asp-for="Lote" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-10">
                 <input asp-for="Lote" class="form-control" />

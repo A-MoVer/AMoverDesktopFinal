@@ -59,17 +59,18 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: MaterialRecebidoes/Create
         public IActionResult Create()
         {
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedores, "IDFornecedor", "Nome");
-            ViewData["PecaId"] = new SelectList(_context.Pecas, "IDPeca", "Descricao");
+            ViewBag.Pecas = new SelectList(_context.Pecas.OrderBy(p => p.PartNumber), "IDPeca", "Descricao");
+            ViewBag.Fornecedores = new SelectList(_context.Fornecedores.OrderBy(f => f.Nome), "IDFornecedor", "Nome");
             return View();
         }
 
         // POST: MaterialRecebidoes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDMaterialRecebido,PecaId,FornecedorId,DataRececao,Quantidade,Lote,Documento,Observacoes")] MaterialRecebido materialRecebido)
+        public async Task<IActionResult> Create([Bind("IDMaterialRecebido,PecaId,FornecedorId,DataRececao,Quantidade,NumeroChassiPrimeiraPeca,NumeroChassiUltimaPeca,Lote,Documento,Observacoes")] MaterialRecebido materialRecebido)
         {
             if (ModelState.IsValid)
             {
@@ -77,8 +78,9 @@ namespace A_Mover_Desktop_Final.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedores, "IDFornecedor", "Nome", materialRecebido.FornecedorId);
-            ViewData["PecaId"] = new SelectList(_context.Pecas, "IDPeca", "Descricao", materialRecebido.PecaId);
+
+            ViewBag.Pecas = new SelectList(_context.Pecas.OrderBy(p => p.PartNumber), "IDPeca", "Descricao", materialRecebido.PecaId);
+            ViewBag.Fornecedores = new SelectList(_context.Fornecedores.OrderBy(f => f.Nome), "IDFornecedor", "Nome", materialRecebido.FornecedorId);
             return View(materialRecebido);
         }
 
@@ -95,8 +97,9 @@ namespace A_Mover_Desktop_Final.Controllers
             {
                 return NotFound();
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedores, "IDFornecedor", "Nome", materialRecebido.FornecedorId);
-            ViewData["PecaId"] = new SelectList(_context.Pecas, "IDPeca", "Descricao", materialRecebido.PecaId);
+
+            ViewBag.Pecas = new SelectList(_context.Pecas.OrderBy(p => p.PartNumber), "IDPeca", "Descricao", materialRecebido.PecaId);
+            ViewBag.Fornecedores = new SelectList(_context.Fornecedores.OrderBy(f => f.Nome), "IDFornecedor", "Nome", materialRecebido.FornecedorId);
             return View(materialRecebido);
         }
 
@@ -105,7 +108,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDMaterialRecebido,PecaId,FornecedorId,DataRececao,Quantidade,Lote,Documento,Observacoes")] MaterialRecebido materialRecebido)
+        public async Task<IActionResult> Edit(int id, [Bind("IDMaterialRecebido,PecaId,FornecedorId,DataRececao,Quantidade,NumeroChassiPrimeiraPeca,NumeroChassiUltimaPeca,Lote,Documento,Observacoes")] MaterialRecebido materialRecebido)
         {
             if (id != materialRecebido.IDMaterialRecebido)
             {
@@ -118,6 +121,7 @@ namespace A_Mover_Desktop_Final.Controllers
                 {
                     _context.Update(materialRecebido);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,15 +129,13 @@ namespace A_Mover_Desktop_Final.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["FornecedorId"] = new SelectList(_context.Fornecedores, "IDFornecedor", "Nome", materialRecebido.FornecedorId);
-            ViewData["PecaId"] = new SelectList(_context.Pecas, "IDPeca", "Descricao", materialRecebido.PecaId);
+
+            ViewBag.Pecas = new SelectList(_context.Pecas.OrderBy(p => p.PartNumber), "IDPeca", "Descricao", materialRecebido.PecaId);
+            ViewBag.Fornecedores = new SelectList(_context.Fornecedores.OrderBy(f => f.Nome), "IDFornecedor", "Nome", materialRecebido.FornecedorId);
             return View(materialRecebido);
         }
 

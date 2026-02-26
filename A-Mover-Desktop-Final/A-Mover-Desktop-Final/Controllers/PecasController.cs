@@ -74,6 +74,14 @@ namespace A_Mover_Desktop_Final.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["FornecedorId"] = new SelectList(
+                _context.Fornecedores.OrderBy(f => f.Nome),
+                "IDFornecedor",
+                "Nome",
+                pecas.FornecedorId
+            );
+
             return View(pecas);
         }
 
@@ -82,7 +90,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDPeca,PartNumber,Descricao")] Pecas pecas)
+        public async Task<IActionResult> Edit(int id, [Bind("IDPeca,PartNumber,Descricao,FornecedorId")] Pecas pecas)
         {
             if (id != pecas.IDPeca)
             {
@@ -102,16 +110,22 @@ namespace A_Mover_Desktop_Final.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["FornecedorId"] = new SelectList(
+                _context.Fornecedores.OrderBy(f => f.Nome),
+                "IDFornecedor",
+                "Nome",
+                pecas.FornecedorId
+            );
+
             return View(pecas);
         }
-
         // GET: Pecas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
