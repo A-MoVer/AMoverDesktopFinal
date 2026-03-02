@@ -180,7 +180,7 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,7 +201,7 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,7 +221,7 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -239,13 +239,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -265,7 +265,7 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -286,7 +286,7 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.FornecedorId,
                         principalTable: "Fornecedores",
                         principalColumn: "IDFornecedor",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -306,13 +306,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDChecklist,
                         principalTable: "Checklist",
                         principalColumn: "IDChecklist",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ChecklistModelo_ModelosMota_IDModelo",
                         column: x => x.IDModelo,
                         principalTable: "ModelosMota",
                         principalColumn: "IDModelo",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -333,13 +333,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDModelo,
                         principalTable: "Documento",
                         principalColumn: "IDDocumento",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DocumentosModelo_ModelosMota_IDModelo",
                         column: x => x.IDModelo,
                         principalTable: "ModelosMota",
                         principalColumn: "IDModelo",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -363,13 +363,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDCliente,
                         principalTable: "Clientes",
                         principalColumn: "IDCliente",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Encomendas_ModelosMota_IDModelo",
                         column: x => x.IDModelo,
                         principalTable: "ModelosMota",
                         principalColumn: "IDModelo",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -391,13 +391,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.FornecedorId,
                         principalTable: "Fornecedores",
                         principalColumn: "IDFornecedor",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Compras_Pecas_PecaId",
                         column: x => x.PecaId,
                         principalTable: "Pecas",
                         principalColumn: "IDPeca",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -418,13 +418,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDModelo,
                         principalTable: "ModelosMota",
                         principalColumn: "IDModelo",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ModeloPecasFixas_Pecas_IDPeca",
                         column: x => x.IDPeca,
                         principalTable: "Pecas",
                         principalColumn: "IDPeca",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -457,7 +457,7 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDPeca,
                         principalTable: "Pecas",
                         principalColumn: "IDPeca",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -559,13 +559,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDChecklist,
                         principalTable: "Checklist",
                         principalColumn: "IDChecklist",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ChecklistControlo_OrdemProducao_IDOrdemProducao",
                         column: x => x.IDOrdemProducao,
                         principalTable: "OrdemProducao",
                         principalColumn: "IDOrdemProducao",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -586,13 +586,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDChecklist,
                         principalTable: "Checklist",
                         principalColumn: "IDChecklist",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ChecklistEmbalagem_OrdemProducao_IDOrdemProducao",
                         column: x => x.IDOrdemProducao,
                         principalTable: "OrdemProducao",
                         principalColumn: "IDOrdemProducao",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -613,13 +613,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDChecklist,
                         principalTable: "Checklist",
                         principalColumn: "IDChecklist",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ChecklistMontagem_OrdemProducao_IDOrdemProducao",
                         column: x => x.IDOrdemProducao,
                         principalTable: "OrdemProducao",
                         principalColumn: "IDOrdemProducao",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -646,13 +646,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDModelo,
                         principalTable: "ModelosMota",
                         principalColumn: "IDModelo",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Motas_OrdemProducao_IDOrdemProducao",
                         column: x => x.IDOrdemProducao,
                         principalTable: "OrdemProducao",
                         principalColumn: "IDOrdemProducao",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -673,13 +673,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDMota,
                         principalTable: "Motas",
                         principalColumn: "IDMota",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_MotasPecasInfo_Pecas_IDPeca",
                         column: x => x.IDPeca,
                         principalTable: "Pecas",
                         principalColumn: "IDPeca",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -700,13 +700,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDMota,
                         principalTable: "Motas",
                         principalColumn: "IDMota",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_MotasPecasSN_Pecas_IDPeca",
                         column: x => x.IDPeca,
                         principalTable: "Pecas",
                         principalColumn: "IDPeca",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -738,7 +738,7 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDMota,
                         principalTable: "Motas",
                         principalColumn: "IDMota",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -762,13 +762,13 @@ namespace A_Mover_Desktop_Final.Migrations
                         column: x => x.IDMota,
                         principalTable: "Motas",
                         principalColumn: "IDMota",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_UtilizadorMota_Utilizadores_IdUtilizador",
                         column: x => x.IdUtilizador,
                         principalTable: "Utilizadores",
                         principalColumn: "IdUtilizador",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
