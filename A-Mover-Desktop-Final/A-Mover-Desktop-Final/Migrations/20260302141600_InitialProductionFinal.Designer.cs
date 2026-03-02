@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace A_Mover_Desktop_Final.Data.Migrations
+namespace A_Mover_Desktop_Final.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260130002447_updateMecanico")]
-    partial class updateMecanico
+    [Migration("20260302141600_InitialProductionFinal")]
+    partial class InitialProductionFinal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -331,6 +331,14 @@ namespace A_Mover_Desktop_Final.Data.Migrations
                     b.Property<string>("Lote")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NumeroChassiPrimeiraPeca")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NumeroChassiUltimaPeca")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Observacoes")
                         .HasMaxLength(300)
