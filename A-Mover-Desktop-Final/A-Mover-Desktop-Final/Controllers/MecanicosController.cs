@@ -28,6 +28,8 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Mecanicos
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "GestaoMecanicos";
+
             string oficinaUserId = _userManager.GetUserId(User)!;
 
             var list = await _context.Mecanicos
@@ -461,6 +463,8 @@ namespace A_Mover_Desktop_Final.Controllers
         // LISTA: só serviços atribuídos ao mecânico autenticado
         public async Task<IActionResult> MeusAgendamentos()
         {
+            ViewData["ActiveMenu"] = "MeusAgendamentos";
+
             int mecanicoId = await GetMecanicoIdAsync();
 
             var lista = await _context.Servico

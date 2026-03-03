@@ -22,6 +22,8 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: MaterialRecebidoes
         public async Task<IActionResult> Index(string searchLote)
         {
+            ViewData["ActiveMenu"] = "GestaoMaterial";
+
             var materiais = _context.MateriaisRecebidos
                 .Include(m => m.Fornecedor)
                 .Include(m => m.Peca)

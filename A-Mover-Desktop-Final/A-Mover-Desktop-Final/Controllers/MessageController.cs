@@ -20,6 +20,8 @@ namespace A_Mover_Desktop_Final.Controllers
 
         public IActionResult SendMessage()
         {
+            ViewData["ActiveMenu"] = "EnviarMensagem";
+
             // Passar a API Key para a view
             ViewBag.ApiKey = _configuration["MessageAPI:ApiKey"];
             ViewBag.BaseUrl = _configuration["MessageAPI:BaseUrl"];
@@ -27,6 +29,8 @@ namespace A_Mover_Desktop_Final.Controllers
         }
         public IActionResult TestarConexao()
         {
+            ViewData["ActiveMenu"] = "TestarConexao";
+
             // Passar a API Key para a view
             ViewBag.ApiKey = _configuration["MessageAPI:ApiKey"];
             ViewBag.BaseUrl = _configuration["MessageAPI:BaseUrl"];

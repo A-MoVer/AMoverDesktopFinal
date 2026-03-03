@@ -21,12 +21,14 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Motas
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "GestaoMotas";
+
             var motas = await _context.Motas
                 .Include(m => m.ModeloMota)
                 .Include(m => m.OrdemProducao)
                 .OrderByDescending(m => m.DataRegisto)  // Ordenar pela data de registro (mais recentes primeiro)
                 .ToListAsync();
-            
+
             return View(motas);
         }
 

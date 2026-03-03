@@ -17,6 +17,8 @@ namespace A_Mover_Desktop_Final.Controllers
 
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "OrdemProducao";
+
             var ordens = await _context.OrdemProducao
                 .Include(op => op.Encomenda)
                     .ThenInclude(e => e.Cliente)

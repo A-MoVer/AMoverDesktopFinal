@@ -22,6 +22,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Documentos
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "TipoDocumentos";
             return View(await _context.Documento.ToListAsync());
         }
 

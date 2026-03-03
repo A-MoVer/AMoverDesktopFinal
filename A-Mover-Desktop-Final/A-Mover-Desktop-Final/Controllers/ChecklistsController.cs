@@ -22,11 +22,13 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Checklists
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "TipoChecklists";
+
             var checklists = await _context.Checklist
                 .Include(c => c.ChecklistModelos)
                 .ThenInclude(cm => cm.ModeloMota)
                 .ToListAsync();
-            
+
             return View(checklists);
         }
 
