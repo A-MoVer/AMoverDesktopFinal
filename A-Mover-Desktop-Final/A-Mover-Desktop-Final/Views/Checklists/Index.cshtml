@@ -4,52 +4,161 @@
     ViewData["Title"] = "Checklists";
 }
 
-<h1>Checklists</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Criar Novo</a>
-</p>
 <div class="card">
     <div class="card-body">
+        <!-- Cabeçalho e Filtro -->
+        <div class="row mb-4 align-items-start">
+            <!-- Título e Botão Criar (lado esquerdo) -->
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <h1 class="h3 mb-2">Tipo de Checklists</h1>
+                <a asp-action="Create" class="btn btn-primary btn-sm">
+                    <i class="bx bx-plus me-1"></i>Criar Novo
+                </a>
+            </div>
+
+            <!-- Seção de Filtro (lado direito) -->
+            <div class="col-12 col-md-6">
+                <form asp-action="Index" method="get" class="mb-0">
+                    <div class="input-group input-group-sm">
+                        <input type="text" 
+                               name="searchString" 
+                               value="@ViewData["CurrentFilter"]" 
+                               class="form-control" 
+                               placeholder="Pesquisar..." 
+                               aria-label="Pesquisar checklists">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-search"></i>
+                        </button>
+                        @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()))
+                        {
+                            <a asp-action="Index" class="btn btn-secondary" title="Limpar filtro">
+                                <i class="bx bx-x"></i>
+                            </a>
+                        }
+                    </div>
+                    @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()))
+                    {
+                        <small class="text-muted mt-1 d-block">
+                            <i class="bx bx-filter-alt me-1"></i>
+                            Filtrando por: <strong>@ViewData["CurrentFilter"]</strong>
+                        </small>
+                    }
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabela de Checklists -->
         <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-hover" id="checklistsTable">
+                <thead class="table-light">
                     <tr>
                         <th>Nome</th>
-                        <th>Descrição</th>
-                        <th>Tipo</th>
-                        <th>Modelos</th>
-                        <th>Ações</th>
+                        <th class="d-none d-md-table-cell">Descrição</th>
+                        <th class="d-none d-lg-table-cell">Tipo</th>
+                        <th class="d-none d-lg-table-cell">Modelos</th>
+                        <th class="text-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@Html.DisplayFor(modelItem => item.Nome)</strong>
+                                    <!-- Informações visíveis apenas em mobile -->
+                                    <div class="d-md-none text-muted small mt-1">
+                                        <div><i class="bx bx-info-circle me-1"></i>@item.Descricao</div>
+                                        <div class="mt-1">
+                                            <span class="badge bg-primary">@item.Tipo</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="d-none d-md-table-cell">@Html.DisplayFor(modelItem => item.Descricao)</td>
+                                <td class="d-none d-lg-table-cell">
+                                    <span class="badge bg-primary">@Html.DisplayFor(modelItem => item.Tipo)</span>
+                                </td>
+                                <td class="d-none d-lg-table-cell">
+                                    @if (item.ChecklistModelos != null && item.ChecklistModelos.Any())
+                                    {
+                                        <ul class="list-unstyled mb-0">
+                                            @foreach (var cm in item.ChecklistModelos)
+                                            {
+                                                <li><small><i class="bx bx-check text-success me-1"></i>@cm.ModeloMota?.Nome</small></li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted"><i class="bx bx-world me-1"></i>Genérico (todos os modelos)</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <!-- Botões para desktop/laptop -->
+                                    <div class="btn-group btn-group-sm d-none d-lg-inline-flex" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.IDChecklist" 
+                                           class="btn btn-info text-white" title="Detalhes">
+                                            <i class="bx bx-info-circle"></i> Detalhes
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.IDChecklist" 
+                                           class="btn btn-warning text-white" title="Editar">
+                                            <i class="bx bx-edit"></i> Editar
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.IDChecklist" 
+                                           class="btn btn-danger text-white" title="Eliminar">
+                                            <i class="bx bx-trash"></i> Eliminar
+                                        </a>
+                                    </div>
+
+                                    <!-- Menu dropdown para mobile/tablet -->
+                                    <div class="d-lg-none">
+                                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" 
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Details" asp-route-id="@item.IDChecklist">
+                                                    <i class="bx bx-info-circle me-2"></i>Detalhes
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.IDChecklist">
+                                                    <i class="bx bx-edit me-2"></i>Editar
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.IDChecklist">
+                                                    <i class="bx bx-trash me-2"></i>Eliminar
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>@Html.DisplayFor(modelItem => item.Nome)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Descricao)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Tipo)</td>
-                            <td>
-                                @if (item.ChecklistModelos != null && item.ChecklistModelos.Any())
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="bx bx-search-alt bx-lg d-block mb-2"></i>
+                                @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()))
                                 {
-                                    <ul class="list-unstyled">
-                                        @foreach (var cm in item.ChecklistModelos)
-                                        {
-                                            <li>@cm.ModeloMota?.Nome</li>
-                                        }
-                                    </ul>
+                                    <p class="mb-2">Nenhuma checklist encontrada com o filtro "<strong>@ViewData["CurrentFilter"]</strong>"</p>
+                                    <a asp-action="Index" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-x me-1"></i>Limpar Filtro
+                                    </a>
                                 }
                                 else
                                 {
-                                    <span class="text-muted">Genérico (todos os modelos)</span>
+                                    <p class="mb-2">Nenhuma checklist cadastrada</p>
+                                    <a asp-action="Create" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-plus me-1"></i>Criar Primeira Checklist
+                                    </a>
                                 }
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a asp-action="Edit" asp-route-id="@item.IDChecklist" class="btn btn-sm btn-outline-primary">Editar</a>
-                                    <a asp-action="Details" asp-route-id="@item.IDChecklist" class="btn btn-sm btn-outline-info">Detalhes</a>
-                                    <a asp-action="Delete" asp-route-id="@item.IDChecklist" class="btn btn-sm btn-outline-danger">Eliminar</a>
-                                </div>
                             </td>
                         </tr>
                     }
