@@ -33,6 +33,7 @@ namespace A_Mover_Desktop_Final.Controllers
             string oficinaUserId = _userManager.GetUserId(User)!;
 
             var list = await _context.Mecanicos
+                .Include(m => m.Servicos)
                 .Where(m => m.OficinaId == oficinaUserId)
                 .OrderByDescending(m => m.IsActive)
                 .ThenBy(m => m.Nome)

@@ -4,50 +4,129 @@
     ViewData["Title"] = "Gestão de Fornecedores";
 }
 
-<div class="card m-5 p-1">
-    <div class="d-flex justify-content-between align-items-center m-3">
-        <h1 class="m-0">Gestão de Fornecedores</h1>
-        <a type="button" class="btn btn-primary" asp-action="Create">Adicionar Fornecedor</a>
-    </div>
+<div class="card">
+    <div class="card-body">
+        <!-- Cabeçalho com título e botão -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">Gestão de Fornecedores</h1>
+            <a type="button" class="btn btn-primary btn-sm" asp-action="Create">
+                <i class="fas fa-plus me-1"></i>Criar Novo
+            </a>
+        </div>
 
-    <div class="table-responsive text-nowrap">
-        <table class="table" id="tabela">
-            <thead class="table-light">
-                <tr>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Nº Peças</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var fornecedor in Model)
-                {
-                    <tr id="row-@fornecedor.IDFornecedor">
-                        <td><b>@Html.DisplayFor(modelItem => fornecedor.Nome)</b></td>
-                        <td>@Html.DisplayFor(modelItem => fornecedor.Email)</td>
-                        <td>@(fornecedor.Pecas?.Count ?? 0)</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@fornecedor.IDFornecedor" class="btn btn-sm btn-warning text-white me-2">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-
-                            <a asp-action="Delete" asp-route-id="@fornecedor.IDFornecedor" class="btn btn-sm btn-danger text-white">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </a>
-                        </td>
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tabela">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nome</th>
+                        <th class="d-none d-md-table-cell">Email</th>
+                        <th class="text-center">Nº Peças</th>
+                        <th class="text-end">Ações</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var fornecedor in Model)
+                    {
+                        <tr id="row-@fornecedor.IDFornecedor">
+                            <td>
+                                <b>@Html.DisplayFor(modelItem => fornecedor.Nome)</b>
+                                <!-- Informação visível apenas em mobile -->
+                                <div class="d-md-none text-muted small mt-1">
+                                    <i class="fas fa-envelope me-1"></i>@fornecedor.Email
+                                </div>
+                            </td>
+                            <td class="d-none d-md-table-cell">@Html.DisplayFor(modelItem => fornecedor.Email)</td>
+                            <td class="text-center">
+                                @if (fornecedor.Pecas?.Count > 0)
+                                {
+                                    <span class="badge bg-info">@fornecedor.Pecas.Count</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">0</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <!-- Botões para desktop/laptop -->
+                                <div class="btn-group btn-group-sm d-none d-lg-inline-flex" role="group">
+                                    <a asp-action="Edit" asp-route-id="@fornecedor.IDFornecedor" 
+                                       class="btn btn-warning text-white" title="Editar">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+
+                                    @if (fornecedor.Pecas == null || !fornecedor.Pecas.Any())
+                                    {
+                                        <a asp-action="Delete" asp-route-id="@fornecedor.IDFornecedor" 
+                                           class="btn btn-danger text-white" title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" 
+                                                class="btn btn-secondary text-white" 
+                                                disabled 
+                                                title="Não é possível eliminar. Fornecedor tem @fornecedor.Pecas.Count peça(s) associada(s)."
+                                                data-bs-toggle="tooltip">
+                                            <i class="fas fa-lock"></i> Bloqueado
+                                        </button>
+                                    }
+                                </div>
+
+                                <!-- Menu dropdown para mobile/tablet -->
+                                <div class="d-lg-none">
+                                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" 
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@fornecedor.IDFornecedor">
+                                                <i class="fas fa-edit me-2"></i>Editar
+                                            </a>
+                                        </li>
+                                        @if (fornecedor.Pecas == null || !fornecedor.Pecas.Any())
+                                        {
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@fornecedor.IDFornecedor">
+                                                    <i class="fas fa-trash-alt me-2"></i>Eliminar
+                                                </a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <span class="dropdown-item text-muted disabled">
+                                                    <i class="fas fa-lock me-2"></i>Não é possível eliminar
+                                                </span>
+                                            </li>
+                                            <li>
+                                                <small class="dropdown-item-text text-muted">
+                                                    Fornecedor tem @fornecedor.Pecas.Count peça(s) associada(s)
+                                                </small>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Inicializar DataTable
             $('#tabela').DataTable({
                 "pageLength": 10,
+                "responsive": true,
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registos por página",
                     "paginate": {
@@ -59,9 +138,20 @@
                     "info": "_START_ a _END_ de _TOTAL_ registos",
                     "infoEmpty": "Nenhum registo disponível",
                     "search": "Pesquisar:",
-                    "zeroRecords": "Nenhum registro encontrado"
-                }
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "infoFiltered": "(filtrado de _MAX_ registos no total)"
+                },
+                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                       "<'row'<'col-sm-12'tr>>" +
+                       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+            });
+
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
     </script>
 }
+
