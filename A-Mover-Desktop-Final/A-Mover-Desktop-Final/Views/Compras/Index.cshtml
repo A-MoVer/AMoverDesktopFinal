@@ -1,53 +1,156 @@
 ﻿@model IEnumerable<A_Mover_Desktop_Final.Models.Compras>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gestão de Compras";
 }
 
-<h1>Index</h1>
+<div class="card">
+    <div class="card-body">
+        <!-- Cabeçalho com título e botão -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">Gestão de Compras</h1>
+            <a class="btn btn-primary btn-sm" asp-action="Create">
+                <i class="bx bx-plus me-1"></i>Criar Nova
+            </a>
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Peca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataPedido)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Fornecedor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantidade)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Peca.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataPedido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fornecedor.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantidade)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IDCompra">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IDCompra">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IDCompra">Delete</a>
-            </td>
-        </tr>
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tabelaCompras">
+                <thead class="table-light">
+                    <tr>
+                        <th>Peça</th>
+                        <th class="d-none d-md-table-cell">Fornecedor</th>
+                        <th class="d-none d-lg-table-cell">Data Pedido</th>
+                        <th class="text-center">Quantidade</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <b>@Html.DisplayFor(modelItem => item.Peca.Descricao)</b>
+                                    <!-- Informação visível apenas em mobile -->
+                                    <div class="d-md-none text-muted small mt-1">
+                                        <div>
+                                            <i class="bx bx-store me-1"></i>
+                                            @Html.DisplayFor(modelItem => item.Fornecedor.Nome)
+                                        </div>
+                                        <div class="mt-1">
+                                            <i class="bx bx-calendar me-1"></i>
+                                            @item.DataPedido.ToString("dd/MM/yyyy")
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="d-none d-md-table-cell">
+                                    <i class="bx bx-store me-1 text-muted"></i>
+                                    @Html.DisplayFor(modelItem => item.Fornecedor.Nome)
+                                </td>
+                                <td class="d-none d-lg-table-cell">
+                                    <i class="bx bx-calendar me-1 text-muted"></i>
+                                    @item.DataPedido.ToString("dd/MM/yyyy")
+                                    <div>
+                                        <small class="text-muted">@item.DataPedido.ToString("HH:mm")</small>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">@Html.DisplayFor(modelItem => item.Quantidade)</span>
+                                </td>
+                                <td class="text-end">
+                                    <!-- Botões para desktop/laptop -->
+                                    <div class="btn-group btn-group-sm d-none d-lg-inline-flex" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.IDCompra" 
+                                           class="btn btn-info text-white" title="Detalhes">
+                                            <i class="bx bx-info-circle"></i> Detalhes
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.IDCompra" 
+                                           class="btn btn-warning text-white" title="Editar">
+                                            <i class="bx bx-edit"></i> Editar
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.IDCompra" 
+                                           class="btn btn-danger text-white" title="Eliminar">
+                                            <i class="bx bx-trash"></i> Eliminar
+                                        </a>
+                                    </div>
+
+                                    <!-- Menu dropdown para mobile/tablet -->
+                                    <div class="d-lg-none">
+                                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" 
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Details" asp-route-id="@item.IDCompra">
+                                                    <i class="bx bx-info-circle me-2"></i>Detalhes
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.IDCompra">
+                                                    <i class="bx bx-edit me-2"></i>Editar
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.IDCompra">
+                                                    <i class="bx bx-trash me-2"></i>Eliminar
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="bx bx-package bx-lg d-block mb-2"></i>
+                                <p class="mb-2">Nenhuma compra registrada</p>
+                                <a asp-action="Create" class="btn btn-sm btn-primary">
+                                    <i class="bx bx-plus me-1"></i>Criar Primeira Compra
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Inicializar DataTable
+            $('#tabelaCompras').DataTable({
+                "pageLength": 10,
+                "responsive": true,
+                "order": [[2, "desc"]], // Ordenar por data (mais recente primeiro)
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "infoFiltered": "(filtrado de _MAX_ registos no total)"
+                },
+                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                       "<'row'<'col-sm-12'tr>>" +
+                       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>
+
