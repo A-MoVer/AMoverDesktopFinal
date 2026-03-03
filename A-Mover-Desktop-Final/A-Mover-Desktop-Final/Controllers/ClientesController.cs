@@ -17,6 +17,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Clientes
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "Clientes";
             return View(await _context.Clientes.ToListAsync());
         }
 

@@ -133,6 +133,28 @@
         .table-responsive {
             margin-bottom: 1rem;
         }
+
+        /* Estilos para itens de menu ativos */
+        .menu-item.active > .menu-link {
+            background-color: rgba(105, 108, 255, 0.16) !important;
+            color: #696cff !important;
+            font-weight: 600;
+        }
+
+        .menu-item.active > .menu-link i {
+            color: #696cff !important;
+        }
+
+        /* Efeito hover nos itens de menu */
+        .menu-item:not(.active) > .menu-link:hover {
+            background-color: rgba(67, 89, 113, 0.04);
+        }
+
+        /* Destaque adicional para submenus ativos */
+        .menu-sub .menu-item.active > .menu-link {
+            background-color: rgba(105, 108, 255, 0.12) !important;
+            padding-left: 3.5rem;
+        }
     </style>
 
     <!-- TESTES -->
@@ -176,14 +198,14 @@
                     }
 
                     <!-- Log Out -->
-                   
-                    <li class="menu-item">
+
+                    <li class="menu-item @(ViewData["ActiveMenu"] as string == "EnviarMensagem" ? "active" : "")">
                         <a class="menu-link" asp-controller="Message" asp-action="SendMessage">
                             <i class="menu-icon tf-icons bx bx-message-square-dots"></i>
                             <div data-i18n="Enviar Mensagem">Enviar Mensagem</div>
                         </a>
                     </li>
-                    <li class="menu-item">
+                    <li class="menu-item @(ViewData["ActiveMenu"] as string == "TestarConexao" ? "active" : "")">
                         <a class="menu-link" asp-controller="Message" asp-action="TestarConexao">
                             <i class="menu-icon tf-icons bx bx-plug"></i>
                             <div data-i18n="Testar Conexão">Testar Conexão</div>

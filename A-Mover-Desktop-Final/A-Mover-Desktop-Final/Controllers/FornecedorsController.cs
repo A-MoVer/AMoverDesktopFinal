@@ -22,6 +22,8 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Fornecedors
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "GestaoFornecedores";
+
             var fornecedores = await _context.Fornecedores
                 .AsNoTracking()
                 .Include(f => f.Pecas)

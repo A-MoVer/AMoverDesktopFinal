@@ -20,14 +20,25 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: Checklists
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var checklists = await _context.Checklist
+            ViewData["ActiveMenu"] = "TipoChecklists";
+            ViewData["CurrentFilter"] = searchString;
+
+            var checklists = _context.Checklist
                 .Include(c => c.ChecklistModelos)
                 .ThenInclude(cm => cm.ModeloMota)
-                .ToListAsync();
-            
-            return View(checklists);
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                checklists = checklists.Where(c => 
+                    c.Nome.Contains(searchString) || 
+                    c.Descricao.Contains(searchString) ||
+                    c.Tipo.ToString().Contains(searchString));
+            }
+
+            return View(await checklists.ToListAsync());
         }
 
         // GET: Checklists/Details/5

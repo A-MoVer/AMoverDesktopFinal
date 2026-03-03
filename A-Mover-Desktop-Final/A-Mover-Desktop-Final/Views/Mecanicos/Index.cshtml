@@ -1,73 +1,268 @@
 ﻿@model IEnumerable<Mecanico>
 @{
-    ViewData["Title"] = "Mecânicos";
+    ViewData["Title"] = "Gestão de Mecânicos";
 }
 
-<h1>Mecânicos</h1>
+<div class="card">
+    <div class="card-body">
+        <!-- Cabeçalho com título e botão -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">Gestão de Mecânicos</h1>
+            <a class="btn btn-primary btn-sm" asp-action="Create">
+                <i class="bx bx-plus me-1"></i>Criar Novo
+            </a>
+        </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-}
-
-<a class="btn btn-primary mb-3" asp-action="Create">Adicionar Mecânico</a>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telemóvel</th>
-            <th>Estado</th>
-            <td>Nome</td>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var m in Model)
+        <!-- Alertas -->
+        @if (TempData["Success"] != null)
         {
-            <tr>
-                <td>@m.Nome</td>
-                <td>@m.Email</td>
-                <td>@m.Telemovel</td>
-                <td>
-                    <div>@m.Nome</div>
-                    <small class="text-muted">
-                        Criado em: @m.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
-                    </small>
-                </td>
-                <td>@(m.IsActive ? "Ativo" : "Inativo")</td>
-                <td>
-                    @if (m.IsActive)
-                    {
-                        <form asp-action="Deactivate" asp-route-id="@m.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button class="btn btn-sm btn-warning" type="submit"
-                                    onclick="return confirm('Desativar este mecânico?');">
-                                Desativar
-                            </button>
-                        </form>
-                    }
-                    else
-                    {
-                        <form asp-action="Reactivate" asp-route-id="@m.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button class="btn btn-sm btn-success" type="submit"
-                                    onclick="return confirm('Reativar este mecânico?');">
-                                Reativar
-                            </button>
-                        </form>
-                    }
-                    <!-- ✅ Eliminar -->
-                    <form asp-action="Delete" asp-route-id="@m.Id" method="post" class="d-inline ms-1">
-                        @Html.AntiForgeryToken()
-                        <button class="btn btn-sm btn-danger" type="submit"
-                                onclick="return confirm('Eliminar este mecânico? Esta ação é irreversível.');">
-                            Eliminar
-                        </button>
-                    </form>
-                </td>
-            </tr>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bx bx-check-circle me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         }
-    </tbody>
-</table>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tabelaMecanicos">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nome</th>
+                        <th class="d-none d-md-table-cell">Email</th>
+                        <th class="d-none d-lg-table-cell">Telemóvel</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-center">Serviços</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in Model)
+                    {
+                        var servicosAtivos = m.Servicos?.Where(s => s.Estado != EstadoServico.Concluido).Count() ?? 0;
+                        var totalServicos = m.Servicos?.Count ?? 0;
+                        var podeEliminar = servicosAtivos == 0;
+
+                        <tr>
+                            <td>
+                                <b>@m.Nome</b>
+                                <!-- Informação visível apenas em mobile -->
+                                <div class="d-md-none text-muted small mt-1">
+                                    <div><i class="bx bx-envelope me-1"></i>@m.Email</div>
+                                    @if (!string.IsNullOrEmpty(m.Telemovel))
+                                    {
+                                        <div><i class="bx bx-phone me-1"></i>@m.Telemovel</div>
+                                    }
+                                    <div class="mt-1">
+                                        <small class="text-muted">Criado: @m.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                @m.Email
+                                <div class="d-lg-none">
+                                    <small class="text-muted">Criado: @m.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</small>
+                                </div>
+                            </td>
+                            <td class="d-none d-lg-table-cell">
+                                @if (!string.IsNullOrEmpty(m.Telemovel))
+                                {
+                                    <span>@m.Telemovel</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                                <div>
+                                    <small class="text-muted">Criado: @m.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                @if (m.IsActive)
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bx bx-check-circle me-1"></i>Ativo
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        <i class="bx bx-x-circle me-1"></i>Inativo
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (totalServicos > 0)
+                                {
+                                    @if (servicosAtivos > 0)
+                                    {
+                                        <span class="badge bg-warning" title="@servicosAtivos serviço(s) em andamento">
+                                            <i class="bx bx-time me-1"></i>@totalServicos (@servicosAtivos ativo)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info" title="Todos os serviços concluídos">
+                                            <i class="bx bx-check-double me-1"></i>@totalServicos
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">0</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <!-- Botões para desktop/laptop -->
+                                <div class="btn-group btn-group-sm d-none d-lg-inline-flex" role="group">
+                                    @if (m.IsActive)
+                                    {
+                                        <form asp-action="Deactivate" asp-route-id="@m.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button class="btn btn-warning text-white" type="submit"
+                                                    onclick="return confirm('Desativar este mecânico?');"
+                                                    title="Desativar">
+                                                <i class="bx bx-pause-circle"></i> Desativar
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Reactivate" asp-route-id="@m.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button class="btn btn-success text-white" type="submit"
+                                                    onclick="return confirm('Reativar este mecânico?');"
+                                                    title="Reativar">
+                                                <i class="bx bx-play-circle"></i> Reativar
+                                            </button>
+                                        </form>
+                                    }
+
+                                    @if (podeEliminar)
+                                    {
+                                        <form asp-action="Delete" asp-route-id="@m.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button class="btn btn-danger text-white" type="submit"
+                                                    onclick="return confirm('Eliminar este mecânico? Esta ação é irreversível.');"
+                                                    title="Eliminar">
+                                                <i class="bx bx-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" 
+                                                class="btn btn-secondary text-white" 
+                                                disabled 
+                                                title="Não é possível eliminar. Mecânico tem @servicosAtivos serviço(s) em andamento."
+                                                data-bs-toggle="tooltip">
+                                            <i class="bx bx-lock"></i> Bloqueado
+                                        </button>
+                                    }
+                                </div>
+
+                                <!-- Menu dropdown para mobile/tablet -->
+                                <div class="d-lg-none">
+                                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" 
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        @if (m.IsActive)
+                                        {
+                                            <li>
+                                                <form asp-action="Deactivate" asp-route-id="@m.Id" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <button class="dropdown-item text-warning" type="submit"
+                                                            onclick="return confirm('Desativar este mecânico?');">
+                                                        <i class="bx bx-pause-circle me-2"></i>Desativar
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <form asp-action="Reactivate" asp-route-id="@m.Id" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <button class="dropdown-item text-success" type="submit"
+                                                            onclick="return confirm('Reativar este mecânico?');">
+                                                        <i class="bx bx-play-circle me-2"></i>Reativar
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+
+                                        @if (podeEliminar)
+                                        {
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="Delete" asp-route-id="@m.Id" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <button class="dropdown-item text-danger" type="submit"
+                                                            onclick="return confirm('Eliminar este mecânico? Esta ação é irreversível.');">
+                                                        <i class="bx bx-trash me-2"></i>Eliminar
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <span class="dropdown-item text-muted disabled">
+                                                    <i class="bx bx-lock me-2"></i>Não é possível eliminar
+                                                </span>
+                                            </li>
+                                            <li>
+                                                <small class="dropdown-item-text text-muted">
+                                                    Mecânico tem @servicosAtivos serviço(s) em andamento
+                                                </small>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Inicializar DataTable
+            $('#tabelaMecanicos').DataTable({
+                "pageLength": 10,
+                "responsive": true,
+                "order": [[3, "desc"], [0, "asc"]], // Ordenar por estado (ativo primeiro) e depois nome
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "infoFiltered": "(filtrado de _MAX_ registos no total)"
+                },
+                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                       "<'row'<'col-sm-12'tr>>" +
+                       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+            });
+
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}
+

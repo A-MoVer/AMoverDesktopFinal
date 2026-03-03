@@ -24,6 +24,8 @@ namespace A_Mover_Desktop_Final.Controllers
         }
         public async Task<IActionResult> IndexOficina()
 {
+    ViewData["ActiveMenu"] = "Dashboard";
+
     var hoje = DateTime.Today;
     var inicioMes = new DateTime(hoje.Year, hoje.Month, 1);
     var fimMes = inicioMes.AddMonths(1).AddDays(-1);
@@ -77,6 +79,8 @@ namespace A_Mover_Desktop_Final.Controllers
 }
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "Dashboard";
+
             if (User.IsInRole("Oficina"))
         {
             return await IndexOficina();

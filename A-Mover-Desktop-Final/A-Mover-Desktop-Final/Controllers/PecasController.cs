@@ -18,6 +18,8 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Pecas
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "GestaoPecas";
+
             var pecas = await _context.Pecas
                 .Include(p => p.Fornecedor)
                 .ToListAsync();

@@ -18,12 +18,14 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Encomendas
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "Encomendas";
+
             var encomendas = await _context.Encomendas
                 .Include(e => e.Cliente)
                 .Include(e => e.ModeloMota)
                 .OrderByDescending(e => e.DateCriacao)  // Ordenar por data de criação (mais recentes primeiro)
                 .ToListAsync();
-            
+
             return View(encomendas);
         }
 

@@ -22,6 +22,8 @@ namespace A_Mover_Desktop_Final.Controllers
         // GET: Compras
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "GestaoCompras";
+
             var applicationDbContext = _context.Compras.Include(c => c.Fornecedor).Include(c => c.Peca);
             return View(await applicationDbContext.ToListAsync());
         }

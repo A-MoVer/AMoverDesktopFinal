@@ -60,16 +60,16 @@
 				<div>Gestão de Modelos</div>
 			</a>
 		</li>
-        <li class="menu-item">
-            <a asp-controller="Checklists" asp-action="Index" class="menu-link">
-                <div>Tipo de Checklists</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a asp-controller="Documentos" asp-action="Index" class="menu-link">
-                <div>Tipo de Documentos</div>
-            </a>
-        </li>
+		<li class="menu-item @(ViewData["ActiveMenu"] as string == "TipoChecklists" ? "active" : "")">
+			<a asp-controller="Checklists" asp-action="Index" class="menu-link">
+				<div>Tipo de Checklists</div>
+			</a>
+		</li>
+		<li class="menu-item @(ViewData["ActiveMenu"] as string == "TipoDocumentos" ? "active" : "")">
+			<a asp-controller="Documentos" asp-action="Index" class="menu-link">
+				<div>Tipo de Documentos</div>
+			</a>
+		</li>
 		<!-- Gestão de Peças -->
 		<li class="menu-item @(ViewData["ActiveMenu"] as string == "GestaoPecas" ? "active" : "")">
 			<a asp-controller="Pecas" asp-action="Index" class="menu-link">

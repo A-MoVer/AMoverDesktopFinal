@@ -21,6 +21,8 @@ namespace A_Mover_Desktop_Final.Controllers
 
         public async Task<IActionResult> Index()
         {
+            ViewData["ActiveMenu"] = "HistoricoManutencoes";
+
             var servicos = await _context.Servico
                 .Include(s => s.Mota)
                 .ThenInclude(m => m.ModeloMota)
@@ -65,6 +67,8 @@ namespace A_Mover_Desktop_Final.Controllers
 
         public async Task<IActionResult> CalendarioIntervencoes()
         {
+            ViewData["ActiveMenu"] = "CalendarioIntervencoes";
+
             var query = _context.Servico
                 .AsNoTracking()
                 .Include(s => s.Mota)
