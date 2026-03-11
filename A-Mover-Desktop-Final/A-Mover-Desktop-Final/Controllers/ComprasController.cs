@@ -63,10 +63,17 @@ namespace A_Mover_Desktop_Final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IDCompra,PecaId,DataPedido,FornecedorId,Quantidade")] Compras compras)
         {
+            // Validar se a data não é anterior à data atual
+            if (compras.DataPedido.Date < DateTime.Today)
+            {
+                ModelState.AddModelError("DataPedido", "A data do pedido não pode ser anterior à data atual.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(compras);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Compra registrada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FornecedorId"] = new SelectList(_context.Fornecedores, "IDFornecedor", "Nome", compras.FornecedorId);
@@ -104,12 +111,19 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
+            // Validar se a data não é anterior à data atual
+            if (compras.DataPedido.Date < DateTime.Today)
+            {
+                ModelState.AddModelError("DataPedido", "A data do pedido não pode ser anterior à data atual.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(compras);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Compra atualizada com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
