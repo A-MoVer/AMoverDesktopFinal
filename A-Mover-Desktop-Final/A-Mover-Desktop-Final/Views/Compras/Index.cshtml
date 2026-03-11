@@ -13,6 +13,23 @@
                 <i class="bx bx-plus me-1"></i>Criar Nova
             </a>
         </div>
+<!-- Alertas de Sucesso/Erro -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bx bx-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bx bx-error-circle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<h1>Index</h1>
 
         <!-- Tabela -->
         <div class="table-responsive">

@@ -66,10 +66,24 @@ namespace A_Mover_Desktop_Final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IDFornecedor,Nome,Email")] Fornecedor fornecedor)
         {
+            // Validar se já existe fornecedor com o mesmo nome
+            if (await _context.Fornecedores.AnyAsync(f => f.Nome.ToLower() == fornecedor.Nome.ToLower()))
+            {
+                ModelState.AddModelError("Nome", "Já existe um fornecedor com este nome.");
+            }
+
+            // Validar se já existe fornecedor com o mesmo email (se email foi fornecido)
+            if (!string.IsNullOrWhiteSpace(fornecedor.Email) && 
+                await _context.Fornecedores.AnyAsync(f => f.Email.ToLower() == fornecedor.Email.ToLower()))
+            {
+                ModelState.AddModelError("Email", "Já existe um fornecedor com este email.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(fornecedor);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Fornecedor criado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             return View(fornecedor);
@@ -103,12 +117,26 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
+            // Validar se já existe outro fornecedor com o mesmo nome
+            if (await _context.Fornecedores.AnyAsync(f => f.Nome.ToLower() == fornecedor.Nome.ToLower() && f.IDFornecedor != id))
+            {
+                ModelState.AddModelError("Nome", "Já existe outro fornecedor com este nome.");
+            }
+
+            // Validar se já existe outro fornecedor com o mesmo email (se email foi fornecido)
+            if (!string.IsNullOrWhiteSpace(fornecedor.Email) && 
+                await _context.Fornecedores.AnyAsync(f => f.Email.ToLower() == fornecedor.Email.ToLower() && f.IDFornecedor != id))
+            {
+                ModelState.AddModelError("Email", "Já existe outro fornecedor com este email.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(fornecedor);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Fornecedor atualizado com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
