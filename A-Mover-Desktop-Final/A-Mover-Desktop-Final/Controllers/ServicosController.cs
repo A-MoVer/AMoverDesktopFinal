@@ -257,6 +257,8 @@ public async Task<IActionResult> RegistarIntervencao(Servico servico)
             if (servico == null) return NotFound();
 
             ViewData["IDMota"] = new SelectList(_context.Motas, "IDMota", "NumeroIdentificacao", servico.IDMota);
+            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico)).Cast<TipoServico>().ToList();
+            ViewData["EstadosServico"] = Enum.GetValues(typeof(EstadoServico)).Cast<EstadoServico>().ToList();
             return View(servico);
         }
 
@@ -282,6 +284,8 @@ public async Task<IActionResult> RegistarIntervencao(Servico servico)
             }
 
             ViewData["IDMota"] = new SelectList(_context.Motas, "IDMota", "NumeroIdentificacao", servico.IDMota);
+            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico)).Cast<TipoServico>().ToList();
+            ViewData["EstadosServico"] = Enum.GetValues(typeof(EstadoServico)).Cast<EstadoServico>().ToList();
             return View(servico);
         }
 
