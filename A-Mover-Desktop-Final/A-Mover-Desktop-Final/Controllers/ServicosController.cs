@@ -136,7 +136,7 @@ namespace A_Mover_Desktop_Final.Controllers
             // ✅ NOVO: Mecânicos para o dropdown
             ViewData["Mecanicos"] = _context.Mecanicos
                 .AsNoTracking()
-                //.Where(m => m.IsActive) // se tiveres campo de ativo
+                .Where(m => m.IsActive)
                 .OrderBy(m => m.Nome)
                 .Select(m => new SelectListItem
                 {
@@ -169,7 +169,7 @@ namespace A_Mover_Desktop_Final.Controllers
             else
             {
                 bool existe = await _context.Mecanicos
-                    .AnyAsync(m => m.Id == servico.IDMecanico /* && m.IsActive */);
+                    .AnyAsync(m => m.Id == servico.IDMecanico && m.IsActive);
 
                 if (!existe)
                     ModelState.AddModelError(nameof(servico.IDMecanico), "Mecânico inválido.");
@@ -192,7 +192,7 @@ namespace A_Mover_Desktop_Final.Controllers
 
                 ViewData["Mecanicos"] = _context.Mecanicos
                     .AsNoTracking()
-                    //.Where(m => m.IsActive)
+                    .Where(m => m.IsActive)
                     .OrderBy(m => m.Nome)
                     .Select(m => new SelectListItem
                     {
