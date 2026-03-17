@@ -136,7 +136,7 @@ namespace A_Mover_Desktop_Final.Controllers
             // ✅ NOVO: Mecânicos para o dropdown
             ViewData["Mecanicos"] = _context.Mecanicos
                 .AsNoTracking()
-                //.Where(m => m.IsActive) // se tiveres campo de ativo
+                .Where(m => m.IsActive)
                 .OrderBy(m => m.Nome)
                 .Select(m => new SelectListItem
                 {
@@ -156,6 +156,11 @@ namespace A_Mover_Desktop_Final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AgendarIntervencao(Servico servico)
         {
+            if (servico.DataServico < DateTime.Now)
+            {
+                ModelState.AddModelError(nameof(servico.DataServico), "A data da intervenção não pode ser anterior à data atual.");
+            }
+
             // ✅ NOVO: validação do mecânico para evitar FK conflict
             if (servico.IDMecanico == null)
             {
@@ -164,7 +169,7 @@ namespace A_Mover_Desktop_Final.Controllers
             else
             {
                 bool existe = await _context.Mecanicos
-                    .AnyAsync(m => m.Id == servico.IDMecanico /* && m.IsActive */);
+                    .AnyAsync(m => m.Id == servico.IDMecanico && m.IsActive);
 
                 if (!existe)
                     ModelState.AddModelError(nameof(servico.IDMecanico), "Mecânico inválido.");
@@ -187,7 +192,7 @@ namespace A_Mover_Desktop_Final.Controllers
 
                 ViewData["Mecanicos"] = _context.Mecanicos
                     .AsNoTracking()
-                    //.Where(m => m.IsActive)
+                    .Where(m => m.IsActive)
                     .OrderBy(m => m.Nome)
                     .Select(m => new SelectListItem
                     {
@@ -252,6 +257,8 @@ public async Task<IActionResult> RegistarIntervencao(Servico servico)
             if (servico == null) return NotFound();
 
             ViewData["IDMota"] = new SelectList(_context.Motas, "IDMota", "NumeroIdentificacao", servico.IDMota);
+            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico)).Cast<TipoServico>().ToList();
+            ViewData["EstadosServico"] = Enum.GetValues(typeof(EstadoServico)).Cast<EstadoServico>().ToList();
             return View(servico);
         }
 
@@ -277,6 +284,8 @@ public async Task<IActionResult> RegistarIntervencao(Servico servico)
             }
 
             ViewData["IDMota"] = new SelectList(_context.Motas, "IDMota", "NumeroIdentificacao", servico.IDMota);
+            ViewData["TiposServico"] = Enum.GetValues(typeof(TipoServico)).Cast<TipoServico>().ToList();
+            ViewData["EstadosServico"] = Enum.GetValues(typeof(EstadoServico)).Cast<EstadoServico>().ToList();
             return View(servico);
         }
 

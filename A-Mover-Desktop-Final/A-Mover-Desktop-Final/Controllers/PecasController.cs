@@ -46,10 +46,23 @@ namespace A_Mover_Desktop_Final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IDPeca,PartNumber,Descricao,FornecedorId")] Pecas pecas)
         {
+            // Validar se já existe peça com a mesma descrição
+            if (await _context.Pecas.AnyAsync(p => p.Descricao.ToLower() == pecas.Descricao.ToLower()))
+            {
+                ModelState.AddModelError("Descricao", "Já existe uma peça com esta descrição.");
+            }
+
+            // Validar se já existe peça com o mesmo Part Number
+            if (await _context.Pecas.AnyAsync(p => p.PartNumber.ToLower() == pecas.PartNumber.ToLower()))
+            {
+                ModelState.AddModelError("PartNumber", "Já existe uma peça com este Part Number.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(pecas);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Peça criada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -99,12 +112,25 @@ namespace A_Mover_Desktop_Final.Controllers
                 return NotFound();
             }
 
+            // Validar se já existe outra peça com a mesma descrição
+            if (await _context.Pecas.AnyAsync(p => p.Descricao.ToLower() == pecas.Descricao.ToLower() && p.IDPeca != id))
+            {
+                ModelState.AddModelError("Descricao", "Já existe outra peça com esta descrição.");
+            }
+
+            // Validar se já existe outra peça com o mesmo Part Number
+            if (await _context.Pecas.AnyAsync(p => p.PartNumber.ToLower() == pecas.PartNumber.ToLower() && p.IDPeca != id))
+            {
+                ModelState.AddModelError("PartNumber", "Já existe outra peça com este Part Number.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(pecas);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Peça atualizada com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
