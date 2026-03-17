@@ -156,6 +156,11 @@ namespace A_Mover_Desktop_Final.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AgendarIntervencao(Servico servico)
         {
+            if (servico.DataServico < DateTime.Now)
+            {
+                ModelState.AddModelError(nameof(servico.DataServico), "A data da intervenção não pode ser anterior à data atual.");
+            }
+
             // ✅ NOVO: validação do mecânico para evitar FK conflict
             if (servico.IDMecanico == null)
             {
