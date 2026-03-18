@@ -4,3 +4,10 @@
         <div>Encomendas de Peças</div>
     </a>
 </li>
+
+<li class="menu-item @(ViewData["ActiveMenu"] as string == "GestaoMotas" ? "active" : "")">
+    <a asp-controller="Motas" asp-action="Index" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-cycling"></i>
+        <div>Stock de Motas</div>
+    </a>
+</li>

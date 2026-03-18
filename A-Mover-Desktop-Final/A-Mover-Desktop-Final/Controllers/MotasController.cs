@@ -23,13 +23,62 @@ namespace A_Mover_Desktop_Final.Controllers
         {
             ViewData["ActiveMenu"] = "GestaoMotas";
 
-            var motas = await _context.Motas
+            var query = _context.Motas
                 .Include(m => m.ModeloMota)
                 .Include(m => m.OrdemProducao)
-                .OrderByDescending(m => m.DataRegisto)  // Ordenar pela data de registro (mais recentes primeiro)
+                .AsQueryable();
+
+            if (User.IsInRole("Concessionaria"))
+            {
+                query = query.Where(m => m.IDOrdemProducao == null);
+            }
+
+            var motas = await query
+                .OrderByDescending(m => m.DataRegisto)
                 .ToListAsync();
 
             return View(motas);
+        }
+
+        // GET: Motas/CreateStock
+        public IActionResult CreateStock()
+        {
+            ViewData["IDModelo"] = new SelectList(_context.ModelosMota.OrderBy(m => m.Nome), "IDModelo", "Nome");
+            return View(new Mota
+            {
+                DataRegisto = DateTime.Now,
+                Estado = EstadoMota.Ativo,
+                Quilometragem = 0
+            });
+        }
+
+        // POST: Motas/CreateStock
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateStock([Bind("IDModelo,NumeroIdentificacao,Cor,Quilometragem,DataRegisto")] Mota mota)
+        {
+            if (await _context.Motas.AnyAsync(m => m.NumeroIdentificacao == mota.NumeroIdentificacao))
+            {
+                ModelState.AddModelError("NumeroIdentificacao", "Já existe uma mota com este número de identificação.");
+            }
+
+            if (mota.DataRegisto == default)
+            {
+                mota.DataRegisto = DateTime.Now;
+            }
+
+            if (ModelState.IsValid)
+            {
+                mota.Estado = EstadoMota.Ativo;
+                mota.IDOrdemProducao = null;
+                _context.Add(mota);
+                await _context.SaveChangesAsync();
+                TempData["Sucesso"] = "Mota registada em stock com sucesso.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["IDModelo"] = new SelectList(_context.ModelosMota.OrderBy(m => m.Nome), "IDModelo", "Nome", mota.IDModelo);
+            return View(mota);
         }
 
         // GET: Motas/Details/5

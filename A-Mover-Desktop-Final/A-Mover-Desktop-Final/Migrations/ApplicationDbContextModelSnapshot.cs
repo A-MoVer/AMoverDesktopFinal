@@ -60,7 +60,7 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Property<int>("IDChecklist")
                         .HasColumnType("int");
 
-                    b.Property<int>("IDOrdemProducao")
+                    b.Property<int?>("IDOrdemProducao")
                         .HasColumnType("int");
 
                     b.HasKey("IDChecklistControlo");
