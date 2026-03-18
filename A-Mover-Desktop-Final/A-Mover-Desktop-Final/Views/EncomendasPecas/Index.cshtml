@@ -1,0 +1,102 @@
+@model IEnumerable<A_Mover_Desktop_Final.Models.EncomendaPeca>
+
+@{
+    ViewData["Title"] = "Encomendas de Peças";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">
+                <i class="bx bx-package text-primary me-2"></i>
+                Encomendas de Peças
+            </h1>
+            <a class="btn btn-primary btn-sm" asp-action="Create">
+                <i class="bx bx-plus me-1"></i>Nova Encomenda
+            </a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bx bx-check-circle me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tabelaEncomendasPecas">
+                <thead class="table-light">
+                    <tr>
+                        <th>Peça</th>
+                        <th class="d-none d-md-table-cell">Part Number</th>
+                        <th class="text-center">Quantidade</th>
+                        <th class="d-none d-lg-table-cell">Data Necessária</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.Peca?.Descricao</strong>
+                                <div class="d-md-none text-muted small mt-1">
+                                    <span>@item.Peca?.PartNumber</span>
+                                </div>
+                            </td>
+                            <td class="d-none d-md-table-cell">@item.Peca?.PartNumber</td>
+                            <td class="text-center">
+                                <span class="badge bg-primary">@item.Quantidade</span>
+                            </td>
+                            <td class="d-none d-lg-table-cell">@item.DataNecessaria.ToString("dd/MM/yyyy")</td>
+                            <td class="text-center">
+                                <span class="badge bg-info">@item.Estado</span>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.IDEncomendaPeca" class="btn btn-info text-white">
+                                        <i class="bx bx-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.IDEncomendaPeca" class="btn btn-warning text-white">
+                                        <i class="bx bx-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tabelaEncomendasPecas').DataTable({
+                "pageLength": 10,
+                "responsive": true,
+                "order": [[5, "desc"]],
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "infoFiltered": "(filtrado de _MAX_ registos no total)"
+                },
+                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                       "<'row'<'col-sm-12'tr>>" +
+                       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+            });
+        });
+    </script>
+}

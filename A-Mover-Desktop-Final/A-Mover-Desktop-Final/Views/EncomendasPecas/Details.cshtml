@@ -1,0 +1,83 @@
+@model A_Mover_Desktop_Final.Models.EncomendaPeca
+
+@{
+    ViewData["Title"] = "Detalhes da Encomenda de Peças";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">
+                <i class="bx bx-info-circle text-info me-2"></i>
+                Detalhes da Encomenda
+            </h1>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i>Voltar
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <div class="card bg-light mb-3">
+                    <div class="card-header bg-transparent">
+                        <h5 class="mb-0">
+                            <i class="bx bx-package me-2"></i>
+                            Dados da Encomenda
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Peça</strong></div>
+                            <div class="col-md-8">@Model.Peca?.Descricao</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Part Number</strong></div>
+                            <div class="col-md-8">@Model.Peca?.PartNumber</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Fornecedor</strong></div>
+                            <div class="col-md-8">@Model.Peca?.Fornecedor?.Nome</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Quantidade</strong></div>
+                            <div class="col-md-8"><span class="badge bg-primary">@Model.Quantidade</span></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Data Necessária</strong></div>
+                            <div class="col-md-8">@Model.DataNecessaria.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Estado</strong></div>
+                            <div class="col-md-8"><span class="badge bg-info">@Model.Estado</span></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4"><strong>Observações</strong></div>
+                            <div class="col-md-8">@(string.IsNullOrWhiteSpace(Model.Observacoes) ? "(sem observações)" : Model.Observacoes)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="card bg-light mb-3">
+                    <div class="card-header bg-transparent">
+                        <h6 class="mb-0">
+                            <i class="bx bx-time me-1"></i>
+                            Datas
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Criação:</strong></p>
+                        <p class="text-muted">@Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.IDEncomendaPeca" class="btn btn-warning text-white">
+                        <i class="bx bx-edit me-1"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
