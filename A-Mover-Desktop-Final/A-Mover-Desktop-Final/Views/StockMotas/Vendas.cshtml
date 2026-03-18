@@ -1,0 +1,84 @@
+@model IEnumerable<A_Mover_Desktop_Final.Models.VendaMota>
+
+@{
+    ViewData["Title"] = "Vendas de Motas";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">
+                <i class="bx bx-receipt text-success me-2"></i>
+                Vendas de Motas
+            </h1>
+            <a class="btn btn-success btn-sm" asp-action="Vender">
+                <i class="bx bx-cart me-1"></i>Nova Venda
+            </a>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bx bx-check-circle me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tabelaVendasMotas">
+                <thead class="table-light">
+                    <tr>
+                        <th>Modelo</th>
+                        <th>Cliente</th>
+                        <th>Nº Série</th>
+                        <th class="d-none d-md-table-cell">Data Venda</th>
+                        <th class="text-end">Detalhes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ModeloMota?.Nome</td>
+                            <td>@item.ClienteNome</td>
+                            <td>@item.NumeroSerie</td>
+                            <td class="d-none d-md-table-cell">@item.DataVenda.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-end">
+                                <span class="text-muted small">@item.ClienteEmail</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tabelaVendasMotas').DataTable({
+                "pageLength": 10,
+                "responsive": true,
+                "order": [[3, "desc"]],
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "infoFiltered": "(filtrado de _MAX_ registos no total)"
+                },
+                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                       "<'row'<'col-sm-12'tr>>" +
+                       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+            });
+        });
+    </script>
+}

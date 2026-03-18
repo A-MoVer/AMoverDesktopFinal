@@ -39,6 +39,8 @@ namespace A_Mover_Desktop_Final.Data
         public DbSet<A_Mover_Desktop_Final.Models.Mecanico> Mecanicos { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.Compras> Compras { get; set; }
         public DbSet<A_Mover_Desktop_Final.Models.EncomendaPeca> EncomendasPecas { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.StockMota> StockMotas { get; set; }
+        public DbSet<A_Mover_Desktop_Final.Models.VendaMota> VendasMotas { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

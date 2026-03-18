@@ -1,0 +1,54 @@
+@model A_Mover_Desktop_Final.Models.StockMota
+
+@{
+    ViewData["Title"] = "Adicionar Stock";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">
+                <i class="bx bx-plus-circle text-primary me-2"></i>
+                Adicionar Stock
+            </h1>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i>Voltar
+            </a>
+        </div>
+
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="IDModelo" class="form-label">Modelo</label>
+                <select asp-for="IDModelo" class="form-select" asp-items="ViewBag.IDModelo"></select>
+                <span asp-validation-for="IDModelo" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="QuantidadeDisponivel" class="form-label">Quantidade</label>
+                <input asp-for="QuantidadeDisponivel" class="form-control" type="number" min="1" />
+                <span asp-validation-for="QuantidadeDisponivel" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Observacoes" class="form-label"></label>
+                <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Observacoes" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bx bx-x me-1"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bx bx-save me-1"></i>Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

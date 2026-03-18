@@ -1,0 +1,123 @@
+@model A_Mover_Desktop_Final.Models.VendaMota
+
+@{
+    ViewData["Title"] = "Vender Mota";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">
+                <i class="bx bx-cart text-success me-2"></i>
+                Vender Mota
+            </h1>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i>Voltar
+            </a>
+        </div>
+
+        <form asp-action="Vender" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">
+                                <i class="bx bx-info-circle me-2"></i>
+                                Dados da Venda
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="IDModelo" class="form-label">Modelo</label>
+                                <select asp-for="IDModelo" class="form-select" asp-items="ViewBag.IDModelo"></select>
+                                <span asp-validation-for="IDModelo" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="NumeroSerie" class="form-label">Número de Série</label>
+                                <input asp-for="NumeroSerie" class="form-control" />
+                                <span asp-validation-for="NumeroSerie" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Cor" class="form-label"></label>
+                                <input asp-for="Cor" class="form-control" />
+                                <span asp-validation-for="Cor" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Quilometragem" class="form-label"></label>
+                                <input asp-for="Quilometragem" class="form-control" type="number" min="0" step="0.1" />
+                                <span asp-validation-for="Quilometragem" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Observacoes" class="form-label"></label>
+                                <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Observacoes" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header bg-transparent">
+                            <h6 class="mb-0">
+                                <i class="bx bx-user me-1"></i>
+                                Cliente
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="IDCliente" class="form-label">Cliente Existente</label>
+                                <select asp-for="IDCliente" class="form-select" asp-items="ViewBag.IDCliente">
+                                    <option value="">-- Novo Cliente --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ClienteNome" class="form-label">Nome do Cliente</label>
+                                <input asp-for="ClienteNome" class="form-control" />
+                                <span asp-validation-for="ClienteNome" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ClienteEmail" class="form-label">Email</label>
+                                <input asp-for="ClienteEmail" class="form-control" />
+                                <span asp-validation-for="ClienteEmail" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ClienteTelefone" class="form-label">Telefone</label>
+                                <input asp-for="ClienteTelefone" class="form-control" />
+                                <span asp-validation-for="ClienteTelefone" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ClienteNif" class="form-label">NIF</label>
+                                <input asp-for="ClienteNif" class="form-control" />
+                                <span asp-validation-for="ClienteNif" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bx bx-x me-1"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bx bx-check me-1"></i>Registar Venda
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
