@@ -93,7 +93,9 @@ public class AuthenticationController : Controller
     public async Task<IActionResult> Register()
     {
         // Fetch roles dynamically from the database
-        var roles = await _roleManager.Roles.ToListAsync();
+        var roles = await _roleManager.Roles
+            .Where(r => r.Name != "Mecanico")
+            .ToListAsync();
 
         var model = new RegisterViewModel
         {
@@ -126,6 +128,19 @@ public class AuthenticationController : Controller
                 // Add the user to the selected role
                 if (!string.IsNullOrEmpty(model.SelectedRole))
                 {
+                    if (model.SelectedRole == "Mecanico")
+                    {
+                        ModelState.AddModelError("SelectedRole", "A role de Mecânico só pode ser criada pela oficina.");
+                        var availableRoles = await _roleManager.Roles
+                            .Where(r => r.Name != "Mecanico")
+                            .ToListAsync();
+                        model.Roles = availableRoles.Select(r => new SelectListItem
+                        {
+                            Value = r.Name,
+                            Text = r.Name
+                        }).ToList();
+                        return View(model);
+                    }
                     await _userManager.AddToRoleAsync(user, model.SelectedRole);
                 }
 
