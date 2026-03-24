@@ -1,5 +1,6 @@
 using A_Mover_Desktop_Final.Data;
 using A_Mover_Desktop_Final.Models;
+using A_Mover_Desktop_Final.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -86,7 +87,7 @@ namespace A_Mover_Desktop_Final.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Vender([Bind("IDModelo,IDCliente,ClienteNome,ClienteEmail,ClienteTelefone,ClienteNif,NumeroSerie,Cor,Quilometragem,Observacoes")] VendaMota venda)
+        public async Task<IActionResult> Vender([Bind("IDModelo,IDCliente,ClienteNome,ClienteEmail,ClienteTelefone,ClienteNif,NumeroSerie,Cor,Quilometragem,PrecoVenda,CustoAquisicao,DespesasManutencao,Observacoes")] VendaMota venda)
         {
             var stock = await _context.StockMotas.FirstOrDefaultAsync(s => s.IDModelo == venda.IDModelo);
             if (stock == null || stock.QuantidadeDisponivel <= 0)
@@ -138,6 +139,31 @@ namespace A_Mover_Desktop_Final.Controllers
                 .Include(v => v.ModeloMota)
                 .Include(v => v.Cliente)
                 .OrderByDescending(v => v.DataVenda)
+                .ToListAsync();
+
+            return View(vendas);
+        }
+
+        public async Task<IActionResult> Rentabilidade()
+        {
+            ViewData["ActiveMenu"] = "RentabilidadeMotas";
+
+            var vendas = await _context.VendasMotas
+                .Include(v => v.ModeloMota)
+                .Include(v => v.Cliente)
+                .OrderByDescending(v => v.DataVenda)
+                .Select(v => new RentabilidadeMotaViewModel
+                {
+                    IDVendaMota = v.IDVendaMota,
+                    Modelo = v.ModeloMota != null ? v.ModeloMota.Nome : string.Empty,
+                    Cliente = string.IsNullOrWhiteSpace(v.ClienteNome) ? (v.Cliente != null ? v.Cliente.Nome : string.Empty) : v.ClienteNome,
+                    NumeroSerie = v.NumeroSerie,
+                    Quilometragem = v.Quilometragem,
+                    PrecoVenda = v.PrecoVenda,
+                    CustoAquisicao = v.CustoAquisicao,
+                    DespesasManutencao = v.DespesasManutencao ?? 0,
+                    DataVenda = v.DataVenda
+                })
                 .ToListAsync();
 
             return View(vendas);

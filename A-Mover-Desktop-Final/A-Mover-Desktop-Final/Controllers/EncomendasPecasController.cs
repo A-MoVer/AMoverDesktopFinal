@@ -18,6 +18,12 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: EncomendasPecas
+
+        public EncomendasPecasController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<IActionResult> Index()
         {
             ViewData["ActiveMenu"] = "EncomendasPecas";
@@ -39,6 +45,31 @@ namespace A_Mover_Desktop_Final.Controllers
         }
 
         // GET: EncomendasPecas/Details/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("IDEncomendaPeca,IDPeca,Quantidade,DataNecessaria,Observacoes")] EncomendaPeca encomenda)
+        {
+            if (encomenda.DataNecessaria.Date < DateTime.Today)
+            {
+                ModelState.AddModelError(nameof(encomenda.DataNecessaria), "A data necessária não pode ser anterior à data atual.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                encomenda.DataCriacao = DateTime.Now;
+                encomenda.Estado = EstadoEncomendaPeca.Pendente;
+
+                _context.Add(encomenda);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Encomenda registada com sucesso.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["IDPeca"] = new SelectList(_context.Pecas.OrderBy(p => p.Descricao), "IDPeca", "Descricao", encomenda.IDPeca);
+            return View(encomenda);
+        }
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

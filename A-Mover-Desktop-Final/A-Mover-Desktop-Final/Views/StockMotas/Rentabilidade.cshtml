@@ -1,0 +1,81 @@
+@model IEnumerable<A_Mover_Desktop_Final.ViewModels.RentabilidadeMotaViewModel>
+
+@{
+    ViewData["Title"] = "Rentabilidade das Motas";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">
+                <i class="bx bx-line-chart text-info me-2"></i>
+                Rentabilidade das Motas
+            </h1>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="tabelaRentabilidade">
+                <thead class="table-light">
+                    <tr>
+                        <th>Modelo</th>
+                        <th>Cliente</th>
+                        <th>Nº Série</th>
+                        <th class="text-center">KM</th>
+                        <th class="text-end">Custo</th>
+                        <th class="text-end">Venda</th>
+                        <th class="text-end">Lucro</th>
+                        <th class="text-end">Margem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Modelo</td>
+                            <td>@item.Cliente</td>
+                            <td>@item.NumeroSerie</td>
+                            <td class="text-center">@item.Quilometragem</td>
+                            <td class="text-end">@item.CustoAquisicao.ToString("C")</td>
+                            <td class="text-end">@item.PrecoVenda.ToString("C")</td>
+                            <td class="text-end">
+                                <span class="badge bg-@(item.Lucro >= 0 ? "success" : "danger")">
+                                    @item.Lucro.ToString("C")
+                                </span>
+                            </td>
+                            <td class="text-end">@item.Margem %</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#tabelaRentabilidade').DataTable({
+                "pageLength": 10,
+                "responsive": true,
+                "order": [[6, "desc"]],
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registos por página",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    },
+                    "info": "_START_ a _END_ de _TOTAL_ registos",
+                    "infoEmpty": "Nenhum registo disponível",
+                    "search": "Pesquisar:",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "infoFiltered": "(filtrado de _MAX_ registos no total)"
+                },
+                "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                       "<'row'<'col-sm-12'tr>>" +
+                       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+            });
+        });
+    </script>
+}

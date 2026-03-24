@@ -54,6 +54,24 @@
                             </div>
 
                             <div class="mb-3">
+                                <label asp-for="CustoAquisicao" class="form-label">Custo de Aquisição</label>
+                                <input asp-for="CustoAquisicao" class="form-control" type="number" min="0" step="0.01" />
+                                <span asp-validation-for="CustoAquisicao" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="DespesasManutencao" class="form-label">Despesas de Manutenção</label>
+                                <input asp-for="DespesasManutencao" class="form-control" type="number" min="0" step="0.01" />
+                                <span asp-validation-for="DespesasManutencao" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="PrecoVenda" class="form-label">Preço de Venda</label>
+                                <input asp-for="PrecoVenda" class="form-control" type="number" min="0" step="0.01" />
+                                <span asp-validation-for="PrecoVenda" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
                                 <label asp-for="Observacoes" class="form-label"></label>
                                 <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
                                 <span asp-validation-for="Observacoes" class="text-danger"></span>

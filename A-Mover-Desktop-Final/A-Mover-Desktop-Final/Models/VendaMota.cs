@@ -43,6 +43,15 @@ namespace A_Mover_Desktop_Final.Models
         [Range(0, double.MaxValue, ErrorMessage = "Quilometragem inválida.")]
         public double Quilometragem { get; set; }
 
+        [Range(0, double.MaxValue, ErrorMessage = "Preço de venda inválido.")]
+        public decimal PrecoVenda { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Custo de aquisição inválido.")]
+        public decimal CustoAquisicao { get; set; }
+
+        [Range(0, double.MaxValue, ErrorMessage = "Despesas de manutenção inválidas.")]
+        public decimal? DespesasManutencao { get; set; }
+
         [StringLength(500)]
         public string? Observacoes { get; set; }
 

@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260324144620_rentabilidde")]
+    partial class rentabilidde
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -282,40 +285,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.ToTable("Encomendas");
                 });
 
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.EncomendaPeca", b =>
-                {
-                    b.Property<int>("IDEncomendaPeca")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDEncomendaPeca"));
-
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataNecessaria")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IDPeca")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Observacoes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("int");
-
-                    b.HasKey("IDEncomendaPeca");
-
-                    b.HasIndex("IDPeca");
-
-                    b.ToTable("EncomendasPecas");
-                });
-
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Fornecedor", b =>
                 {
                     b.Property<int>("IDFornecedor")
@@ -551,7 +520,7 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Property<int>("IDModelo")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IDOrdemProducao")
+                    b.Property<int>("IDOrdemProducao")
                         .HasColumnType("int");
 
                     b.Property<string>("NumeroIdentificacao")
@@ -572,8 +541,7 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.HasIndex("IDModelo");
 
                     b.HasIndex("IDOrdemProducao")
-                        .IsUnique()
-                        .HasFilter("[IDOrdemProducao] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Motas");
                 });
@@ -894,9 +862,6 @@ namespace A_Mover_Desktop_Final.Migrations
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
-
-                    b.Property<DateTime>("DataVenda")
-                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("CustoAquisicao")
                         .HasColumnType("decimal(18,2)");
@@ -1272,17 +1237,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Navigation("ModeloMota");
                 });
 
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.EncomendaPeca", b =>
-                {
-                    b.HasOne("A_Mover_Desktop_Final.Models.Pecas", "Peca")
-                        .WithMany()
-                        .HasForeignKey("IDPeca")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Peca");
-                });
-
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.MaterialRecebido", b =>
                 {
                     b.HasOne("A_Mover_Desktop_Final.Models.Compras", "Compra")
@@ -1360,7 +1314,9 @@ namespace A_Mover_Desktop_Final.Migrations
 
                     b.HasOne("A_Mover_Desktop_Final.Models.OrdemProducao", "OrdemProducao")
                         .WithOne("Mota")
-                        .HasForeignKey("A_Mover_Desktop_Final.Models.Mota", "IDOrdemProducao");
+                        .HasForeignKey("A_Mover_Desktop_Final.Models.Mota", "IDOrdemProducao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ModeloMota");
 

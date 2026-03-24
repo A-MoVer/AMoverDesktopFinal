@@ -17,3 +17,9 @@
         <div>Vendas de Motas</div>
     </a>
 </li>
+<li class="menu-item @(ViewData["ActiveMenu"] as string == "RentabilidadeMotas" ? "active" : "")">
+    <a asp-controller="StockMotas" asp-action="Rentabilidade" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-line-chart"></i>
+        <div>Rentabilidade</div>
+    </a>
+</li>
