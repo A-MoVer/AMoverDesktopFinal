@@ -36,6 +36,7 @@
                     <th>Part Number</th>
                     <th>Descrição</th>
                     <th>Fornecedor</th>
+                    <th>Quantidade</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -46,6 +47,15 @@
                         <td><b>@Html.DisplayFor(modelItem => peca.PartNumber)</b></td>
                         <td>@Html.DisplayFor(modelItem => peca.Descricao)</td>
                         <td>@peca.Fornecedor?.Nome</td>
+                        <td>
+                            @{
+                                var quantidades = ViewBag.Quantidades as Dictionary<int, int>;
+                                int qtd = quantidades != null && quantidades.ContainsKey(peca.IDPeca) ? quantidades[peca.IDPeca] : 0;
+                            }
+                            <span class="badge bg-@(qtd > 0 ? "success" : "danger")" style="font-size: 0.9em;">
+                                @qtd un
+                            </span>
+                        </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@peca.IDPeca" class="btn btn-sm btn-warning text-white me-2">
                                 <i class="fas fa-edit"></i> Editar
