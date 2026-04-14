@@ -114,6 +114,8 @@ namespace A_Mover_Desktop_Final.Data
                 .Property(s => s.IDMecanico)
                 .HasColumnName("MecanicoId");
 
+            
+
         }
     }
 }
