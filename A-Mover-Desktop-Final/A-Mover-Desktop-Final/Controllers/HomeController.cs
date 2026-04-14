@@ -243,12 +243,28 @@ namespace A_Mover_Desktop_Final.Controllers
 
             // Alertas e notificações
             var alertas = new List<string>();
-            
+
             if (ViewBag.EncomendasPendentes > 5)
                 alertas.Add($"Você tem {ViewBag.EncomendasPendentes} encomendas pendentes que requerem atenção.");
-                
+
             if (ViewBag.ServicosAgendados > 0)
                 alertas.Add($"Existem {ViewBag.ServicosAgendados} serviços agendados para os próximos dias.");
+
+            // Alerta de peças com baixo stock
+            var quantidades = await _context.MateriaisRecebidos
+                .GroupBy(m => m.PecaId)
+                .Select(g => new { 
+                    PecaId = g.Key, 
+                    Quantidade = g.Sum(m => m.Quantidade),
+                    NomePeca = g.FirstOrDefault().Peca.Descricao
+                })
+                .Where(p => p.Quantidade <= 5) // Considerando <= 5 como baixo stock
+                .ToListAsync();
+
+            foreach (var peca in quantidades)
+            {
+                alertas.Add($"Atenção! A peça '{peca.NomePeca}' está com baixo stock ({peca.Quantidade} unidades).");
+            }
 
             ViewBag.Alertas = alertas;
 
