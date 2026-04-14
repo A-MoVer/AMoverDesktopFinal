@@ -74,7 +74,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // POST: Encomendas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IDEncomenda,IDModelo,IDCliente,Quantidade,DataEntrega")] Encomenda encomenda)
+        public async Task<IActionResult> Create([Bind("IDEncomenda,IDModelo,IDCliente,Quantidade,DataEntrega,Prioridade")] Encomenda encomenda)
         {
             if (ModelState.IsValid)
             {
@@ -124,7 +124,7 @@ namespace A_Mover_Desktop_Final.Controllers
         // POST: Encomendas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IDEncomenda,IDModelo,IDCliente,Quantidade,Estado,DateCriacao,DataEntrega")] Encomenda encomenda)
+        public async Task<IActionResult> Edit(int id, [Bind("IDEncomenda,IDModelo,IDCliente,Quantidade,Estado,DateCriacao,DataEntrega,Prioridade")] Encomenda encomenda)
         {
             if (id != encomenda.IDEncomenda)
             {

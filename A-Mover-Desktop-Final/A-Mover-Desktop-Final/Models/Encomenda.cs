@@ -12,6 +12,14 @@ namespace A_Mover_Desktop_Final.Models
         Enviada,
         Entregue
     }
+    public enum PrioridadeEncomenda
+    {
+        Baixa,
+        Media,
+        Alta,
+        Urgente
+    }
+
     public class Encomenda
     {
         [Key]
@@ -30,6 +38,11 @@ namespace A_Mover_Desktop_Final.Models
         [Required(ErrorMessage = "É necessário adicionar a quantidade de motas.")]
         public int Quantidade { get; set; }
         public EstadoEncomenda Estado { get; set; } = EstadoEncomenda.Pendente;
+
+        [Display(Name = "Prioridade")]
+        public PrioridadeEncomenda Prioridade { get; set; } = PrioridadeEncomenda.Media;
+
+        [Display(Name = "Data de Criação")]
         public DateTime DateCriacao { get; set; } = DateTime.Now;
         public DateTime? DataEntrega { get; set; }
 

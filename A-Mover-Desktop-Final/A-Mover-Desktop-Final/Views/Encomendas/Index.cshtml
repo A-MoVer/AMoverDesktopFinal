@@ -42,6 +42,7 @@
                     <th>Modelo</th>
                     <th>Quantidade</th>
                     <th>Data de Entrega</th>
+                    <th>Prioridade</th>
                     <th>Estado</th>
                     <th>Ações</th>
                 </tr>
@@ -73,6 +74,13 @@
                             {
                                 <span class="text-muted">Por definir</span>
                             }
+                        </td>
+                        <td>
+                            <span class="badge bg-@(encomenda.Prioridade == A_Mover_Desktop_Final.Models.PrioridadeEncomenda.Urgente ? "danger" : 
+                                                    encomenda.Prioridade == A_Mover_Desktop_Final.Models.PrioridadeEncomenda.Alta ? "warning" : 
+                                                    encomenda.Prioridade == A_Mover_Desktop_Final.Models.PrioridadeEncomenda.Media ? "info" : "secondary")">
+                                @encomenda.Prioridade
+                            </span>
                         </td>
                         <td><b>@Html.DisplayFor(modelItem => encomenda.Estado)</b></td>
                         <td>
