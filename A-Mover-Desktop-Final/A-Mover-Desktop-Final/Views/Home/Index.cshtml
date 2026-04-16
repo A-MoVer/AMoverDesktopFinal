@@ -18,12 +18,15 @@
                             </p>
                             @if (ViewBag.Alertas != null && ((List<string>)ViewBag.Alertas).Count > 0)
                             {
-                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                    <strong>Atenção!</strong> @((List<string>)ViewBag.Alertas)[0]
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
+                                @foreach (var alerta in (List<string>)ViewBag.Alertas)
+                                {
+                                    <div class="alert alert-warning alert-dismissible fade show mb-2 py-2" role="alert">
+                                        <strong>Atenção!</strong> @alerta
+                                        <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+                                    </div>
+                                }
                             }
-                            <a href="@Url.Action("Index", "OrdemProducao")" class="btn btn-outline-light btn-sm">Ver todas as ordens</a>
+                            <a href="@Url.Action("Index", "OrdemProducao")" class="btn btn-outline-light btn-sm mt-2">Ver todas as ordens</a>
                         </div>
                     </div>
                     <div class="col-sm-5 text-center">

@@ -42,6 +42,16 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th>Prioridade:</th>
+                                    <td>
+                                        <span class="badge bg-@(Model.Prioridade == PrioridadeEncomenda.Urgente ? "danger" : 
+                                                                Model.Prioridade == PrioridadeEncomenda.Alta ? "warning" : 
+                                                                Model.Prioridade == PrioridadeEncomenda.Media ? "info" : "secondary")">
+                                            @Model.Prioridade
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th>Data de Criação:</th>
                                     <td>@Model.DateCriacao.ToString("dd/MM/yyyy")</td>
                                 </tr>

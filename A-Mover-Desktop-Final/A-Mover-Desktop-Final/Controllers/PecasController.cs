@@ -23,6 +23,14 @@ namespace A_Mover_Desktop_Final.Controllers
             var pecas = await _context.Pecas
                 .Include(p => p.Fornecedor)
                 .ToListAsync();
+
+            var quantidades = await _context.MateriaisRecebidos
+                .GroupBy(m => m.PecaId)
+                .Select(g => new { PecaId = g.Key, Quantidade = g.Sum(m => m.Quantidade) })
+                .ToDictionaryAsync(k => k.PecaId, v => v.Quantidade);
+
+            ViewBag.Quantidades = quantidades;
+
             return View(pecas);
         }
 
