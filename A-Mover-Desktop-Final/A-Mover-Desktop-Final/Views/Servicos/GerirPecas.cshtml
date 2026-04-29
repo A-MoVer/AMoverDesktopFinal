@@ -1,19 +1,19 @@
-@model A_Mover_Desktop_Final.Models.Servico
+﻿@model A_Mover_Desktop_Final.Models.Servico
 
 @{
-    ViewData["Title"] = "Gerenciar Peças da Intervenção";
+    ViewData["Title"] = "Gerenciar PeÃ§as da IntervenÃ§Ã£o";
 }
 
-<div class="card m-5 p-4">
+<div class="card  p-4">
     <h2 class="text-primary mb-4">
-        <i class="bi bi-wrench"></i> Gestão de Peças - Intervenção #@Model.IDServico
+        <i class="bi bi-wrench"></i> GestÃ£o de PeÃ§as - IntervenÃ§Ã£o #@Model.IDServico
     </h2>
     
     <div class="alert alert-info">
-        <h5><i class="bi bi-info-circle"></i> Informações da Mota</h5>
-        <p><strong>Nº Identificação:</strong> @Model.Mota?.NumeroIdentificacao</p>
+        <h5><i class="bi bi-info-circle"></i> InformaÃ§Ãµes da Mota</h5>
+        <p><strong>NÂº IdentificaÃ§Ã£o:</strong> @Model.Mota?.NumeroIdentificacao</p>
         <p><strong>Modelo:</strong> @Model.Mota?.ModeloMota?.Nome</p>
-        <p><strong>Tipo de Serviço:</strong> @Model.Tipo</p>
+        <p><strong>Tipo de ServiÃ§o:</strong> @Model.Tipo</p>
     </div>
     
     <form asp-action="GerirPecas" method="post">
@@ -25,9 +25,9 @@
                     <tr>
                         <th>Substituir</th>
                         <th>Part Number</th>
-                        <th>Descrição</th>
-                        <th>Nº de Série Atual</th>
-                        <th>Novo Nº de Série</th>
+                        <th>DescriÃ§Ã£o</th>
+                        <th>NÂº de SÃ©rie Atual</th>
+                        <th>Novo NÂº de SÃ©rie</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +53,7 @@
                                     <input type="text" class="form-control peca-serie"
                                            name="novasSeriesNumericas"
                                            id="serie_@peca.IDMotasPecasSN"
-                                           placeholder="Novo número de série"
+                                           placeholder="Novo nÃºmero de sÃ©rie"
                                            @(isChecked ? "" : "disabled")>
                                 </td>
                             </tr>
@@ -63,7 +63,7 @@
                     {
                         <tr>
                             <td colspan="5" class="text-center">
-                                <em>Esta mota não possui peças registradas com número de série.</em>
+                                <em>Esta mota nÃ£o possui peÃ§as registradas com nÃºmero de sÃ©rie.</em>
                             </td>
                         </tr>
                     }
@@ -71,19 +71,19 @@
             </table>
         </div>
         
-<!-- Seção de Notas da Manutenção -->
+<!-- SeÃ§Ã£o de Notas da ManutenÃ§Ã£o -->
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-journal-text"></i> Notas da Manutenção</h5>
+        <h5 class="mb-0"><i class="bi bi-journal-text"></i> Notas da ManutenÃ§Ã£o</h5>
     </div>
     <div class="card-body">
         <div class="mb-3">
-            <label class="form-label">Observações Técnicas</label>
+            <label class="form-label">ObservaÃ§Ãµes TÃ©cnicas</label>
             <textarea class="form-control" name="NotasManutencao" rows="3" 
-                      placeholder="Registre detalhes importantes sobre a manutenção realizada...">@Model.NotasServico</textarea>
+                      placeholder="Registre detalhes importantes sobre a manutenÃ§Ã£o realizada...">@Model.NotasServico</textarea>
             <small class="text-muted">
-                Inclua informações relevantes como: anomalias detectadas, recomendações 
-                para o cliente ou observações para a próxima manutenção.
+                Inclua informaÃ§Ãµes relevantes como: anomalias detectadas, recomendaÃ§Ãµes 
+                para o cliente ou observaÃ§Ãµes para a prÃ³xima manutenÃ§Ã£o.
             </small>
         </div>
     </div>
@@ -91,7 +91,7 @@
         <div class="d-flex justify-content-between mt-4">
             <div>
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Salvar Alterações
+                    <i class="bi bi-save"></i> Salvar AlteraÃ§Ãµes
                 </button>
                 <a asp-action="Details" asp-route-id="@Model.IDServico" class="btn btn-secondary ms-2">
                     <i class="bi bi-arrow-left"></i> Voltar
@@ -100,30 +100,30 @@
             
             <div>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalConcluirServico">
-                    <i class="bi bi-check-circle"></i> Concluir Serviço
+                    <i class="bi bi-check-circle"></i> Concluir ServiÃ§o
                 </button>
             </div>
         </div>
     </form>
 </div>
 
-<!-- Modal para confirmar conclusão do serviço -->
+<!-- Modal para confirmar conclusÃ£o do serviÃ§o -->
 <div class="modal fade" id="modalConcluirServico" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Concluir Serviço</h5>
+                <h5 class="modal-title">Concluir ServiÃ§o</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Tem certeza que deseja concluir este serviço?</p>
-                <p>Esta ação não pode ser desfeita.</p>
+                <p>Tem certeza que deseja concluir este serviÃ§o?</p>
+                <p>Esta aÃ§Ã£o nÃ£o pode ser desfeita.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form asp-action="ConcluirServico" asp-route-id="@Model.IDServico" method="post">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-success">Concluir Serviço</button>
+                    <button type="submit" class="btn btn-success">Concluir ServiÃ§o</button>
                 </form>
             </div>
         </div>
