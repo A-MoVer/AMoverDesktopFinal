@@ -20,6 +20,11 @@ html {
 body {
     margin-bottom: 60px;
 }
+
+textarea {
+    resize: none;
+}
+
 /* Estilizar o container do campo de pesquisa */
 .dataTables_filter {
     display: flex; /* Alinhar horizontalmente */

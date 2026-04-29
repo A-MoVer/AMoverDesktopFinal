@@ -1,16 +1,16 @@
-@{
+﻿@{
     ViewData["Title"] = "Enviar Mensagem";
 }
 
-<div class="card m-4">
+<div class="card ">
     <div class="card-header bg-primary text-white">
         <h2 class="m-0">Enviar Mensagem para a API</h2>
     </div>
     <div class="card-body">
         <form id="messageForm">
             <div class="mb-3">
-                <label for="recipientId" class="form-label">ID do Destinatário</label>
-                <input type="text" id="recipientId" name="recipientId" class="form-control" placeholder="Insira o ID do destinatário" required />
+                <label for="recipientId" class="form-label">ID do DestinatÃ¡rio</label>
+                <input type="text" id="recipientId" name="recipientId" class="form-control" placeholder="Insira o ID do destinatÃ¡rio" required />
                 <small class="form-text text-muted">Exemplo: XYZ1234567890</small>
             </div>
             <div class="mb-3">
@@ -84,7 +84,7 @@
                     responseCard.className = "alert alert-success";
                     responseIcon.className = "bx bx-check-circle fs-3 me-2";
                     responseTitle.textContent = "Mensagem enviada com sucesso!";
-                    responseMessage.textContent = responseData.message || "A mensagem foi entregue ao destinatário.";
+                    responseMessage.textContent = responseData.message || "A mensagem foi entregue ao destinatÃ¡rio.";
                 } else {
                     const errorData = await response.json().catch(() => ({ message: response.statusText }));
                     
@@ -92,14 +92,14 @@
                     responseCard.className = "alert alert-danger";
                     responseIcon.className = "bx bx-error-circle fs-3 me-2";
                     responseTitle.textContent = "Erro ao enviar mensagem";
-                    responseMessage.textContent = errorData.message || `Código de erro: ${response.status}`;
+                    responseMessage.textContent = errorData.message || `CÃ³digo de erro: ${response.status}`;
                 }
             } catch (error) {
-                // Exceção
+                // ExceÃ§Ã£o
                 responseCard.className = "alert alert-danger";
                 responseIcon.className = "bx bx-error-circle fs-3 me-2";
-                responseTitle.textContent = "Falha na comunicação";
-                responseMessage.textContent = `Não foi possível conectar à API: ${error.message}`;
+                responseTitle.textContent = "Falha na comunicaÃ§Ã£o";
+                responseMessage.textContent = `NÃ£o foi possÃ­vel conectar Ã  API: ${error.message}`;
             }
         });
     </script>

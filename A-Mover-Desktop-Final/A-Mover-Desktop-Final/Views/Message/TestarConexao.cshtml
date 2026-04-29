@@ -1,16 +1,16 @@
-@{
-    ViewData["Title"] = "Teste de Conexão com a API";
+﻿@{
+    ViewData["Title"] = "Teste de ConexÃ£o com a API";
 }
 
-<div class="card m-4">
+<div class="card ">
     <div class="card-header bg-primary text-white">
-        <h1 class="m-0">Teste de Conexão com MessageAPI</h1>
+        <h1 class="m-0">Teste de ConexÃ£o com MessageAPI</h1>
     </div>
     <div class="card-body">
         <p>Base URL: <code id="baseUrl">@ViewBag.BaseUrl</code></p>
         <p>API Key: <code id="apiKey">@ViewBag.ApiKey</code></p>
         
-        <button id="testConnection" class="btn btn-primary">Testar Conexão</button>
+        <button id="testConnection" class="btn btn-primary">Testar ConexÃ£o</button>
         
         <div id="result" class="mt-4"></div>
     </div>
@@ -21,9 +21,9 @@
         $(document).ready(function() {
             $('#testConnection').on('click', function() {
                 // Mostrar indicador de carregamento
-                $('#result').html('<div class="alert alert-info">Testando conexão...</div>');
+                $('#result').html('<div class="alert alert-info">Testando conexÃ£o...</div>');
                 
-                // Enviar requisição para testar conexão
+                // Enviar requisiÃ§Ã£o para testar conexÃ£o
                 $.ajax({
                     url: '@Url.Action("TestConnection", "Message")',
                     type: 'POST',
@@ -45,7 +45,7 @@
                     error: function(xhr, status, error) {
                         $('#result').html(`
                             <div class="alert alert-danger">
-                                <p><strong>Erro na requisição AJAX:</strong> ${error}</p>
+                                <p><strong>Erro na requisiÃ§Ã£o AJAX:</strong> ${error}</p>
                             </div>
                         `);
                     }
