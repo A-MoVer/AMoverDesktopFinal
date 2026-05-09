@@ -2,55 +2,19 @@ pipeline {
     agent any
 
     environment {
-        // ID da credencial que criámos no Jenkins
-        GITHUB_CREDENTIAL_ID = 'jenkins'
-        // Registo oficial do GitHub
-        REGISTRY             = 'ghcr.io'
-        // Nome da tua organização e do repositório em minúsculas
-        IMAGE_NAME           = 'ghcr.io/a-mover/amoverdesktopfinal'
-        // Tag única baseada no número do Build do Jenkins
-        IMAGE_TAG            = "v1.0.${BUILD_NUMBER}"
+        REGISTRY   = 'ghcr.io'
+        IMAGE_NAME = 'ghcr.io/a-mover/amoverdesktopfinal'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Saca o código do GitHub usando a tua credencial
-                checkout scm
-            }
-        }
-
-        stage('Docker Login & Build') {
-            steps {
-                // Entra na pasta do projeto e faz o build
-                dir('A-Mover-Desktop-Final/A-Mover-Desktop-Final') {
-                    script {
-                        // Faz login no GitHub Container Registry usando o teu token
-                        withCredentials([usernamePassword(credentialsId: env.GITHUB_CREDENTIAL_ID, usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
-                            sh "echo ${GH_TOKEN} | docker login ${REGISTRY} -u ${GH_USER} --password-stdin"
-                        }
-                        // Compila a imagem .NET
-                        sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest ."
-                    }
-                }
-            }
-        }
-
-        stage('Docker Push') {
-            steps {
-                script {
-                    // Envia a imagem para o GitHub Registry
-                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker push ${IMAGE_NAME}:latest"
-                }
-            }
-        }
-
         stage('Deploy to Kubernetes (Dev)') {
             steps {
                 script {
-                    // Aqui vamos aplicar as tuas configurações no Kubernetes local lcm-dev
-                    sh "kubectl set image deployment/lcm-app-deployment lcm-app=${IMAGE_NAME}:${IMAGE_TAG} -n lcm-dev"
+                    // O Jenkins apenas diz ao K8s para atualizar a imagem para a versão mais recente compilada pelo GitHub
+                    sh "kubectl set image deployment/lcm-app-deployment lcm-app=${IMAGE_NAME}:latest -n lcm-dev"
+                    
+                    // Força o Kubernetes a fazer o rollout (reiniciar os pods com a nova imagem do registo)
+                    sh "kubectl rollout restart deployment/lcm-app-deployment -n lcm-dev"
                 }
             }
         }
@@ -58,7 +22,6 @@ pipeline {
 
     post {
         always {
-            // Limpa o espaço de trabalho no Jenkins para não encher o disco da VM
             cleanWs()
         }
     }
