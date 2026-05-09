@@ -2,25 +2,21 @@ pipeline {
     agent any
 
     environment {
-        // ID da credencial SSH que vamos usar para ligar ao infra01
-        // Se ainda não a criaste, vamos criá-la já a seguir
-        SSH_CREDENTIAL_ID = 'infra01-ssh'
-        REGISTRY          = 'ghcr.io'
-        IMAGE_NAME        = 'ghcr.io/a-mover/amoverdesktopfinal'
+        REGISTRY   = 'ghcr.io'
+        IMAGE_NAME = 'ghcr.io/a-mover/amoverdesktopfinal'
     }
 
     stages {
         stage('Deploy to Kubernetes (Dev)') {
             steps {
                 script {
-                    // Liga-se ao teu infra01 via SSH e executa o deploy com o kubectl local da máquina
-                    withCredentials([usernamePassword(credentialsId: env.SSH_CREDENTIAL_ID, usernameVariable: 'SSH_USER', passwordVariable: 'SSH_PASS')]) {
-                        sh """
-                            sshpass -p '${SSH_PASS}' ssh -o StrictHostKeyChecking=no ${SSH_USER}@172.20.0.167 \
-                            "kubectl set image deployment/lcm-app-deployment lcm-app=${IMAGE_NAME}:latest -n lcm-dev && \
-                             kubectl rollout restart deployment/lcm-app-deployment -n lcm-dev"
-                        """
-                    }
+                    // 1. Saca o kubectl para dentro da pasta temporária da pipeline
+                    sh "curl -LO https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl"
+                    sh "chmod +x ./kubectl"
+                    
+                    // 2. Executa os comandos usando o kubectl que acabámos de descarregar
+                    sh "./kubectl set image deployment/lcm-app-deployment lcm-app=${IMAGE_NAME}:latest -n lcm-dev"
+                    sh "./kubectl rollout restart deployment/lcm-app-deployment -n lcm-dev"
                 }
             }
         }
@@ -28,6 +24,7 @@ pipeline {
 
     post {
         always {
+            // Limpa tudo (incluindo o kubectl temporário)
             cleanWs()
         }
     }
