@@ -2,19 +2,25 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY   = 'ghcr.io'
-        IMAGE_NAME = 'ghcr.io/a-mover/amoverdesktopfinal'
+        // ID da credencial SSH que vamos usar para ligar ao infra01
+        // Se ainda não a criaste, vamos criá-la já a seguir
+        SSH_CREDENTIAL_ID = 'infra01-ssh'
+        REGISTRY          = 'ghcr.io'
+        IMAGE_NAME        = 'ghcr.io/a-mover/amoverdesktopfinal'
     }
 
     stages {
         stage('Deploy to Kubernetes (Dev)') {
             steps {
                 script {
-                    // O Jenkins apenas diz ao K8s para atualizar a imagem para a versão mais recente compilada pelo GitHub
-                    sh "kubectl set image deployment/lcm-app-deployment lcm-app=${IMAGE_NAME}:latest -n lcm-dev"
-                    
-                    // Força o Kubernetes a fazer o rollout (reiniciar os pods com a nova imagem do registo)
-                    sh "kubectl rollout restart deployment/lcm-app-deployment -n lcm-dev"
+                    // Liga-se ao teu infra01 via SSH e executa o deploy com o kubectl local da máquina
+                    withCredentials([usernamePassword(credentialsId: env.SSH_CREDENTIAL_ID, usernameVariable: 'SSH_USER', passwordVariable: 'SSH_PASS')]) {
+                        sh """
+                            sshpass -p '${SSH_PASS}' ssh -o StrictHostKeyChecking=no ${SSH_USER}@172.20.0.167 \
+                            "kubectl set image deployment/lcm-app-deployment lcm-app=${IMAGE_NAME}:latest -n lcm-dev && \
+                             kubectl rollout restart deployment/lcm-app-deployment -n lcm-dev"
+                        """
+                    }
                 }
             }
         }
