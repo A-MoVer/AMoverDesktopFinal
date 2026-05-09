@@ -2,30 +2,74 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY   = 'ghcr.io'
-        IMAGE_NAME = 'ghcr.io/a-mover/amoverdesktopfinal'
+        REGISTRY = "ghcr.io/a-mover"
+        IMAGE_NAME = "amoverdesktopfinal"
+        TAG = "latest"
     }
 
     stages {
-        stage('Deploy to Kubernetes (Dev)') {
+        stage('Checkout Código') {
             steps {
-                script {
-                    // 1. Saca o kubectl para dentro da pasta temporária da pipeline
-                    sh "curl -LO https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl"
-                    sh "chmod +x ./kubectl"
-                    
-                    // 2. Executa os comandos usando o kubectl que acabámos de descarregar
-                    sh "./kubectl set image deployment/lcm-app-deployment lcm-app=${IMAGE_NAME}:latest -n lcm-dev"
-                    sh "./kubectl rollout restart deployment/lcm-app-deployment -n lcm-dev"
-                }
+                // Saca o código mais recente do GitHub
+                checkout scm
+            }
+        }
+
+        // ==========================================
+        // 🚀 PASSO 1: ATUALIZAR SEMPRE O AMBIENTE DEV
+        // ==========================================
+        stage('Deploy to DEV') {
+            steps {
+                echo 'A compilar e a enviar para o ambiente de DEV (sem restrições)...'
+                // Compila a imagem Docker localmente com o código novo
+                sh "docker build -t ${REGISTRY}/${IMAGE_NAME}:${TAG} ."
+                
+                // Aplica os YAMLs de DEV no Kubernetes
+                sh "kubectl apply -f k8s/dev/ -n lcm-dev"
+                
+                // Força o Kubernetes a reiniciar o Pod de DEV com a imagem nova
+                sh "kubectl rollout restart deployment/lcm-app-deployment -n lcm-dev"
+            }
+        }
+
+        // ==========================================
+        // 🧪 PASSO 2: EXECUTAR OS TESTES AUTOMATIZADOS
+        // ==========================================
+        stage('Executar Testes Automatizados') {
+            steps {
+                echo 'Iniciando a validação de testes automatizados (.NET)...'
+                
+                // Executa o comando de testes do .NET Core no projeto
+                // Se algum teste falhar, o Jenkins dá erro nesta etapa e PARA o pipeline aqui!
+                sh 'dotnet test A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln --configuration Release'
+            }
+        }
+
+        // ==========================================
+        // 🚀 PASSO 3: DEPLOY PARA PRE-PROD (SÓ SE PASSAR NOS TESTES)
+        // ==========================================
+        stage('Deploy to PRE-PROD') {
+            steps {
+                echo 'Parabéns! Todos os testes passaram com sucesso.'
+                echo 'A atualizar o ambiente de Pre-Produção (lcm-preprod)...'
+                
+                // Aplica os YAMLs de Pre-Prod que criámos na tua pasta local do infra01
+                // NOTA: Como os teus YAMLs de preprod estão no servidor em ~/lcm-k8s/preprod, 
+                // podemos apontar diretamente para essa pasta no teu servidor:
+                sh "kubectl apply -f /home/diogo_admin/lcm-k8s/preprod/ -n lcm-preprod"
+                
+                // Força o restart do pod de Pre-Prod para carregar a versão estável testada
+                sh "kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod"
             }
         }
     }
 
     post {
-        always {
-            // Limpa tudo (incluindo o kubectl temporário)
-            cleanWs()
+        failure {
+            echo "❌ O Pipeline falhou! Os testes não passaram ou houve um erro no Build. O Pre-Prod NÃO foi alterado."
+        }
+        success {
+            echo "✅ Pipeline executado com sucesso! DEV e PRE-PROD atualizados."
         }
     }
 }
