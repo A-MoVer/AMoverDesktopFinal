@@ -1,42 +1,47 @@
-name: Deploy na VPS Amen (A-MoVer)
+name: Build and Push to GHCR
 
 on:
   push:
     branches:
       - main
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Executar comandos na VPS via SSH
-        uses: appleboy/ssh-action@master
+      - name: Login no GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            # Garante que a pasta existe ou entra nela
-            mkdir -p /root/AMoverDesktopFinal
-            cd /root/AMoverDesktopFinal
-            
-            # 1. Se a pasta .git não existir, clonamos o repo
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/A-MoVer/AMoverDesktopFinal.git .
-            fi
-            
-            # 2. Atualizar o código na VPS
-            git pull origin main
-            
-            # 3. Entrar na pasta onde está o docker-compose
-            cd A-Mover-Desktop-Final/A-Mover-Desktop-Final
-            
-            # 4. Deployment Robusto
-            # Para qualquer container antigo, remove órfãos e força a limpeza
-            docker compose down --remove-orphans
-            
-            # Sobe tudo do zero, forçando o build e a recriação
-            docker compose up -d --build --force-recreate
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extrair metadados para o Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=sha,format=short
+            latest
+
+      - name: Build e Push da imagem Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: ./A-Mover-Desktop-Final/A-Mover-Desktop-Final
+          file: ./A-Mover-Desktop-Final/A-Mover-Desktop-Final/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
