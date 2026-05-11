@@ -55,7 +55,7 @@ pipeline {
         success {
             mail to: "${env.RECIPIENTS}",
                  subject: "✅ Jenkins: Pipeline Sucesso - Pre-Prod Atualizado",
-                 body: "Olá Diana e Diogo,\n\nO ambiente de Pre-Prod foi atualizado com sucesso!\n\n🔗 Link: http://lcm-preprod.amover"
+                 body: "Olá Diana ,\n\nO ambiente de Pre-Prod foi atualizado com sucesso! O codigo passou em todos os testes\n\n🔗 Link: http://lcm-preprod.amover"
         }
         failure {
             script {
