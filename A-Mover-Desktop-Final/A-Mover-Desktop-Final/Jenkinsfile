@@ -97,7 +97,7 @@ EOF
         success {
             mail to: "${env.TEAM_EMAILS}, ${env.CHIEFS_EMAILS}",
                  subject: "✅ SUCESSO: Aplicação Online na VPS",
-                 body: "O deploy foi concluído com sucesso em http://${env.VPS_IP}"
+                 body: "O deploy foi concluído com sucesso em https://lcmp.amover.pt/"
         }
     }
 }
