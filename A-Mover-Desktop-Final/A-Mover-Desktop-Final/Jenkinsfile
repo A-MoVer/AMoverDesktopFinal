@@ -82,10 +82,10 @@ pipeline {
                             # 3. Reiniciar a Aplicação ligando-a à BD local da VPS
                             docker stop lcm-app-prod || true
                             docker rm lcm-app-prod || true
-                            docker run -d --name lcm-app-prod -p 80:80 \
-                              -e ConnectionStrings__DefaultConnection="Server=lcm-db-prod;Database=LCM_Prod;User Id=sa;Password=SenhaForteProd123!;TrustServerCertificate=True;" \
-                              --link lcm-db-prod:lcm-db-prod \
-                              --restart always ${env.IMAGE_NAME}
+                            docker run -d --name lcm-app-prod -p 8080:80 \
+                                -e ConnectionStrings__DefaultConnection="Server=lcm-db-prod;Database=LCM_Prod;User Id=sa;Password=SenhaForteProd123!;TrustServerCertificate=True;" \
+                                --link lcm-db-prod:lcm-db-prod \
+                                --restart always ${env.IMAGE_NAME}
 EOF
                     """
                 }
