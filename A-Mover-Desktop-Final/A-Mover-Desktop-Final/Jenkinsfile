@@ -9,8 +9,6 @@ pipeline {
         RECIPIENTS = "diogooresende@utad.pt, dianamc@utad.pt"
         KUBECONFIG_ID = 'kubeconfig-preprod'
         SLN_PATH = 'A-Mover-Desktop-Final/A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln'
-        
-        // 🚀 SOLUÇÃO PARA O ERRO ICU (TESTES DA DIANA)
         DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = 'true'
     }
 
@@ -18,13 +16,14 @@ pipeline {
         stage('Checkout Código') {
             steps {
                 checkout scm
+                // Debug: Mostra-nos o que o Jenkins vê na raiz do Git
+                sh "ls -R" 
             }
         }
 
         stage('Executar Testes de Validação') {
             steps {
-                echo '🚀 A iniciar os testes automatizados da Diana...'
-                // O 2>&1 | tee garante que o erro vai para o log e para o e-mail
+                echo '🚀 A iniciar os testes da Diana...'
                 sh "dotnet test ${env.SLN_PATH} --configuration Release 2>&1 | tee test_result.log"
             }
         }
@@ -32,16 +31,13 @@ pipeline {
         stage('Deploy to PRE-PROD') {
             steps {
                 echo '✅ Testes passados! A preparar deploy...'
-                
                 withKubeConfig([credentialsId: "${env.KUBECONFIG_ID}"]) {
                     script {
-                        // 🛠️ SOLUÇÃO PARA O KUBECTL NOT FOUND
-                        // Se o kubectl não existir no container, vamos buscá-lo
                         sh """
                             if ! command -v kubectl &> /dev/null; then
-                                echo 'Instalando kubectl temporariamente...'
                                 curl -LO "https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
                                 chmod +x ./kubectl
+                                # Usamos o ./kubectl local que descarregámos
                                 ./kubectl apply -f k8s/preprod/ -n lcm-preprod
                                 ./kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod
                             else
@@ -59,19 +55,14 @@ pipeline {
         success {
             mail to: "${env.RECIPIENTS}",
                  subject: "✅ Jenkins: Pipeline Sucesso - Pre-Prod Atualizado",
-                 body: "Olá Diana e Diogo,\n\nOs testes passaram e o ambiente de Pre-Prod foi atualizado!\n\nLink: http://lcm-preprod.amover"
+                 body: "Olá Diana e Diogo,\n\nO ambiente de Pre-Prod foi atualizado com sucesso!\n\n🔗 Link: http://lcm-preprod.amover"
         }
         failure {
             script {
-                def testLog = "Ocorreu um erro de ambiente ou de sistema."
-                if (fileExists('test_result.log')) {
-                    testLog = readFile('test_result.log')
-                    if (testLog.length() > 5000) testLog = testLog.substring(testLog.length() - 5000)
-                }
-                
+                def testLog = fileExists('test_result.log') ? readFile('test_result.log') : "Erro de sistema ou pasta 'k8s/preprod' inexistente no Git."
                 mail to: "${env.RECIPIENTS}",
                      subject: "❌ Jenkins: FALHA no Pipeline!",
-                     body: "Olá Diana,\n\nOs testes falharam. Detalhes abaixo:\n\n📋 LOG DE ERRO:\n${testLog}"
+                     body: "Olá Diana,\n\nO deploy falhou. Detalhes:\n\n${testLog}"
             }
         }
     }
