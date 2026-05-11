@@ -8,7 +8,7 @@ pipeline {
     environment {
         // --- GRUPOS DE E-MAIL ---
         TEAM_EMAILS = "diogooresende@utad.pt, dianamc@utad.pt"
-        CHIEFS_EMAILS = "ars@utad.pt, jgouveia@utad.pt" // ALTERAR AQUI
+        CHIEFS_EMAILS = "diogooresende@utad.pt" //  ars@utad.pt, jgouveia@utad.pt
 
         // --- CONFIGURAÇÕES GERAIS ---
         SLN_PATH = 'A-Mover-Desktop-Final/A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln'
