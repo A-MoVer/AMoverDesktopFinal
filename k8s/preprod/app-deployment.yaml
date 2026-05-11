@@ -19,5 +19,7 @@ spec:
         ports:
         - containerPort: 80
         env:
+        - name: ConnectionStrings__DefaultConnection
+          value: "Server=lcm-preprod-db-service;Database=LCM_PreProd;User Id=sa;Password=SenhaPreProd123!;TrustServerCertificate=True;"
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
