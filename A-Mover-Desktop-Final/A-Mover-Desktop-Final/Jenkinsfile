@@ -1,98 +1,92 @@
 pipeline {
-    agent none // Não define um agente global para podermos alternar entre Docker e Host
+    agent any // Usa o ambiente do infra01 para evitar problemas com Docker
 
     environment {
+        // Definição dos destinatários
         RECIPIENTS = "diogooresende@utad.pt, dianamc@utad.pt"
+        // Caminho para a solução (ajustado para a tua estrutura de pastas)
+        SLN_PATH = "A-Mover-Desktop-Final/A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln"
     }
 
     stages {
         stage('Checkout Código') {
-            agent any
             steps {
+                // Saca o código mais recente do GitHub
                 checkout scm
             }
         }
 
-        // ==========================================
-        // 🧪 PASSO 1: TESTES ISOLADOS NO CLUSTER
-        // ==========================================
+        // ==========================================================
+        // 🧪 PASSO 1: EXECUÇÃO DE TESTES E GERAÇÃO DE RELATÓRIO
+        // ==========================================================
         stage('Executar Testes de Validação') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/dotnet/sdk:8.0'
-                    // Garante que o container tem permissões para ler os ficheiros do workspace
-                    args '-u root'
-                }
-            }
             steps {
-                echo '🚀 A iniciar os testes automatizados dentro do contentor .NET 8...'
+                echo '🚀 A iniciar os testes automatizados da Diana...'
                 
-                // O comando "tee" grava o output no ficheiro test_result.log para enviarmos por email depois
-                sh 'dotnet test A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln --configuration Release 2>&1 | tee test_result.log'
+                // O comando corre os testes e o "2>&1 | tee" grava TUDO (erros e sucessos) no log
+                // Adicionámos o logger normal para o relatório ser mais legível no email
+                sh "dotnet test ${env.SLN_PATH} --configuration Release --logger 'console;verbosity=normal' 2>&1 | tee test_result.log"
             }
         }
 
-        // ==========================================
-        // 🚀 PASSO 2: DEPLOY EM PRE-PROD (SÓ SE PASSAR!)
-        // ==========================================
+        // ==========================================================
+        // 🚀 PASSO 2: DEPLOY EM PRE-PROD (SÓ SE O PASSO 1 PASSAR)
+        // ==========================================================
         stage('Deploy to PRE-PROD') {
-            agent any // Aqui o Jenkins usa a máquina infra01 para ter acesso ao kubectl
             steps {
                 echo '✅ Todos os testes passaram! A atualizar o ambiente de Pre-Prod...'
                 
-                // Aplica os YAMLs que estão na tua pasta de pre-prod no infra01
+                // Aplica os YAMLs e força o Kubernetes a atualizar a imagem para a mais recente
                 sh "kubectl apply -f /home/diogo_admin/lcm-k8s/preprod/ -n lcm-preprod"
                 sh "kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod"
             }
         }
     }
 
-    // ==========================================
-    // 📢 NOTIFICAÇÕES COMPLETAS (REPORTING)
-    // ==========================================
+    // ==========================================================
+    // 📢 NOTIFICAÇÕES E REPORTS (A PARTE QUE A DIANA RECEBE)
+    // ==========================================================
     post {
         success {
             echo '📧 A enviar email de sucesso...'
             mail to: "${env.RECIPIENTS}",
-                 subject: "✅ Jenkins: Sucesso no Pipeline - Pre-Prod Atualizado",
-                 body: """Olá Diogo e Diana,\n\n
-O pipeline foi executado com sucesso e todos os testes automatizados passaram!\n
-A nova versão já está disponível para validação em Pre-Produção.\n\n
-🔗 Aceder ao ambiente: http://lcm-preprod.amover\n\n
+                 subject: "✅ Jenkins: Pipeline Sucesso - Versão Estável em Pre-Prod",
+                 body: """Olá Diana e Diogo,\n\n
+Boas notícias! O pipeline foi concluído com sucesso.\n
+Os testes automatizados passaram em todos os cenários e o ambiente de Pre-Produção foi atualizado.\n\n
+🔗 Aceder ao sistema: http://lcm-preprod.amover\n\n
 Cumprimentos,\n
-Servidor Jenkins (infra01)"""
+O vosso Servidor Jenkins (infra01)"""
         }
         
         failure {
-            echo '📧 A recolher logs de erro para a Diana...'
+            echo '📧 A preparar o relatório de erro detalhado para a Diana...'
             script {
-                // Tenta ler o ficheiro de log gerado no passo de teste
-                def fullLog = "Não foi possível recuperar o log detalhado dos testes."
-                try {
-                    if (fileExists('test_result.log')) {
-                        fullLog = readFile('test_result.log')
-                        // Se o log for demasiado grande, cortamos apenas os últimos 5000 caracteres
-                        if (fullLog.length() > 5000) {
-                            fullLog = " (Log truncado por tamanho)...\n" + fullLog.substring(fullLog.length() - 5000)
-                        }
+                // Tentamos ler o ficheiro de log que criámos no passo dos testes
+                def reportContent = "Infelizmente, não foi possível extrair o log de erro. Verifica a consola do Jenkins."
+                
+                if (fileExists('test_result.log')) {
+                    reportContent = readFile('test_result.log')
+                    // Se o log for gigante (mais de 10.000 carateres), cortamos para o email não ser rejeitado
+                    if (reportContent.length() > 8000) {
+                        reportContent = "--- LOG MUITO EXTENSO (A mostrar o final) ---\n\n" + 
+                                        reportContent.substring(reportContent.length() - 8000)
                     }
-                } catch (Exception e) {
-                    fullLog = "Erro ao ler o ficheiro de log: ${e.message}"
                 }
-
+                
                 mail to: "${env.RECIPIENTS}",
-                     subject: "❌ Jenkins: FALHA no Pipeline (Testes Recusados)",
+                     subject: "❌ Jenkins: FALHA no Pipeline (Deploy Abortado)",
                      body: """Olá Diana,\n\n
-Os testes automatizados falharam e o deploy para Pre-Prod foi bloqueado por segurança.\n
-Abaixo encontras o relatório detalhado do erro gerado pelo .NET SDK:\n\n
---------------------------------------------------
-📋 RELATÓRIO DE ERRO (.NET TEST LOG):
---------------------------------------------------
-${fullLog}
---------------------------------------------------\n\n
-Por favor, verifica os erros acima, corrige-os localmente e faz um novo push.\n\n
+Ocorreu um erro durante a execução dos testes automatizados. O deploy para Pre-Prod foi bloqueado para evitar quebras no sistema.\n\n
+------------------------------------------------------------
+📋 RELATÓRIO DETALHADO DE ERRO (.NET SDK):
+------------------------------------------------------------
+${reportContent}
+------------------------------------------------------------\n\n
+Diana, por favor analisa as mensagens acima. Geralmente, o erro está indicado nas últimas linhas (Failed!).\n
+Depois de corrigires, basta fazeres um novo Push para a 'main'.\n\n
 Cumprimentos,\n
-Servidor Jenkins (infra01)"""
+O vosso Servidor Jenkins """
             }
         }
     }
