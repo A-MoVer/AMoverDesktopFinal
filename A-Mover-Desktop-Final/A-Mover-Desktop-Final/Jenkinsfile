@@ -6,46 +6,88 @@ pipeline {
     }
 
     environment {
-        RECIPIENTS = "diogooresende@utad.pt, dianamc@utad.pt"
-        KUBECONFIG_ID = 'kubeconfig-preprod'
+        // --- GRUPOS DE E-MAIL ---
+        TEAM_EMAILS = "diogooresende@utad.pt, dianamc@utad.pt"
+        CHIEFS_EMAILS = "ars@utad.pt, jgouveia@utad.pt" // ALTERAR AQUI
+
+        // --- CONFIGURAÇÕES GERAIS ---
         SLN_PATH = 'A-Mover-Desktop-Final/A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln'
+        IMAGE_NAME = 'ghcr.io/a-mover/amoverdesktopfinal:latest'
         DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = 'true'
+
+        // --- PRE-PROD (CLUSTER) ---
+        KUBECONFIG_ID = 'kubeconfig-preprod'
+
+        // --- PRODUÇÃO (VPS EXTERNA) ---
+        VPS_IP = '85.234.145.56'
+        VPS_USER = 'root'
+        VPS_CRED_ID = 'vps-producao'
     }
 
     stages {
-        stage('Checkout Código') {
+        stage('Checkout e Testes') {
             steps {
                 checkout scm
-                // Debug: Mostra-nos o que o Jenkins vê na raiz do Git
-                sh "ls -R" 
-            }
-        }
-
-        stage('Executar Testes de Validação') {
-            steps {
-                echo '🚀 A iniciar os testes da Diana...'
+                echo '🚀 Validando código da Diana...'
                 sh "dotnet test ${env.SLN_PATH} --configuration Release 2>&1 | tee test_result.log"
             }
         }
 
-        stage('Deploy to PRE-PROD') {
+        stage('Deploy para PRE-PROD') {
             steps {
-                echo '✅ Testes passados! A preparar deploy...'
+                echo '✅ Testes passados. Atualizando Pre-Prod local...'
                 withKubeConfig([credentialsId: "${env.KUBECONFIG_ID}"]) {
                     script {
-                        sh """
-                            if ! command -v kubectl &> /dev/null; then
-                                curl -LO "https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-                                chmod +x ./kubectl
-                                # Usamos o ./kubectl local que descarregámos
-                                ./kubectl apply -f k8s/preprod/ -n lcm-preprod
-                                ./kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod
-                            else
-                                kubectl apply -f k8s/preprod/ -n lcm-preprod
-                                kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod
-                            fi
-                        """
+                        sh "./kubectl apply -f k8s/preprod/ -n lcm-preprod"
+                        sh "./kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod"
                     }
+                }
+                mail to: "${env.TEAM_EMAILS}", 
+                     subject: "🛠️ Pre-Prod Atualizado", 
+                     body: "Diogo e Diana, validem em http://lcm-preprod.amover antes da aprovação final."
+            }
+        }
+
+        stage('Aprovação dos Chefes') {
+            steps {
+                script {
+                    mail to: "${env.CHIEFS_EMAILS}",
+                         subject: "🚀 Autorização: Publicação em Produção (VPS)",
+                         body: "A versão de Pre-Prod foi validada. Autoriza o deploy para a VPS?\n${env.BUILD_URL}input/"
+                    
+                    input message: "Publicar na VPS de Produção (85.234.145.56)?", ok: "Sim, Publicar!"
+                }
+            }
+        }
+
+        stage('Deploy para PRODUÇÃO (VPS)') {
+            steps {
+                echo "🚀 Conectando à VPS ${env.VPS_IP}..."
+                sshagent([env.VPS_CRED_ID]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_IP} << 'EOF'
+                            # 1. Atualizar Imagem
+                            docker pull ${env.IMAGE_NAME}
+                            
+                            # 2. Garantir que a Base de Dados de Produção existe na VPS
+                            if [ ! "\$(docker ps -q -f name=lcm-db-prod)" ]; then
+                                echo "Criando base de dados de Produção..."
+                                docker run -d --name lcm-db-prod \
+                                  -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=SenhaForteProd123!' \
+                                  -p 1433:1433 --restart always \
+                                  mcr.microsoft.com/mssql/server:2022-latest
+                                sleep 20 # Espera o SQL Server arrancar
+                            fi
+
+                            # 3. Reiniciar a Aplicação ligando-a à BD local da VPS
+                            docker stop lcm-app-prod || true
+                            docker rm lcm-app-prod || true
+                            docker run -d --name lcm-app-prod -p 80:80 \
+                              -e ConnectionStrings__DefaultConnection="Server=lcm-db-prod;Database=LCM_Prod;User Id=sa;Password=SenhaForteProd123!;TrustServerCertificate=True;" \
+                              --link lcm-db-prod:lcm-db-prod \
+                              --restart always ${env.IMAGE_NAME}
+EOF
+                    """
                 }
             }
         }
@@ -53,17 +95,9 @@ pipeline {
 
     post {
         success {
-            mail to: "${env.RECIPIENTS}",
-                 subject: "✅ Jenkins: Pipeline Sucesso - Pre-Prod Atualizado",
-                 body: "Olá Diana ,\n\nO ambiente de Pre-Prod foi atualizado com sucesso! O codigo passou em todos os testes\n\n🔗 Link: http://lcm-preprod.amover"
-        }
-        failure {
-            script {
-                def testLog = fileExists('test_result.log') ? readFile('test_result.log') : "Erro de sistema ou pasta 'k8s/preprod' inexistente no Git."
-                mail to: "${env.RECIPIENTS}",
-                     subject: "❌ Jenkins: FALHA no Pipeline!",
-                     body: "Olá Diana,\n\nO deploy falhou. Detalhes:\n\n${testLog}"
-            }
+            mail to: "${env.TEAM_EMAILS}, ${env.CHIEFS_EMAILS}",
+                 subject: "✅ SUCESSO: Aplicação Online na VPS",
+                 body: "O deploy foi concluído com sucesso em http://${env.VPS_IP}"
         }
     }
 }
