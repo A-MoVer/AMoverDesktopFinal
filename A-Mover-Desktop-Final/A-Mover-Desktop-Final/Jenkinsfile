@@ -1,17 +1,17 @@
 pipeline {
     agent any
 
-    // 🛠️ Esta secção diz ao Jenkins para usar o SDK que configuraste nas Tools
     tools {
         dotnetsdk 'dotnet8'
     }
 
     environment {
         RECIPIENTS = "diogooresende@utad.pt, dianamc@utad.pt"
-        // ID da credencial Secret File que criaste com o conteúdo do config
         KUBECONFIG_ID = 'kubeconfig-preprod'
-        // Caminho da solução .sln dentro do repositório
         SLN_PATH = 'A-Mover-Desktop-Final/A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln'
+        
+        // 🚀 SOLUÇÃO PARA O ERRO ICU (TESTES DA DIANA)
+        DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = 'true'
     }
 
     stages {
@@ -21,56 +21,57 @@ pipeline {
             }
         }
 
-        // ==========================================
-        // 🧪 PASSO 1: TESTES (COM REPORT PARA EMAIL)
-        // ==========================================
         stage('Executar Testes de Validação') {
             steps {
                 echo '🚀 A iniciar os testes automatizados da Diana...'
-                // O Jenkins instala o SDK automaticamente aqui antes de correr o comando
+                // O 2>&1 | tee garante que o erro vai para o log e para o e-mail
                 sh "dotnet test ${env.SLN_PATH} --configuration Release 2>&1 | tee test_result.log"
             }
         }
 
-        // ==========================================
-        // 🚀 PASSO 2: DEPLOY EM PRE-PROD
-        // ==========================================
         stage('Deploy to PRE-PROD') {
             steps {
-                echo '✅ Testes passados! A atualizar o Kubernetes...'
+                echo '✅ Testes passados! A preparar deploy...'
                 
-                // Usa o ficheiro de configuração que carregaste nas Credentials
                 withKubeConfig([credentialsId: "${env.KUBECONFIG_ID}"]) {
-                    // ⚠️ IMPORTANTE: Assume que moveste os ficheiros YAML para o Git na pasta k8s/preprod/
-                    sh "kubectl apply -f k8s/preprod/ -n lcm-preprod"
-                    sh "kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod"
+                    script {
+                        // 🛠️ SOLUÇÃO PARA O KUBECTL NOT FOUND
+                        // Se o kubectl não existir no container, vamos buscá-lo
+                        sh """
+                            if ! command -v kubectl &> /dev/null; then
+                                echo 'Instalando kubectl temporariamente...'
+                                curl -LO "https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                                chmod +x ./kubectl
+                                ./kubectl apply -f k8s/preprod/ -n lcm-preprod
+                                ./kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod
+                            else
+                                kubectl apply -f k8s/preprod/ -n lcm-preprod
+                                kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod
+                            fi
+                        """
+                    }
                 }
             }
         }
     }
 
-    // ==========================================
-    // 📢 NOTIFICAÇÕES (O REPORT DA DIANA)
-    // ==========================================
     post {
         success {
             mail to: "${env.RECIPIENTS}",
                  subject: "✅ Jenkins: Pipeline Sucesso - Pre-Prod Atualizado",
-                 body: "Olá Diana e Diogo,\n\nOs testes passaram com sucesso e o ambiente de Pre-Produção foi atualizado.\n\n🔗 Link: http://lcm-preprod.amover\n\nCumprimentos,\nO vosso Jenkins."
+                 body: "Olá Diana e Diogo,\n\nOs testes passaram e o ambiente de Pre-Prod foi atualizado!\n\nLink: http://lcm-preprod.amover"
         }
         failure {
             script {
-                def testLog = "Ocorreu um erro. Verifica se o Jenkinsfile e as ferramentas estão bem configurados."
+                def testLog = "Ocorreu um erro de ambiente ou de sistema."
                 if (fileExists('test_result.log')) {
                     testLog = readFile('test_result.log')
-                    if (testLog.length() > 5000) {
-                        testLog = testLog.substring(testLog.length() - 5000)
-                    }
+                    if (testLog.length() > 5000) testLog = testLog.substring(testLog.length() - 5000)
                 }
                 
                 mail to: "${env.RECIPIENTS}",
                      subject: "❌ Jenkins: FALHA no Pipeline!",
-                     body: "Olá Diana,\n\nOs testes falharam ou houve um erro de ambiente. O deploy foi bloqueado.\n\n📋 LOG DE ERRO:\n${testLog}"
+                     body: "Olá Diana,\n\nOs testes falharam. Detalhes abaixo:\n\n📋 LOG DE ERRO:\n${testLog}"
             }
         }
     }
