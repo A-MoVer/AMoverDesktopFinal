@@ -4,7 +4,7 @@ metadata:
   name: lcm-app-preprod-deployment
   namespace: lcm-preprod
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: lcm-app-preprod
@@ -13,15 +13,11 @@ spec:
       labels:
         app: lcm-app-preprod
     spec:
-      imagePullSecrets:
-      - name: ghcr-secret
       containers:
       - name: lcm-app
         image: ghcr.io/a-mover/amoverdesktopfinal:latest
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionStrings__DefaultConnection
-          value: "Server=mssql-service.lcm-dev.svc.cluster.local;Database=lcm_preprod_db;User Id=sa;Password=ProjetoUtad2026!;TrustServerCertificate=True;"
         - name: ASPNETCORE_ENVIRONMENT
-          value: "Production
+          value: "Development"
