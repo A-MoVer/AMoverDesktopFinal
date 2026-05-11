@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lcm-preprod-db
+  namespace: lcm-preprod
+spec:
+  selector:
+    matchLabels:
+      app: lcm-db-preprod
+  template:
+    metadata:
+      labels:
+        app: lcm-db-preprod
+    spec:
+      containers:
+      - name: mssql
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_SA_PASSWORD
+          value: "SenhaPreProd123!"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lcm-preprod-db-service
+  namespace: lcm-preprod
+spec:
+  selector:
+    app: lcm-db-preprod
+  ports:
+    - protocol: TCP
+      port: 1433
+      targetPort: 1433
