@@ -44,7 +44,7 @@ pipeline {
                 }
                 mail to: "${env.TEAM_EMAILS}", 
                      subject: "🛠️ Pre-Prod Atualizado", 
-                     body: "Diogo e Diana, validem em http://lcm-preprod.amover antes da aprovação final."
+                     body: "Diana, valida em http://lcm-preprod.amover antes da aprovação final."
             }
         }
 
