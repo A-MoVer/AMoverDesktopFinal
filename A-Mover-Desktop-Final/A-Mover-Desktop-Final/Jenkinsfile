@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'mcr.microsoft.com/dotnet/sdk:8.0'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent none // Não define um agente global para podermos alternar entre Docker e Host
 
     environment {
         RECIPIENTS = "diogooresende@utad.pt, dianamc@utad.pt"
@@ -12,20 +7,27 @@ pipeline {
 
     stages {
         stage('Checkout Código') {
+            agent any
             steps {
                 checkout scm
             }
         }
 
         // ==========================================
-        // 🧪 PASSO 1: TESTES ISOLADOS (E GRAVAÇÃO DE LOGS)
+        // 🧪 PASSO 1: TESTES ISOLADOS NO CLUSTER
         // ==========================================
         stage('Executar Testes de Validação') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/dotnet/sdk:8.0'
+                    // Garante que o container tem permissões para ler os ficheiros do workspace
+                    args '-u root'
+                }
+            }
             steps {
                 echo '🚀 A iniciar os testes automatizados dentro do contentor .NET 8...'
                 
-                // Executa os testes e guarda todo o output num ficheiro chamado "test_result.log"
-                // O "tee" garante que o log aparece no ecrã do Jenkins E é gravado no ficheiro
+                // O comando "tee" grava o output no ficheiro test_result.log para enviarmos por email depois
                 sh 'dotnet test A-Mover-Desktop-Final/A-Mover-Desktop-Final.sln --configuration Release 2>&1 | tee test_result.log'
             }
         }
@@ -34,8 +36,11 @@ pipeline {
         // 🚀 PASSO 2: DEPLOY EM PRE-PROD (SÓ SE PASSAR!)
         // ==========================================
         stage('Deploy to PRE-PROD') {
+            agent any // Aqui o Jenkins usa a máquina infra01 para ter acesso ao kubectl
             steps {
-                echo '✅ Todos os testes passaram! A atualizar o Pre-Prod...'
+                echo '✅ Todos os testes passaram! A atualizar o ambiente de Pre-Prod...'
+                
+                // Aplica os YAMLs que estão na tua pasta de pre-prod no infra01
                 sh "kubectl apply -f /home/diogo_admin/lcm-k8s/preprod/ -n lcm-preprod"
                 sh "kubectl rollout restart deployment/lcm-app-preprod-deployment -n lcm-preprod"
             }
@@ -43,48 +48,51 @@ pipeline {
     }
 
     // ==========================================
-    // 📢 ENVIAR EMAILS AUTOMÁTICOS COM OS ERROS
+    // 📢 NOTIFICAÇÕES COMPLETAS (REPORTING)
     // ==========================================
     post {
         success {
             echo '📧 A enviar email de sucesso...'
             mail to: "${env.RECIPIENTS}",
-                 subject: "✅ Jenkins: Pipeline Sucesso - Versão estável em Pre-Prod",
-                 body: """Olá Diana,\n\n
-O pipeline foi executado com sucesso!\n
-Os testes automatizados passaram em todos os cenários (validados isoladamente em contentor Kubernetes) e a nova versão já se encontra disponível no ambiente de Pre-Produção.\n\n
-Aceder ao ambiente: http://lcm-preprod.amover\n\n
+                 subject: "✅ Jenkins: Sucesso no Pipeline - Pre-Prod Atualizado",
+                 body: """Olá Diogo e Diana,\n\n
+O pipeline foi executado com sucesso e todos os testes automatizados passaram!\n
+A nova versão já está disponível para validação em Pre-Produção.\n\n
+🔗 Aceder ao ambiente: http://lcm-preprod.amover\n\n
 Cumprimentos,\n
-"""
+Servidor Jenkins (infra01)"""
         }
         
         failure {
-            echo '📧 A ler ficheiro de erros e a enviar email...'
-            
-            // Script em Groovy para ler as últimas 30 linhas do log de erro para enviar no email
+            echo '📧 A recolher logs de erro para a Diana...'
             script {
-                def testLog = "Não foi possível carregar o log de testes."
-                if (fileExists('test_result.log')) {
-                    testLog = readFile('test_result.log')
-                    // Limita o tamanho do log no email para não ficar gigante (ex: últimas 5000 letras)
-                    if (testLog.length() > 5000) {
-                        testLog = testLog.substring(testLog.length() - 5000)
+                // Tenta ler o ficheiro de log gerado no passo de teste
+                def fullLog = "Não foi possível recuperar o log detalhado dos testes."
+                try {
+                    if (fileExists('test_result.log')) {
+                        fullLog = readFile('test_result.log')
+                        // Se o log for demasiado grande, cortamos apenas os últimos 5000 caracteres
+                        if (fullLog.length() > 5000) {
+                            fullLog = " (Log truncado por tamanho)...\n" + fullLog.substring(fullLog.length() - 5000)
+                        }
                     }
+                } catch (Exception e) {
+                    fullLog = "Erro ao ler o ficheiro de log: ${e.message}"
                 }
-                
+
                 mail to: "${env.RECIPIENTS}",
-                     subject: "❌ Jenkins: ALERTA de Falha no Pipeline!",
-                     body: """Olá ,\n\n
-ATENÇÃO: Os testes automatizados da Diana FALHARAM no ambiente de testes do cluster.\n
-Por razões de segurança, o deploy para o ambiente de Pre-Produção (PRE-PROD) foi ABORTADO.\n\n
+                     subject: "❌ Jenkins: FALHA no Pipeline (Testes Recusados)",
+                     body: """Olá Diana,\n\n
+Os testes automatizados falharam e o deploy para Pre-Prod foi bloqueado por segurança.\n
+Abaixo encontras o relatório detalhado do erro gerado pelo .NET SDK:\n\n
 --------------------------------------------------
-📋 EXTRATO DO LOG DE ERRO DOS TESTES (.NET):
+📋 RELATÓRIO DE ERRO (.NET TEST LOG):
 --------------------------------------------------
-${testLog}
+${fullLog}
 --------------------------------------------------\n\n
-Por favor, Diana, corrige os erros indicados acima e faz um novo push para o GitHub para reiniciar a validação.\n\n
+Por favor, verifica os erros acima, corrige-os localmente e faz um novo push.\n\n
 Cumprimentos,\n
-O Servidor Jenkins """
+Servidor Jenkins (infra01)"""
             }
         }
     }
