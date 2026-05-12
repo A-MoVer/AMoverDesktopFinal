@@ -15,7 +15,7 @@ pipeline {
         IMAGE_NAME = 'ghcr.io/a-mover/amoverdesktopfinal:latest'
         DOTNET_SYSTEM_GLOBALIZATION_INVARIANT = 'true'
 
-        // --- PRE-PROD (CLUSTER) ---
+        // --- PRE-PROD (CLUSTERr) ---
         KUBECONFIG_ID = 'kubeconfig-preprod'
 
         // --- PRODUÇÃO (VPS EXTERNA) ---
