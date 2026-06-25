@@ -21,8 +21,7 @@ namespace A_Mover_Desktop_Final.Models
         [ForeignKey("IDModelo")]
         public ModeloMota? ModeloMota { get; set; }
 
-        [Required(ErrorMessage = "É necessário associar uma OP.")]
-        public int IDOrdemProducao { get; set; }
+        public int? IDOrdemProducao { get; set; }
 
         [ForeignKey("IDOrdemProducao")]
         public OrdemProducao? OrdemProducao { get; set; }

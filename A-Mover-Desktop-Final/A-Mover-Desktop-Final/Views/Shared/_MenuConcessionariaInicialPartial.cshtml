@@ -1,0 +1,25 @@
+<li class="menu-item @(ViewData["ActiveMenu"] as string == "EncomendasPecas" ? "active" : "")">
+    <a asp-controller="EncomendasPecas" asp-action="Index" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-package"></i>
+        <div>Encomendas de Peças</div>
+    </a>
+</li>
+
+<li class="menu-item @(ViewData["ActiveMenu"] as string == "StockMotas" ? "active" : "")">
+    <a asp-controller="StockMotas" asp-action="Index" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-cycling"></i>
+        <div>Stock de Motas</div>
+    </a>
+</li>
+<li class="menu-item @(ViewData["ActiveMenu"] as string == "VendasMotas" ? "active" : "")">
+    <a asp-controller="StockMotas" asp-action="Vendas" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-receipt"></i>
+        <div>Vendas de Motas</div>
+    </a>
+</li>
+<li class="menu-item @(ViewData["ActiveMenu"] as string == "RentabilidadeMotas" ? "active" : "")">
+    <a asp-controller="StockMotas" asp-action="Rentabilidade" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-line-chart"></i>
+        <div>Rentabilidade</div>
+    </a>
+</li>

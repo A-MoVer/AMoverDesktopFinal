@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260318113350_encomendasConcessionaria")]
+    partial class encomendasConcessionaria
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,9 +271,6 @@ namespace A_Mover_Desktop_Final.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("IDModelo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Prioridade")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantidade")
@@ -554,7 +554,7 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Property<int>("IDModelo")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IDOrdemProducao")
+                    b.Property<int>("IDOrdemProducao")
                         .HasColumnType("int");
 
                     b.Property<string>("NumeroIdentificacao")
@@ -575,8 +575,7 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.HasIndex("IDModelo");
 
                     b.HasIndex("IDOrdemProducao")
-                        .IsUnique()
-                        .HasFilter("[IDOrdemProducao] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Motas");
                 });
@@ -778,37 +777,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.ToTable("ServicosPecasAlteradas");
                 });
 
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.StockMota", b =>
-                {
-                    b.Property<int>("IDStockMota")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDStockMota"));
-
-                    b.Property<DateTime>("DataAtualizacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IDModelo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Observacoes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("QuantidadeDisponivel")
-                        .HasColumnType("int");
-
-                    b.HasKey("IDStockMota");
-
-                    b.HasIndex("IDModelo");
-
-                    b.ToTable("StockMotas");
-                });
-
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.Utilizador", b =>
                 {
                     b.Property<int>("IdUtilizador")
@@ -866,78 +834,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.HasIndex("IdUtilizador");
 
                     b.ToTable("UtilizadorMota");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.VendaMota", b =>
-                {
-                    b.Property<int>("IDVendaMota")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDVendaMota"));
-
-                    b.Property<string>("ClienteEmail")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("ClienteNif")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ClienteNome")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("ClienteTelefone")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Cor")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<DateTime>("DataVenda")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("CustoAquisicao")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("DataVenda")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("DespesasManutencao")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("IDCliente")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IDModelo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NumeroSerie")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Observacoes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<decimal>("PrecoVenda")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<double>("Quilometragem")
-                        .HasColumnType("float");
-
-                    b.HasKey("IDVendaMota");
-
-                    b.HasIndex("IDCliente");
-
-                    b.HasIndex("IDModelo");
-
-                    b.ToTable("VendasMotas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1363,7 +1259,9 @@ namespace A_Mover_Desktop_Final.Migrations
 
                     b.HasOne("A_Mover_Desktop_Final.Models.OrdemProducao", "OrdemProducao")
                         .WithOne("Mota")
-                        .HasForeignKey("A_Mover_Desktop_Final.Models.Mota", "IDOrdemProducao");
+                        .HasForeignKey("A_Mover_Desktop_Final.Models.Mota", "IDOrdemProducao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ModeloMota");
 
@@ -1479,17 +1377,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Navigation("Servico");
                 });
 
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.StockMota", b =>
-                {
-                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", "ModeloMota")
-                        .WithMany()
-                        .HasForeignKey("IDModelo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ModeloMota");
-                });
-
             modelBuilder.Entity("A_Mover_Desktop_Final.Models.UtilizadorMota", b =>
                 {
                     b.HasOne("A_Mover_Desktop_Final.Models.Mota", "Mota")
@@ -1507,23 +1394,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Navigation("Mota");
 
                     b.Navigation("Utilizador");
-                });
-
-            modelBuilder.Entity("A_Mover_Desktop_Final.Models.VendaMota", b =>
-                {
-                    b.HasOne("A_Mover_Desktop_Final.Models.Cliente", "Cliente")
-                        .WithMany()
-                        .HasForeignKey("IDCliente");
-
-                    b.HasOne("A_Mover_Desktop_Final.Models.ModeloMota", "ModeloMota")
-                        .WithMany()
-                        .HasForeignKey("IDModelo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-
-                    b.Navigation("ModeloMota");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

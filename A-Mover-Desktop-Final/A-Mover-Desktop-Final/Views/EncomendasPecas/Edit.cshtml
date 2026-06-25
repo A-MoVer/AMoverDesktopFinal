@@ -1,0 +1,95 @@
+@model A_Mover_Desktop_Final.Models.EncomendaPeca
+
+@{
+    ViewData["Title"] = "Editar Encomenda de Peças";
+    var estados = ViewData["EstadosEncomenda"] as List<EstadoEncomendaPeca> ?? new List<EstadoEncomendaPeca>();
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 m-0">
+                <i class="bx bx-edit text-warning me-2"></i>
+                Editar Encomenda de Peças
+            </h1>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i>Voltar
+            </a>
+        </div>
+
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            <input type="hidden" asp-for="IDEncomendaPeca" />
+            <input type="hidden" asp-for="DataCriacao" />
+
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">
+                                <i class="bx bx-info-circle me-2"></i>
+                                Dados da Encomenda
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="IDPeca" class="form-label"></label>
+                                <select asp-for="IDPeca" class="form-select" asp-items="ViewBag.IDPeca"></select>
+                                <span asp-validation-for="IDPeca" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Quantidade" class="form-label"></label>
+                                <input asp-for="Quantidade" class="form-control" />
+                                <span asp-validation-for="Quantidade" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="DataNecessaria" class="form-label"></label>
+                                <input asp-for="DataNecessaria" class="form-control" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="DataNecessaria" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Estado" class="form-label"></label>
+                                <select asp-for="Estado" class="form-select">
+                                    @foreach (var estado in estados)
+                                    {
+                                        <option value="@estado" selected="@(Model.Estado == estado)">@estado</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Estado" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Observacoes" class="form-label"></label>
+                                <textarea asp-for="Observacoes" class="form-control" rows="3"></textarea>
+                                <span asp-validation-for="Observacoes" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <div class="alert alert-info small">
+                        <i class="bx bx-info-circle me-1"></i>
+                        Atualize o estado conforme a resposta do fabricante.
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bx bx-x me-1"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bx bx-save me-1"></i>Guardar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

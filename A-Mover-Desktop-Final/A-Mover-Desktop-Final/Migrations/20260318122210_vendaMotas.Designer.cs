@@ -4,6 +4,7 @@ using A_Mover_Desktop_Final.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace A_Mover_Desktop_Final.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260318122210_vendaMotas")]
+    partial class vendaMotas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,9 +271,6 @@ namespace A_Mover_Desktop_Final.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("IDModelo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Prioridade")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantidade")
@@ -901,15 +901,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Property<DateTime>("DataVenda")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("CustoAquisicao")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("DataVenda")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("DespesasManutencao")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("IDCliente")
                         .HasColumnType("int");
 
@@ -924,9 +915,6 @@ namespace A_Mover_Desktop_Final.Migrations
                     b.Property<string>("Observacoes")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<decimal>("PrecoVenda")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<double>("Quilometragem")
                         .HasColumnType("float");
