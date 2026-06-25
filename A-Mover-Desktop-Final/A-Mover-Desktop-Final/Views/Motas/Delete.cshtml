@@ -1,63 +1,123 @@
 ﻿@model A_Mover_Desktop_Final.Models.Mota
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar Mota";
+    ViewData["ActiveMenu"] = "Motas";
 }
 
-<h1>Delete</h1>
+<div class="col-xxl">
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h1 class="mb-0">Eliminar Mota</h1>
+        </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Mota</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModeloMota)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModeloMota.CodigoProduto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrdemProducao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrdemProducao.NumeroOrdem)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeroIdentificacao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeroIdentificacao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataRegisto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataRegisto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quilometragem)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quilometragem)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="IDMota" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+        <div class="card-body">
+
+            <div class="alert alert-warning">
+                <i class="bx bx-error-circle me-2"></i>
+                Tem a certeza de que pretende eliminar esta mota?
+            </div>
+
+            <!-- Modelo -->
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">
+                    @Html.DisplayNameFor(model => model.ModeloMota)
+                </label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @Html.DisplayFor(model => model.ModeloMota.CodigoProduto)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Ordem de Produção -->
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">
+                    @Html.DisplayNameFor(model => model.OrdemProducao)
+                </label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @Html.DisplayFor(model => model.OrdemProducao.NumeroOrdem)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Número de Identificação -->
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">
+                    @Html.DisplayNameFor(model => model.NumeroIdentificacao)
+                </label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @Html.DisplayFor(model => model.NumeroIdentificacao)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Data de Registo -->
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">
+                    @Html.DisplayNameFor(model => model.DataRegisto)
+                </label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @Html.DisplayFor(model => model.DataRegisto)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cor -->
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">
+                    @Html.DisplayNameFor(model => model.Cor)
+                </label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @Html.DisplayFor(model => model.Cor)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quilometragem -->
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">
+                    @Html.DisplayNameFor(model => model.Quilometragem)
+                </label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @Html.DisplayFor(model => model.Quilometragem)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Estado -->
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">
+                    @Html.DisplayNameFor(model => model.Estado)
+                </label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @Html.DisplayFor(model => model.Estado)
+                    </p>
+                </div>
+            </div>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="IDMota" />
+
+                <div class="row">
+                    <div class="col-sm-10 offset-sm-2">
+                        <button type="submit" class="btn btn-danger me-2">
+                            <i class="bx bx-trash me-1"></i> Eliminar
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bx bx-arrow-back me-1"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </div>

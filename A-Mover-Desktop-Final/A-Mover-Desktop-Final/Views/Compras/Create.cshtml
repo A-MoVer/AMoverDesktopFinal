@@ -1,46 +1,94 @@
 ﻿@model A_Mover_Desktop_Final.Models.Compras
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Criar Nova Compra";
+    ViewData["ActiveMenu"] = "Compras";
 }
 
-<h1>Create</h1>
+<div class="col-xxl">
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h1 class="mb-0">Criar Nova Compra</h1>
+        </div>
 
-<h4>Compras</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PecaId" class="control-label"></label>
-                <select asp-for="PecaId" class ="form-control" asp-items="ViewBag.PecaId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataPedido" class="control-label"></label>
-                <input asp-for="DataPedido" class="form-control" />
-                <span asp-validation-for="DataPedido" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FornecedorId" class="control-label"></label>
-                <select asp-for="FornecedorId" class ="form-control" asp-items="ViewBag.FornecedorId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quantidade" class="control-label"></label>
-                <input asp-for="Quantidade" class="form-control" />
-                <span asp-validation-for="Quantidade" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- Peça -->
+                <div class="row mb-3">
+                    <label asp-for="PecaId" class="col-sm-2 col-form-label">
+                        Peça <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <select asp-for="PecaId" class="form-select" asp-items="ViewBag.PecaId">
+                            <option value="">-- Selecione uma Peça --</option>
+                        </select>
+                        <span asp-validation-for="PecaId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Data do Pedido -->
+                <div class="row mb-3">
+                    <label asp-for="DataPedido" class="col-sm-2 col-form-label">
+                        Data do Pedido <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <div class="input-group input-group-merge">
+                            <span class="input-group-text">
+                                <i class="bx bx-calendar"></i>
+                            </span>
+                            <input asp-for="DataPedido" type="date" class="form-control" />
+                        </div>
+                        <span asp-validation-for="DataPedido" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Fornecedor -->
+                <div class="row mb-3">
+                    <label asp-for="FornecedorId" class="col-sm-2 col-form-label">
+                        Fornecedor <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <select asp-for="FornecedorId" class="form-select" asp-items="ViewBag.FornecedorId">
+                            <option value="">-- Selecione um Fornecedor --</option>
+                        </select>
+                        <span asp-validation-for="FornecedorId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Quantidade -->
+                <div class="row mb-3">
+                    <label asp-for="Quantidade" class="col-sm-2 col-form-label">
+                        Quantidade <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-10">
+                        <input asp-for="Quantidade" class="form-control" min="1" />
+                        <span asp-validation-for="Quantidade" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <p class="text-muted">
+                    <span class="text-danger">*</span> - Preenchimento obrigatório
+                </p>
+
+                <div class="row justify-content-start">
+                    <div class="col-sm-10 offset-sm-2">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bx bx-save me-1"></i> Criar
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bx bx-arrow-back me-1"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }
