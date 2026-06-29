@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Importar Clientes";
+}
+
+<div class="card m-5 p-4" style="max-width:640px; margin-left:auto!important; margin-right:auto!important;">
+
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <i class="bx bx-spreadsheet fs-4 text-primary"></i>
+        <h1 class="h4 m-0">Importar clientes do Excel</h1>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success d-flex align-items-center gap-2">
+            <i class="bx bx-check-circle"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Erro"] != null)
+    {
+        <div class="alert alert-danger d-flex align-items-center gap-2">
+            <i class="bx bx-error-circle"></i> @TempData["Erro"]
+        </div>
+    }
+
+    <div class="alert alert-info mb-4">
+        <div class="fw-semibold mb-1">Formato esperado do ficheiro</div>
+        <div class="small">
+            Colunas: <strong>Número</strong> · <strong>Nome</strong> · <strong>País morada</strong> · <strong>País origem</strong> · <strong>Inativo (SIM/NÃO)</strong><br>
+            Suporta ficheiros <code>.xls</code> e <code>.xlsx</code>
+        </div>
+    </div>
+
+    <form asp-action="ImportarExcel" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label text-muted small">Ficheiro Excel</label>
+
+            <div id="drop-zone"
+                 class="border rounded text-center p-4"
+                 style="border-style:dashed!important; cursor:pointer; transition:background 0.15s, border-color 0.15s;">
+                <i class="bx bx-upload fs-2 text-muted d-block mb-2"></i>
+                <div class="small text-muted mb-1">Arraste o ficheiro para aqui ou</div>
+                <label for="ficheiro" class="small text-primary fw-semibold" style="cursor:pointer;">
+                    escolha um ficheiro
+                </label>
+                <input type="file" id="ficheiro" name="ficheiro" accept=".xls,.xlsx"
+                       class="d-none" required onchange="mostrarFicheiro(this)">
+            </div>
+
+            <div id="ficheiro-info" class="d-none mt-2 p-2 px-3 rounded border d-flex align-items-center gap-2 small">
+                <i class="bx bx-file-check text-success"></i>
+                <span id="ficheiro-nome" class="flex-fill"></span>
+                <span id="ficheiro-tamanho" class="text-muted"></span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="atualizarExistentes"
+                       id="atualizarExistentes" value="true" checked>
+                <label class="form-check-label small text-muted" for="atualizarExistentes">
+                    Atualizar clientes já existentes (por número ou nome)
+                </label>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">
+                <i class="bx bx-upload me-1"></i> Importar
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const input    = document.getElementById('ficheiro');
+
+        dropZone.addEventListener('click', () => input.click());
+
+        dropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropZone.classList.add('border-primary', 'bg-light');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-primary', 'bg-light');
+        });
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('border-primary', 'bg-light');
+            const dt = new DataTransfer();
+            dt.items.add(e.dataTransfer.files[0]);
+            input.files = dt.files;
+            mostrarFicheiro(input);
+        });
+
+        function mostrarFicheiro(input) {
+            if (!input.files.length) return;
+            const f = input.files[0];
+            document.getElementById('ficheiro-nome').textContent    = f.name;
+            document.getElementById('ficheiro-tamanho').textContent = (f.size / 1024).toFixed(1) + ' KB';
+            document.getElementById('ficheiro-info').classList.remove('d-none');
+            document.getElementById('ficheiro-info').style.display  = 'flex';
+        }
+    </script>
+}

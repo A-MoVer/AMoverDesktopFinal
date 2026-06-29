@@ -4,36 +4,90 @@
     ViewData["Title"] = "Detalhes";
 }
 
-<div class="container mt-4">
+<div class="col-xxl">
     <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h4>Detalhes do Cliente</h4>
+
+        <div class="card-header">
+            <h1 class="mb-0">Detalhes do Cliente</h1>
         </div>
+
         <div class="card-body">
+
             <div class="row mb-3">
-                <div class="col-md-3 text-md-right">
-                    <strong>Nome:</strong>
-                </div>
-                <div class="col-md-9">
-                    @Html.DisplayFor(model => model.Nome)
+                <label class="col-sm-2 col-form-label fw-bold">Nome</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.Nome</p>
                 </div>
             </div>
 
             <div class="row mb-3">
-                <div class="col-md-3 text-md-right">
-                    <strong>Tipo de Cliente:</strong>
-                </div>
-                <div class="col-md-9">
-                    @Html.DisplayFor(model => model.Tipo)
+                <label class="col-sm-2 col-form-label fw-bold">Tipo</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.Tipo</p>
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12">
-                    <a asp-action="Edit" asp-route-id="@Model.IDCliente" class="btn btn-primary">Editar</a>
-                    <a asp-action="Index" class="btn btn-secondary">Voltar à Lista</a>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">Número Cliente</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.NumeroCliente</p>
                 </div>
             </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">País</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.Pais</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">País Origem</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.PaisOrigem</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">Estado</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.Estado</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">Criado em</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">@Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">Última Modificação</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @(Model.DataModificacao?.ToString("dd/MM/yyyy HH:mm") ?? "-")
+                    </p>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label fw-bold">Última Encomenda</label>
+                <div class="col-sm-10">
+                    <p class="form-control-plaintext">
+                        @(Model.UltimaEncomenda?.ToString("dd/MM/yyyy") ?? "-")
+                    </p>
+                </div>
+            </div>
+
+            <a asp-action="Edit" asp-route-id="@Model.IDCliente" class="btn btn-primary me-2">
+                Editar
+            </a>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Voltar
+            </a>
+
         </div>
     </div>
 </div>

@@ -1,67 +1,90 @@
 ﻿@model IEnumerable<A_Mover_Desktop_Final.Models.Cliente>
 
 @{
-    ViewData["Title"] = "Gestão de Clientes";
+    ViewData["Title"] = "Clientes";
 }
 
-<div class="card  p-1">
-    <div class="d-flex justify-content-between align-items-center m-3">
-        <h1 class="m-0">Gestão de Clientes</h1>
-        <a type="button" class="btn btn-primary" asp-action="Create">Adicionar Cliente</a>
+<div class="card">
+
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Clientes</h1>
+
+        <a asp-action="Create" class="btn btn-primary">
+            Novo Cliente
+        </a>
+
+        <<a asp-action="ImportarExcel" class="btn" style="background:transparent; border:1px solid #28a745; color:#28a745;">
+            Importar Excel
+        </a>
     </div>
 
-    <div class="table-responsive text-nowrap">
-        <table class="table" id="tabela">
-            <thead class="table-light">
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead>
                 <tr>
+                    <th>Nº</th>
                     <th>Nome</th>
                     <th>Tipo</th>
-                    <th>Ações</th>
+                    <th>País</th>
+                    <th>Estado</th>
+                    <th>Última Encomenda</th>
+                    <th width="180"></th>
                 </tr>
             </thead>
+
             <tbody>
-                @foreach (var cliente in Model)
+
+                @foreach (var item in Model)
                 {
-                    <tr id="row-@cliente.IDCliente">
-                        <td><b>@Html.DisplayFor(modelItem => cliente.Nome)</b></td>
-                        <td>@Html.DisplayFor(modelItem => cliente.Tipo)</td>
+                    <tr>
+
+                        <td>@item.NumeroCliente</td>
+
+                        <td>@item.Nome</td>
+
+                        <td>@item.Tipo</td>
+
+                        <td>@item.Pais</td>
+
+                        <td>@item.Estado</td>
+
                         <td>
-                            <a asp-action="Details" asp-route-id="@cliente.IDCliente" class="btn btn-sm btn-info text-white me-2">
-                                <i class="fas fa-info-circle"></i> Detalhes
-                            </a>
-                            <a asp-action="Edit" asp-route-id="@cliente.IDCliente" class="btn btn-sm btn-warning text-white me-2">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@cliente.IDCliente" class="btn btn-sm btn-danger text-white">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </a>
+                            @(item.UltimaEncomenda?.ToString("dd/MM/yyyy") ?? "-")
                         </td>
+
+                        <td>
+
+                            <a asp-action="Details"
+                                   asp-route-id="@item.IDCliente"
+                                   class="btn btn-sm btn-info">
+                                Detalhes
+                            </a>
+
+                            <a asp-action="Edit"
+                                   asp-route-id="@item.IDCliente"
+                                   class="btn btn-sm btn-warning">
+                                Editar
+                            </a>
+
+                            <a asp-action="Delete"
+                                   asp-route-id="@item.IDCliente"
+                                   class="btn btn-sm btn-danger">
+                                Eliminar
+                            </a>
+
+
+
+                        </td>
+
                     </tr>
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
 
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#tabela').DataTable({
-                "pageLength": 10,
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registos por página",
-                    "paginate": {
-                        "first": "Primeira",
-                        "last": "Última",
-                        "next": "Próxima",
-                        "previous": "Anterior"
-                    },
-                    "info": "_START_ a _END_ de _TOTAL_ registos",
-                    "infoEmpty": "Nenhum registo disponível",
-                    "search": "Pesquisar:",
-                    "zeroRecords": "Nenhum registro encontrado"
-                }
-            });
-        });
-    </script>
-}
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
