@@ -1,0 +1,67 @@
+﻿@{
+    ViewData["Title"] = "Exportar Encomendas";
+}
+
+<div class="card m-5 p-4" style="max-width:520px; margin-left:auto!important; margin-right:auto!important;">
+
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <i class="bx bx-export fs-4 text-primary"></i>
+        <h1 class="h4 m-0">Exportar encomendas para Power BI</h1>
+    </div>
+
+    <div class="alert alert-info small mb-4">
+        <i class="bx bx-info-circle me-1"></i>
+        Exporta um <strong>CSV (separado por ponto e vírgula)</strong> pronto a importar no Power BI.
+        Inclui: cliente, modelo, quantidade, estado, prioridade e datas.
+    </div>
+
+    <form asp-action="ExportarEncomendas" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row g-3 mb-3">
+            <div class="col-6">
+                <label class="form-label small text-muted">Data início</label>
+                <input type="date" name="dataInicio" class="form-control" />
+            </div>
+            <div class="col-6">
+                <label class="form-label small text-muted">Data fim</label>
+                <input type="date" name="dataFim" class="form-control" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label small text-muted">Filtrar por estado</label>
+            <select name="estado" class="form-select">
+                <option value="">Todos os estados</option>
+                <option value="Pendente">Pendente</option>
+                <option value="EmProducao">Em produção</option>
+                <option value="Concluida">Concluída</option>
+                <option value="Embalada">Embalada</option>
+                <option value="Enviada">Enviada</option>
+                <option value="Entregue">Entregue</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label small text-muted">Filtrar por prioridade</label>
+            <select name="prioridade" class="form-select">
+                <option value="">Todas as prioridades</option>
+                <option value="Baixa">Baixa</option>
+                <option value="Media">Média</option>
+                <option value="Alta">Alta</option>
+                <option value="Urgente">Urgente</option>
+            </select>
+        </div>
+
+        <div class="text-muted small mb-4">
+            Deixa os campos em branco para exportar <strong>todas as encomendas</strong>.
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">
+                <i class="bx bx-download me-1"></i> Exportar CSV
+            </button>
+        </div>
+    </form>
+</div>

@@ -103,6 +103,66 @@ namespace A_Mover_Desktop_Final.Controllers
             return View(encomenda);
         }
 
+        // GET: Encomendas/ExportarEncomendas
+        public IActionResult ExportarEncomendas()
+        {
+            ViewData["ActiveMenu"] = "Encomendas";
+            return View();
+        }
+
+        // POST: Encomendas/ExportarEncomendas
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExportarEncomendas(DateTime? dataInicio, DateTime? dataFim, string? estado, string? prioridade)
+        {
+            var query = _context.Encomendas
+                .Include(e => e.Cliente)
+                .Include(e => e.ModeloMota)
+                .AsQueryable();
+
+            if (dataInicio.HasValue)
+                query = query.Where(e => e.DateCriacao >= dataInicio.Value);
+
+            if (dataFim.HasValue)
+                query = query.Where(e => e.DateCriacao <= dataFim.Value.AddDays(1).AddTicks(-1));
+
+            if (!string.IsNullOrEmpty(estado) && Enum.TryParse<EstadoEncomenda>(estado, out var estadoEnum))
+                query = query.Where(e => e.Estado == estadoEnum);
+
+            if (!string.IsNullOrEmpty(prioridade) && Enum.TryParse<PrioridadeEncomenda>(prioridade, out var prioridadeEnum))
+                query = query.Where(e => e.Prioridade == prioridadeEnum);
+
+            var encomendas = await query.OrderBy(e => e.DateCriacao).ToListAsync();
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("ID;Data Criação;Data Entrega;Cliente;Modelo;Quantidade;Estado;Prioridade");
+
+            foreach (var e in encomendas)
+            {
+                sb.AppendLine(string.Join(";", new[]
+                {
+            e.IDEncomenda.ToString(),
+            e.DateCriacao.ToString("yyyy-MM-dd"),
+            e.DataEntrega?.ToString("yyyy-MM-dd") ?? "",
+            e.Cliente?.Nome ?? "",
+            e.ModeloMota?.Nome ?? "",
+            e.Quantidade.ToString(),
+            e.Estado.ToString(),
+            e.Prioridade.ToString()
+        }));
+            }
+
+            var bytes = System.Text.Encoding.UTF8.GetPreamble()
+                .Concat(System.Text.Encoding.UTF8.GetBytes(sb.ToString()))
+                .ToArray();
+
+            var periodo = dataInicio.HasValue || dataFim.HasValue
+                ? $"_{dataInicio?.ToString("yyyyMMdd") ?? "inicio"}_{dataFim?.ToString("yyyyMMdd") ?? "fim"}"
+                : "";
+
+            return File(bytes, "text/csv", $"encomendas_motas{periodo}.csv");
+        }
+
         // GET: Encomendas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
